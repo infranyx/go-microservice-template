@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -13,7 +14,8 @@ type PostgreSqlx struct {
 }
 
 func NewPostgreSqlx() (*PostgreSqlx, error) {
-	DB, err := sqlx.ConnectContext(context.Background(), "postgres", os.Getenv("DATABASE_URL"))
+	fmt.Println(os.Getenv("PG_URL"))
+	DB, err := sqlx.ConnectContext(context.Background(), "postgres", `postgres://postgres:postgrespw@localhost:5432/postgres?sslmode=disable`)
 	if err != nil {
 		return nil, err
 	}
