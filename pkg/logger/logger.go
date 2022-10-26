@@ -1,10 +1,8 @@
 package logger
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type Logger struct {
@@ -12,21 +10,22 @@ type Logger struct {
 }
 
 func NewLogger() *Logger {
-	fmt.Printf("\n*** Using a JSON encoder, at debug level, sending output to stdout, no key specified\n\n")
-	rawJSON := []byte(`{
-		"level": "debug",
-		"encoding": "json",
-		"outputPaths": ["stdout", "tmp/logs/main.log"],
-		"errorOutputPaths": ["stderr"],
-		"encoderConfig": {
-		  "messageKey": "message",
-		  "levelKey": "level",
-		  "levelEncoder": "lowercase"
-		}
-	  }`)
-	var cfg zap.Config
-	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
-		panic(err)
+	cfg := zap.Config{
+		Level:       zap.NewAtomicLevelAt(zapcore.DebugLevel),
+		Encoding:    "json",
+		OutputPaths: []string{"stdout", "tmp/logs/main.log"},
+		EncoderConfig: zapcore.EncoderConfig{
+			MessageKey: "message",
+
+			LevelKey:    "level",
+			EncodeLevel: zapcore.LowercaseLevelEncoder,
+
+			TimeKey:    "time",
+			EncodeTime: zapcore.ISO8601TimeEncoder,
+
+			CallerKey:    "caller",
+			EncodeCaller: zapcore.ShortCallerEncoder,
+		},
 	}
 	logger := zap.Must(cfg.Build())
 	defer logger.Sync()

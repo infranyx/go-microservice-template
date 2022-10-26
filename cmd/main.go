@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/infranyx/go-grpc-template/cmd/app"
 	"github.com/infranyx/go-grpc-template/config"
@@ -16,8 +15,7 @@ func main() {
 	l.Infow("test",
 		// Structured context as loosely typed key-value pairs.
 		"url", 4,
-		"attempt", 3,
-		"backoff", time.Second)
+		"attempt", 3)
 
 	fmt.Println("Hello world")
 	app.Run()
