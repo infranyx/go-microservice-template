@@ -10,7 +10,8 @@ import (
 )
 
 func main() {
-	config.Init()
+	conf := config.New()
+	fmt.Println(conf.App.Port)
 
 	l := logger.NewLogger()
 	l.Infow("test",
