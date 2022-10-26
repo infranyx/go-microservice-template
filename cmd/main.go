@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/infranyx/go-grpc-template/cmd/app"
+	"github.com/infranyx/go-grpc-template/app"
 	"github.com/infranyx/go-grpc-template/config"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/sentry"
