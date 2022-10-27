@@ -2,9 +2,8 @@ package postgres
 
 import (
 	"context"
-	"fmt"
-	"os"
 
+	"github.com/infranyx/go-grpc-template/config"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // pgx also supported
 )
@@ -14,8 +13,8 @@ type PostgreSqlx struct {
 }
 
 func NewPostgreSqlx() (*PostgreSqlx, error) {
-	fmt.Println(os.Getenv("PG_URL"))
-	DB, err := sqlx.ConnectContext(context.Background(), "postgres", `postgres://postgres:postgrespw@localhost:5432/postgres?sslmode=disable`)
+	conf := config.Conf
+	DB, err := sqlx.ConnectContext(context.Background(), "postgres", conf.Postgres.Url)
 	if err != nil {
 		return nil, err
 	}

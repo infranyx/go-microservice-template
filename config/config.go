@@ -11,12 +11,17 @@ import (
 var Conf *Config
 
 type Config struct {
-	App  AppConfig
-	Grpc GrpcConfig
+	App      AppConfig
+	Grpc     GrpcConfig
+	Postgres PostgresConfig
 }
 
 type AppConfig struct {
 	AppEnv string
+}
+
+type PostgresConfig struct {
+	Url string
 }
 type GrpcConfig struct {
 	Port int
@@ -35,11 +40,14 @@ func init() {
 func NewConfig() *Config {
 	Conf = &Config{
 		App: AppConfig{
-			AppEnv: (utils.GetEnv("APP_ENV", const_app_env.DEV)),
+			AppEnv: utils.GetEnv("APP_ENV", const_app_env.DEV),
 		},
 		Grpc: GrpcConfig{
 			Port: utils.GetEnvAsInt("PORT", 3000),
 			Host: utils.GetEnv("HOST", "0.0.0.0"),
+		},
+		Postgres: PostgresConfig{
+			Url: utils.GetEnv("PG_URL", ""),
 		},
 	}
 	return Conf

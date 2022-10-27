@@ -1,6 +1,7 @@
-export PG_URL=postgres://postgres:postgrespw@localhost:5432/postgres
-
 .PHONY: help
+
+env:
+	export PG_URL=postgres://postgres:postgrespw@localhost:5432/postgres
 
 rollback:
     migrate -source db/migrations -database '$(PG_URL)?sslmode=disable' down
