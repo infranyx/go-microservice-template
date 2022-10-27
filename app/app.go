@@ -2,12 +2,13 @@ package app
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/infranyx/go-grpc-template/app/grpc"
+	"github.com/infranyx/go-grpc-template/config"
+	const_app_env "github.com/infranyx/go-grpc-template/constant/app_env"
+	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 )
@@ -22,17 +23,33 @@ func NewServer(logger *logger.Logger) *Server {
 }
 
 func (s *Server) Run() error {
+	conf := config.Conf
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Setup DB
 	postgresSQLX, err := postgres.NewPostgreSqlx()
 	if err != nil {
-		log.Fatalf("Could not initialize Database connection using sqlx %s", err)
+		s.logger.Fatalf("Could not initialize Database connection using sqlx %s", err)
 	}
 	defer postgresSQLX.Close()
 
-	grpcServer := grpc.NewGrpcServer(s.logger)
+	var grpcServerConfig *grpc.GrpcConfig
+	if conf.App.AppEnv == const_app_env.DEV {
+		grpcServerConfig = &grpc.GrpcConfig{
+			Port:        conf.Grpc.Port,
+			Host:        conf.Grpc.Host,
+			Development: true,
+		}
+	} else {
+		grpcServerConfig = &grpc.GrpcConfig{
+			Port:        conf.Grpc.Port,
+			Host:        conf.Grpc.Host,
+			Development: false,
+		}
+	}
+
+	grpcServer := grpc.NewGrpcServer(grpcServerConfig, s.logger)
 	grpcErr := grpcServer.RunGrpcServer(ctx, nil)
 	if grpcErr != nil {
 		s.logger.Error(grpcErr)

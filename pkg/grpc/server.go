@@ -10,8 +10,6 @@ import (
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/infranyx/go-grpc-template/config"
-	const_app_env "github.com/infranyx/go-grpc-template/constant/app_env"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	googleGrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -31,12 +29,19 @@ type GrpcServer interface {
 	GetCurrentGrpcServer() *googleGrpc.Server
 }
 
+type GrpcConfig struct {
+	Port        int
+	Host        string
+	Development bool
+}
+
 type grpcServer struct {
 	server *googleGrpc.Server
 	logger *logger.Logger
+	config *GrpcConfig
 }
 
-func NewGrpcServer(logger *logger.Logger) *grpcServer {
+func NewGrpcServer(conf *GrpcConfig, logger *logger.Logger) *grpcServer {
 	s := googleGrpc.NewServer(
 		googleGrpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle: maxConnectionIdle * time.Minute,
@@ -54,12 +59,11 @@ func NewGrpcServer(logger *logger.Logger) *grpcServer {
 		)),
 	)
 
-	return &grpcServer{server: s, logger: logger}
+	return &grpcServer{server: s, logger: logger, config: conf}
 }
 
 func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error {
-	conf := config.Conf
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.Grpc.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.Port))
 	if err != nil {
 		return err
 	}
@@ -69,20 +73,20 @@ func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServ
 
 	grpcPrometheus.Register(s.server)
 
-	if conf.App.AppEnv == const_app_env.DEV {
+	if s.config.Development {
 		reflection.Register(s.server)
 	}
 
 	go func() {
 		for {
 			<-ctx.Done()
-			s.logger.Infof("App is shutting down Grpc PORT: {%d}", conf.Grpc.Port)
+			s.logger.Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
 			s.GracefulShutdown()
 			return
 		}
 	}()
 
-	s.logger.Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", conf.Grpc.Host, conf.Grpc.Port)
+	s.logger.Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
 
 	err = s.server.Serve(l)
 	if err != nil {
