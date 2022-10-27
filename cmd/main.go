@@ -10,11 +10,9 @@ import (
 )
 
 func main() {
-	conf := config.New()
-	fmt.Println(conf.App.Port)
-
-	l := logger.NewLogger()
-	l.Infow("test",
+	config.NewConfig()
+	logger := logger.NewLogger()
+	logger.Infow("test",
 		// Structured context as loosely typed key-value pairs.
 		"url", 4,
 		"attempt", 3)
@@ -22,6 +20,9 @@ func main() {
 	s := sentry.NewSentryClient()
 	s.CaptureException(fmt.Errorf("error from golang"))
 
-	fmt.Println("Hello world")
-	app.Run()
+	application := app.NewServer(logger)
+	err := application.Run()
+	if err != nil {
+		logger.Error(err)
+	}
 }
