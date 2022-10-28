@@ -21,7 +21,12 @@ type AppConfig struct {
 }
 
 type PostgresConfig struct {
-	Url string
+	Host     string
+	Port     string
+	User     string
+	DBName   string
+	SSLMode  string
+	Password string
 }
 type GrpcConfig struct {
 	Port int
@@ -47,7 +52,12 @@ func NewConfig() *Config {
 			Host: utils.GetEnv("HOST", "0.0.0.0"),
 		},
 		Postgres: PostgresConfig{
-			Url: utils.GetEnv("PG_URL", ""),
+			Host:     utils.GetEnv("PG_HOST", "localhost"),
+			Port:     utils.GetEnv("PG_PORT", "5432"),
+			User:     utils.GetEnv("PG_USER", "postgres"),
+			DBName:   utils.GetEnv("PG_DB", "postgres"),
+			SSLMode:  utils.GetEnv("PG_SSL", "disable"),
+			Password: utils.GetEnv("PG_PASS", "postgrespw"),
 		},
 	}
 	return Conf

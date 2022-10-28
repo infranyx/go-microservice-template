@@ -10,10 +10,10 @@ import (
 )
 
 type articleRepository struct {
-	Conn *postgres.PostgreSqlx
+	Conn *postgres.Postgres
 }
 
-func NewArticleRepository(Conn *postgres.PostgreSqlx) article_domain.ArticleRepository {
+func NewArticleRepository(Conn *postgres.Postgres) article_domain.ArticleRepository {
 	return &articleRepository{Conn}
 }
 

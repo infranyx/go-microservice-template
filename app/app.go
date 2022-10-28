@@ -28,11 +28,18 @@ func (s *Server) Run() error {
 	defer cancel()
 
 	// Setup DB
-	postgresSQLX, err := postgres.NewPostgreSqlx()
+	postgresSQL, err := postgres.NewPostgreSql(ctx, &postgres.Config{
+		Host:     conf.Postgres.Host,
+		Port:     conf.Postgres.Port,
+		User:     conf.Postgres.User,
+		DBName:   conf.Postgres.DBName,
+		SSLMode:  conf.Postgres.SSLMode,
+		Password: conf.Postgres.Password,
+	})
 	if err != nil {
 		s.logger.Fatalf("Could not initialize Database connection using sqlx %s", err)
 	}
-	defer postgresSQLX.Close()
+	defer postgresSQL.Close()
 
 	var grpcServerConfig *grpc.GrpcConfig
 	if conf.App.AppEnv == const_app_env.DEV {

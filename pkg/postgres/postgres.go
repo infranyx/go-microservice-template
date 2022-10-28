@@ -2,28 +2,38 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/infranyx/go-grpc-template/config"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // pgx also supported
 )
 
-type PostgreSqlx struct {
-	DB *sqlx.DB
+type Config struct {
+	Host     string
+	Port     string
+	User     string
+	DBName   string
+	SSLMode  string
+	Password string
 }
 
-func NewPostgreSqlx() (*PostgreSqlx, error) {
-	conf := config.Conf
-	DB, err := sqlx.ConnectContext(context.Background(), "postgres", conf.Postgres.Url)
+type Postgres struct {
+	DB *sqlx.DB
+	// may add query builder
+}
+
+func NewPostgreSql(ctx context.Context, conf *Config) (*sqlx.DB, error) {
+	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		conf.Host,
+		conf.Port,
+		conf.User,
+		conf.DBName,
+		conf.Password,
+		conf.SSLMode,
+	)
+	DB, err := sqlx.ConnectContext(ctx, "postgres", dataSourceName)
 	if err != nil {
 		return nil, err
 	}
-
-	return &PostgreSqlx{
-		DB: DB,
-	}, nil
-}
-
-func (p *PostgreSqlx) Close() {
-	p.DB.Close()
+	return DB, nil
 }

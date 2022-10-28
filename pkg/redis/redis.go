@@ -25,7 +25,7 @@ const (
 	idleTimeout     = 12 * time.Second
 )
 
-func NewUniversalRedisClient(cfg *Config) redis.UniversalClient {
+func NewUniversalRedisClient(cfg *Config) *redis.UniversalClient {
 	universalClient := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:           []string{cfg.Addr},
 		Password:        cfg.Password, // no password set
@@ -41,5 +41,5 @@ func NewUniversalRedisClient(cfg *Config) redis.UniversalClient {
 		PoolTimeout:     poolTimeout,
 		IdleTimeout:     idleTimeout,
 	})
-	return universalClient
+	return &universalClient
 }
