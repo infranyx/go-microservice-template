@@ -18,10 +18,12 @@ func NewArticleRepository(Conn *postgres.Postgres) article_domain.ArticleReposit
 }
 
 func (r *articleRepository) Create(ctx context.Context, article *article_dto.CreateArticle) (*article_domain.Article, error) {
-	query := `INSERT INTO place (name, desc) VALUES (?, ?)`
+	query := `INSERT INTO articles (name, description) VALUES ($1, $2)`
+
 	var result article_domain.Article
-	if _, err := r.Conn.DB.MustExecContext(ctx, query, article.Name, article.Description).LastInsertId(); err != nil {
+	if _, err := r.Conn.Sqlx.MustExecContext(ctx, query, article.Name, article.Description).RowsAffected(); err != nil {
 		return &article_domain.Article{}, fmt.Errorf("error inserting article record")
 	}
+
 	return &result, nil
 }

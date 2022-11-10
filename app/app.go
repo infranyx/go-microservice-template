@@ -8,9 +8,10 @@ import (
 
 	"github.com/infranyx/go-grpc-template/config"
 	const_app_env "github.com/infranyx/go-grpc-template/constant/app_env"
+	article_configurator "github.com/infranyx/go-grpc-template/internal/article/controllers/configurator"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/postgres"
+	"github.com/infranyx/go-grpc-template/shared/infrastructure"
 )
 
 type Server struct {
@@ -23,44 +24,40 @@ func NewServer(logger *logger.Logger) *Server {
 }
 
 func (s *Server) Run() error {
+	var serverError error
+
 	conf := config.Conf
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Setup DB
-	postgresSQL, err := postgres.NewPostgreSql(ctx, &postgres.Config{
-		Host:     conf.Postgres.Host,
-		Port:     conf.Postgres.Port,
-		User:     conf.Postgres.User,
-		DBName:   conf.Postgres.DBName,
-		SSLMode:  conf.Postgres.SSLMode,
-		Password: conf.Postgres.Password,
-	})
+	ic := infrastructure.NewInfrastructureConfigurator(s.logger, conf)
+	infrastructureConfigurations, infraCleanup, err := ic.ConfigInfrastructures(ctx)
 	if err != nil {
-		s.logger.Fatalf("Could not initialize Database connection using sqlx %s", err)
+		return err
 	}
-	defer postgresSQL.Close()
+	defer infraCleanup()
 
-	var grpcServerConfig *grpc.GrpcConfig
+	grpcServerConfig := &grpc.GrpcConfig{
+		Port:        conf.Grpc.Port,
+		Host:        conf.Grpc.Host,
+		Development: false,
+	}
 	if conf.App.AppEnv == const_app_env.DEV {
-		grpcServerConfig = &grpc.GrpcConfig{
-			Port:        conf.Grpc.Port,
-			Host:        conf.Grpc.Host,
-			Development: true,
-		}
-	} else {
-		grpcServerConfig = &grpc.GrpcConfig{
-			Port:        conf.Grpc.Port,
-			Host:        conf.Grpc.Host,
-			Development: false,
-		}
+		grpcServerConfig.Development = true
 	}
 
 	grpcServer := grpc.NewGrpcServer(grpcServerConfig, s.logger)
-	grpcErr := grpcServer.RunGrpcServer(ctx, nil)
-	if grpcErr != nil {
-		s.logger.Error(grpcErr)
-	}
+
+	articleConfigurator := article_configurator.NewArticleControllerConfigurator(infrastructureConfigurations, grpcServer)
+	articleConfigurator.ConfigureArticleController(ctx)
+
+	go func() {
+		if err := grpcServer.RunGrpcServer(ctx, nil); err != nil {
+			s.logger.Errorf("(s.RunGrpcServer) err: {%v}", err)
+			serverError = err
+			cancel()
+		}
+	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
@@ -73,5 +70,5 @@ func (s *Server) Run() error {
 	}
 
 	s.logger.Info("Server Exited Properly")
-	return nil
+	return serverError
 }

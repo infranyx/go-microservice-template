@@ -14,7 +14,7 @@ migrate-create:  ### create new migration
 .PHONY: migrate-create
 
 migrate-up: ### migration up
-	migrate -path db/migrations -database '$(PG_URL)?sslmode=disable' up
+	migrate -path db/migrations -database 'postgres://postgres:postgrespw@localhost:5432/postgres?sslmode=disable' up
 .PHONY: migrate-up
 
 force: ### migration up

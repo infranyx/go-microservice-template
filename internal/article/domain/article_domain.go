@@ -12,7 +12,7 @@ import (
 type Article struct {
 	ID          uuid.UUID `db:"id"`
 	Name        string    `db:"name"`
-	Description string    `db:"desc"`
+	Description string    `db:"description"`
 }
 
 // ArticleService is a contract of http adapter layer

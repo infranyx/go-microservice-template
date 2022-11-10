@@ -18,11 +18,11 @@ type Config struct {
 }
 
 type Postgres struct {
-	DB *sqlx.DB
+	Sqlx *sqlx.DB
 	// may add query builder
 }
 
-func NewPostgreSql(ctx context.Context, conf *Config) (*sqlx.DB, error) {
+func NewPostgreSqlx(ctx context.Context, conf *Config) (*Postgres, error) {
 	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		conf.Host,
 		conf.Port,
@@ -35,5 +35,7 @@ func NewPostgreSql(ctx context.Context, conf *Config) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	return DB, nil
+	return &Postgres{
+		Sqlx: DB,
+	}, nil
 }
