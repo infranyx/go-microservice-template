@@ -57,5 +57,4 @@ func (ic *infrastructureConfigurator) ConfigInfrastructures(ctx context.Context)
 	infrastructure.Pgx = pgx
 
 	return infrastructure, cleanupfn, nil
-
 }

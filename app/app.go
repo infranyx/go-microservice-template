@@ -8,7 +8,7 @@ import (
 
 	"github.com/infranyx/go-grpc-template/config"
 	const_app_env "github.com/infranyx/go-grpc-template/constant/app_env"
-	article_configurator "github.com/infranyx/go-grpc-template/internal/article/controllers/configurator"
+	article_configurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/shared/infrastructure"

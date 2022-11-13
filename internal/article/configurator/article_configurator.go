@@ -1,8 +1,7 @@
-package configurator
+package article_configurator
 
 import (
 	"context"
-	"fmt"
 
 	article_grpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
 	article_repo "github.com/infranyx/go-grpc-template/internal/article/repository"
@@ -24,9 +23,8 @@ func NewArticleControllerConfigurator(infrastructureConfiguration *infrastructur
 func (c *articleControllerConfigurator) ConfigureArticleController(ctx context.Context) error {
 	articleRepo := article_repo.NewArticleRepository(c.Pgx)
 	articleUC := article_usecase.NewArticleUseCase(articleRepo)
-	articleControllers := article_grpc.New(articleUC)
-	fmt.Println(c.grpcServer.GetCurrentGrpcServer().GetServiceInfo())
-	articlev1.RegisterArticleServiceServer(c.grpcServer.GetCurrentGrpcServer(), articleControllers)
+	articleGrpcControllers := article_grpc.New(articleUC)
+	articlev1.RegisterArticleServiceServer(c.grpcServer.GetCurrentGrpcServer(), articleGrpcControllers)
 
 	return nil
 }
