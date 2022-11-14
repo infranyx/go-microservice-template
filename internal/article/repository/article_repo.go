@@ -21,11 +21,18 @@ func (r *articleRepository) Create(ctx context.Context, article *article_dto.Cre
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
 	var result article_domain.Article
-	x, err := r.Conn.Sqlx.ExecContext(ctx, query, article.Name, article.Description)
+	x, err := r.Conn.Sqlx.QueryContext(ctx, query, article.Name, article.Description)
+
 	if err != nil {
 		return &article_domain.Article{}, fmt.Errorf("error inserting article record")
 	}
-	fmt.Println(x)
+
+	for x.Next() {
+		err = x.Scan(&result.ID, &result.Name, &result.Description)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &result, nil
 }
