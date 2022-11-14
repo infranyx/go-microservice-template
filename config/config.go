@@ -14,6 +14,7 @@ type Config struct {
 	App      AppConfig
 	Grpc     GrpcConfig
 	Postgres PostgresConfig
+	Kafka    KafkaConfig
 }
 
 type AppConfig struct {
@@ -31,6 +32,11 @@ type PostgresConfig struct {
 type GrpcConfig struct {
 	Port int
 	Host string
+}
+
+type KafkaConfig struct {
+	Network string
+	Address string
 }
 
 // init is invoked before main()
@@ -58,6 +64,10 @@ func NewConfig() *Config {
 			DBName:   utils.GetEnv("PG_DB", "postgres"),
 			SSLMode:  utils.GetEnv("PG_SSL", "disable"),
 			Password: utils.GetEnv("PG_PASS", "postgrespw"),
+		},
+		Kafka: KafkaConfig{
+			Network: utils.GetEnv("KAFKA_NETWORK", "tcp"),
+			Address: utils.GetEnv("KAFKA_ADDRESS", "localhost:9092"),
 		},
 	}
 	return Conf

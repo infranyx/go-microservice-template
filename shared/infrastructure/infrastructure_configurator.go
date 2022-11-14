@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/infranyx/go-grpc-template/config"
+	"github.com/infranyx/go-grpc-template/pkg/kafka"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 )
@@ -13,6 +14,7 @@ type InfrastructureConfiguration struct {
 	Logger *logger.Logger
 	Cfg    *config.Config
 	Pgx    *postgres.Postgres
+	Kafka  *kafka.Kafka
 }
 
 type InfrastructureConfigurator interface {
@@ -53,8 +55,22 @@ func (ic *infrastructureConfigurator) ConfigInfrastructures(ctx context.Context)
 	cleanup = append(cleanup, func() {
 		pgx.Sqlx.Close()
 	})
-
 	infrastructure.Pgx = pgx
+
+	// Setup Kafka
+	kafkaConn, err := kafka.NewKafkaConn(ctx, &kafka.Config{
+		Network: ic.cfg.Kafka.Network,
+		Address: ic.cfg.Kafka.Address,
+	})
+	if err != nil {
+		return nil, cleanupfn, err
+	}
+	cleanup = append(cleanup, func() {
+		kafkaConn.Conn.Close()
+	})
+	// TODO
+	// kafkaConn.CreateTopic()
+	infrastructure.Kafka = kafkaConn
 
 	return infrastructure, cleanupfn, nil
 }
