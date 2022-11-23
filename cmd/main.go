@@ -8,13 +8,11 @@ import (
 
 func main() {
 	config.NewConfig()
-	logger := logger.NewLogger()
+	l := logger.NewLogger()
 
-	// s := sentry.NewSentryClient()
-
-	application := app.NewServer(logger)
+	application := app.NewServer(l)
 	err := application.Run()
 	if err != nil {
-		logger.Error(err)
+		l.Error(err)
 	}
 }

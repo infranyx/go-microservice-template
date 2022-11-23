@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/infranyx/go-grpc-template/config"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	logger "github.com/infranyx/go-grpc-template/pkg/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -116,8 +116,7 @@ func (p *grpcErr) ToGrpcResponseErr() error {
 }
 
 func (p *grpcErr) ToJson() string {
-	l := logger.NewLogger()
-	l.Error(p.Error())
+	logger.Defaultlogger.Error(p.Error())
 
 	if config.IsDevelopment() {
 		stackTrace := p.GetStackTrace()
