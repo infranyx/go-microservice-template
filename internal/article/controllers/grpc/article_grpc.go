@@ -6,7 +6,6 @@ import (
 	article_domain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	article_dto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	article_exception "github.com/infranyx/go-grpc-template/internal/article/exception"
-	grpErr "github.com/infranyx/go-grpc-template/shared/error/grpc"
 	articlev1 "go.buf.build/grpc/go/infranyx/golang-grpc-template/article/v1"
 )
 
@@ -27,7 +26,7 @@ func (c *ArticleController) CreateArticle(ctx context.Context, req *articlev1.Cr
 	}
 	err := articleDto.ValidateCreateArticleDto()
 	if err != nil {
-		return nil, grpErr.ParseError(article_exception.NewCreateArticleValidationErr(err)).ToGrpcResponseErr()
+		return nil, article_exception.NewCreateArticleValidationErr(err)
 	}
 	article, err := c.articleUC.Create(ctx, articleDto)
 	if err != nil {

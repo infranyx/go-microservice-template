@@ -21,8 +21,6 @@ func CheckErrMessages(err error, messages ...string) bool {
 // ErrorsWithStack returns a string contains grpc_errors messages in the stack with its stack trace levels for given error
 func ErrorsWithStack(err error) string {
 	res := fmt.Sprintf("%+v\n", err)
-	fmt.Println("res")
-	fmt.Println(res)
 	return res
 }
 

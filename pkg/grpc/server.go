@@ -10,6 +10,7 @@ import (
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpcInterceptors "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	googleGrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -51,9 +52,10 @@ func NewGrpcServer(conf *GrpcConfig, logger *logger.Logger) *grpcServer {
 		}),
 
 		googleGrpc.StreamInterceptor(grpcMiddleware.ChainStreamServer(
-		// grpcError.StreamServerInterceptor(),
+			grpcInterceptors.StreamServerInterceptor(),
 		)),
 		googleGrpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(
+			grpcInterceptors.UnaryServerInterceptor(),
 			grpcCtxTags.UnaryServerInterceptor(),
 			grpcRecovery.UnaryServerInterceptor(),
 		)),
