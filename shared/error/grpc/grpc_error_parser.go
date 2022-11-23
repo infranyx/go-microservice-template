@@ -1,10 +1,8 @@
-package grpcErrors
+package grpc_errors
 
 import (
 	"context"
-	"database/sql"
 
-	validator "github.com/go-ozzo/ozzo-validation"
 	errorTitles "github.com/infranyx/go-grpc-template/constant/errors"
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/utils/error_utils"
@@ -17,8 +15,14 @@ import (
 
 func ParseError(err error) GrpcErr {
 	customErr := customErrors.GetCustomError(err)
-	var validatorErr validator.Errors
 	stackTrace := errorUtils.ErrorsWithStack(err)
+
+	if customErr == nil {
+		err = customErrors.NewApiErrorWrap(err, 0, "Unkown Error")
+		customErr = customErrors.GetCustomError(err)
+		stackTrace = errorUtils.ErrorsWithStack(err)
+		return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Error(), stackTrace)
+	}
 
 	if err != nil {
 		switch {
@@ -48,12 +52,8 @@ func ParseError(err error) GrpcErr {
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Error(), stackTrace)
 		case customErrors.IsMarshalingError(err):
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Error(), stackTrace)
-		case errors.Is(err, sql.ErrNoRows):
-			return NewNotFoundErrorGrpcError(customErr.Code(), err.Error(), stackTrace)
 		case errors.Is(err, context.DeadlineExceeded):
 			return NewGrpcError(codes.DeadlineExceeded, customErr.Code(), errorTitles.ErrRequestTimeoutTitle, err.Error(), stackTrace)
-		case errors.As(err, &validatorErr):
-			return NewValidationGrpcError(customErr.Code(), validatorErr.Error(), stackTrace)
 		default:
 			return NewInternalServerGrpcError(customErr.Code(), err.Error(), stackTrace)
 		}

@@ -1,4 +1,4 @@
-package grpcErrors
+package grpc_errors
 
 import (
 	"time"

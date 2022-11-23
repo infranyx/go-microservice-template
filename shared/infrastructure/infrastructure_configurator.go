@@ -58,19 +58,19 @@ func (ic *infrastructureConfigurator) ConfigInfrastructures(ctx context.Context)
 	infrastructure.Pgx = pgx
 
 	// Setup Kafka
-	kafkaConn, err := kafka.NewKafkaConn(ctx, &kafka.Config{
-		Network: ic.cfg.Kafka.Network,
-		Address: ic.cfg.Kafka.Address,
-	})
-	if err != nil {
-		return nil, cleanupfn, err
-	}
-	cleanup = append(cleanup, func() {
-		kafkaConn.Conn.Close()
-	})
-	// TODO
-	// kafkaConn.CreateTopic()
-	infrastructure.Kafka = kafkaConn
+	// kafkaConn, err := kafka.NewKafkaConn(ctx, &kafka.Config{
+	// 	Network: ic.cfg.Kafka.Network,
+	// 	Address: ic.cfg.Kafka.Address,
+	// })
+	// if err != nil {
+	// 	return nil, cleanupfn, err
+	// }
+	// cleanup = append(cleanup, func() {
+	// 	kafkaConn.Conn.Close()
+	// })
+	// // TODO
+	// // kafkaConn.CreateTopic()
+	// infrastructure.Kafka = kafkaConn
 
 	return infrastructure, cleanupfn, nil
 }
