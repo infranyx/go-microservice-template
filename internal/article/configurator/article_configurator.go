@@ -16,11 +16,17 @@ type articleControllerConfigurator struct {
 	*infrastructure.InfrastructureConfiguration
 }
 
-func NewArticleControllerConfigurator(infrastructureConfiguration *infrastructure.InfrastructureConfiguration, grpcServer grpc.GrpcServer) *articleControllerConfigurator {
+func InitArticleConfigurator(ctx context.Context, infrastructureConfiguration *infrastructure.InfrastructureConfiguration, grpcServer grpc.GrpcServer) error {
+	articleConfigurator := NewArticleConfigurator(infrastructureConfiguration, grpcServer)
+	err := articleConfigurator.ConfigureArticle(ctx)
+	return err
+}
+
+func NewArticleConfigurator(infrastructureConfiguration *infrastructure.InfrastructureConfiguration, grpcServer grpc.GrpcServer) *articleControllerConfigurator {
 	return &articleControllerConfigurator{InfrastructureConfiguration: infrastructureConfiguration, grpcServer: grpcServer}
 }
 
-func (c *articleControllerConfigurator) ConfigureArticleController(ctx context.Context) error {
+func (c *articleControllerConfigurator) ConfigureArticle(ctx context.Context) error {
 	articleRepo := article_repo.NewArticleRepository(c.Pgx)
 	articleUC := article_usecase.NewArticleUseCase(articleRepo)
 	articleGrpcControllers := article_grpc.New(articleUC)

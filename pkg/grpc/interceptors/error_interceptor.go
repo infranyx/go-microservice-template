@@ -3,6 +3,7 @@ package grpc_interceptors
 import (
 	"context"
 
+	"github.com/infranyx/go-grpc-template/pkg/logger"
 	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
 	"google.golang.org/grpc"
 )
@@ -19,6 +20,7 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 		if err != nil {
 			grpcErr := grpcErrors.ParseError(err)
+			logger.Defaultlogger.GrpcServerInterceptorErrLogger(grpcErr)
 			return nil, grpcErr.ToGrpcResponseErr()
 		}
 

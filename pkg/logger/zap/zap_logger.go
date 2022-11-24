@@ -1,12 +1,12 @@
 package zap
 
 import (
-	"os"
 	"time"
 
 	"github.com/infranyx/go-grpc-template/config"
 	constants "github.com/infranyx/go-grpc-template/constant/logger"
 	"github.com/infranyx/go-grpc-template/pkg/logger/contracts"
+	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
 
 	// "github.com/mehdihadeli/store-golang-microservice-sample/pkg/constants"
 	"go.uber.org/zap"
@@ -57,10 +57,8 @@ func (l *zapLogger) getLoggerLevel() zapcore.Level {
 func (l *zapLogger) initLogger() {
 	logLevel := l.getLoggerLevel()
 
-	logWriter := zapcore.AddSync(os.Stdout)
-
 	var encoderCfg zapcore.EncoderConfig
-	var encoder zapcore.Encoder
+	var cfg zap.Config
 
 	if config.IsProduction() {
 		encoderCfg = zap.NewProductionEncoderConfig()
@@ -75,7 +73,11 @@ func (l *zapLogger) initLogger() {
 		encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
-		encoder = zapcore.NewJSONEncoder(encoderCfg)
+
+		cfg.EncoderConfig = encoderCfg
+		cfg.Encoding = "json"
+		cfg.OutputPaths = []string{"tmp/logs/main.log"}
+		cfg.Level = zap.NewAtomicLevelAt(logLevel)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
 		encoderCfg.NameKey = "[SERVICE]"
@@ -90,12 +92,14 @@ func (l *zapLogger) initLogger() {
 		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		encoderCfg.EncodeCaller = zapcore.FullCallerEncoder
 		encoderCfg.ConsoleSeparator = " | "
-		encoder = zapcore.NewConsoleEncoder(encoderCfg)
+
+		cfg = zap.NewDevelopmentConfig()
+		cfg.EncoderConfig = encoderCfg
+		cfg.Level = zap.NewAtomicLevelAt(logLevel)
 	}
 
-	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLevel))
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
-
+	logger := zap.Must(cfg.Build())
+	defer logger.Sync()
 	l.logger = logger
 	l.sugarLogger = logger.Sugar()
 }
@@ -246,6 +250,26 @@ func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interf
 		zap.Duration(constants.TIME, time),
 		zap.Any(constants.METADATA, metaData),
 		zap.Error(err),
+	)
+}
+
+func (l *zapLogger) GrpcServerInterceptorLogger(req interface{}, time time.Time) {
+	l.Info(
+		constants.GRPC,
+		zap.Any(constants.REQUEST, req),
+		zap.Time(constants.TIME, time),
+	)
+}
+
+func (l *zapLogger) GrpcServerInterceptorErrLogger(err grpcErrors.GrpcErr) {
+	l.Error(
+		constants.GRPC,
+		zap.String(constants.TITILE, err.GetTitle()),
+		zap.Int(constants.CODE, err.GetCode()),
+		zap.Int(constants.STATUS, int(err.GetStatus())),
+		zap.Time(constants.TIME, err.GetTimestamp()),
+		zap.String(constants.ERR, err.GetDetail()),
+		zap.Any(constants.STACK_TRACE, err.GetStackTrace()),
 	)
 }
 

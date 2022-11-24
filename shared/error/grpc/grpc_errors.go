@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/infranyx/go-grpc-template/config"
-	logger "github.com/infranyx/go-grpc-template/pkg/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -31,6 +29,8 @@ type GrpcErr interface {
 	SetStackTrace(stackTrace string) GrpcErr
 	GetDetail() string
 	SetDetail(detail string) GrpcErr
+	GetTimestamp() time.Time
+	SetTimestamp(time time.Time) GrpcErr
 	Error() string
 	ErrBody() error
 	ToJson() string
@@ -100,6 +100,16 @@ func (p *grpcErr) SetDetail(detail string) GrpcErr {
 	return p
 }
 
+func (p *grpcErr) GetTimestamp() time.Time {
+	return p.Timestamp
+}
+
+func (p *grpcErr) SetTimestamp(time time.Time) GrpcErr {
+	p.Timestamp = time
+
+	return p
+}
+
 func (p *grpcErr) GetStackTrace() string {
 	return p.StackTrace
 }
@@ -116,13 +126,6 @@ func (p *grpcErr) ToGrpcResponseErr() error {
 }
 
 func (p *grpcErr) ToJson() string {
-	logger.Defaultlogger.Error(p.Error())
-
-	if config.IsDevelopment() {
-		stackTrace := p.GetStackTrace()
-		fmt.Println(stackTrace)
-	}
-
 	return string(p.json())
 }
 

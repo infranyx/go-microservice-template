@@ -2,6 +2,8 @@ package contracts
 
 import (
 	"time"
+
+	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
 )
 
 type Fields map[string]interface{}
@@ -43,4 +45,6 @@ type Logger interface {
 	WithName(name string)
 	GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error)
 	GrpcClientInterceptorLogger(method string, req interface{}, reply interface{}, time time.Duration, metaData map[string][]string, err error)
+	GrpcServerInterceptorLogger(req interface{}, time time.Time)
+	GrpcServerInterceptorErrLogger(err grpcErrors.GrpcErr)
 }
