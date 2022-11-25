@@ -48,8 +48,7 @@ func (s *Server) Run() error {
 
 	grpcServer := grpc.NewGrpcServer(grpcServerConfig, s.logger)
 
-	articleConfigurator := article_configurator.NewArticleControllerConfigurator(infrastructureConfigurations, grpcServer)
-	articleConfigurator.ConfigureArticleController(ctx)
+	article_configurator.InitArticleConfigurator(ctx, infrastructureConfigurations, grpcServer)
 
 	go func() {
 		if err := grpcServer.RunGrpcServer(ctx, nil); err != nil {

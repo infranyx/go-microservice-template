@@ -1,36 +1,26 @@
 package logger
 
 import (
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"github.com/infranyx/go-grpc-template/pkg/logger/contracts"
+	"github.com/infranyx/go-grpc-template/pkg/logger/zap"
 )
 
+var (
+	Defaultlogger *Logger
+)
+
+// interface wrapper
 type Logger struct {
-	*zap.SugaredLogger
+	contracts.Logger
 }
 
 func NewLogger() *Logger {
-	cfg := zap.Config{
-		Level:       zap.NewAtomicLevelAt(zapcore.DebugLevel),
-		Encoding:    "json",
-		OutputPaths: []string{"stdout", "tmp/logs/main.log"},
-		EncoderConfig: zapcore.EncoderConfig{
-			MessageKey: "message",
-
-			LevelKey:    "level",
-			EncodeLevel: zapcore.LowercaseLevelEncoder,
-
-			TimeKey:    "time",
-			EncodeTime: zapcore.ISO8601TimeEncoder,
-
-			CallerKey:    "caller",
-			EncodeCaller: zapcore.ShortCallerEncoder,
-		},
+	Defaultlogger = &Logger{
+		zap.NewZapLogger(&contracts.LogConfig{
+			LogLevel: "debug",
+			LogType:  contracts.Zap,
+		}),
 	}
-	logger := zap.Must(cfg.Build())
-	defer logger.Sync()
-	sugar := logger.Sugar()
-	return &Logger{
-		sugar,
-	}
+
+	return Defaultlogger
 }

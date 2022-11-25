@@ -72,3 +72,11 @@ func NewConfig() *Config {
 	}
 	return Conf
 }
+
+func IsDevelopment() bool {
+	return Conf.App.AppEnv == const_app_env.DEV
+}
+
+func IsProduction() bool {
+	return Conf.App.AppEnv == const_app_env.PROD
+}

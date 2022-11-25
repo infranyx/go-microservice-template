@@ -1,0 +1,46 @@
+package customErrors
+
+import (
+	"github.com/pkg/errors"
+)
+
+func NewApplicationError(message string, code int) error {
+	ae := &applicationError{
+		CustomError: NewCustomError(nil, code, message),
+	}
+	stackErr := errors.WithStack(ae)
+
+	return stackErr
+}
+
+func NewApplicationErrorWrap(err error, code int, message string) error {
+	ae := &applicationError{
+		CustomError: NewCustomError(err, code, message),
+	}
+	stackErr := errors.WithStack(ae)
+
+	return stackErr
+}
+
+type applicationError struct {
+	CustomError
+}
+
+type ApplicationError interface {
+	CustomError
+	IsApplicationError() bool
+}
+
+func (a *applicationError) IsApplicationError() bool {
+	return true
+}
+
+func IsApplicationError(err error) bool {
+	var applicationError ApplicationError
+	//us, ok := grpc_errors.Cause(err).(ApplicationError)
+	if errors.As(err, &applicationError) {
+		return applicationError.IsApplicationError()
+	}
+
+	return false
+}
