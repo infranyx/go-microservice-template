@@ -15,12 +15,12 @@ import (
 
 func ParseError(err error) GrpcErr {
 	customErr := customErrors.GetCustomError(err)
-	stackTrace := errorUtils.ErrorsWithStack(err)
+	stackTrace := errorUtils.RootStackTrace(err)
 
 	if customErr == nil {
 		err = customErrors.NewApiErrorWrap(err, 0, "Unkown Error")
 		customErr = customErrors.GetCustomError(err)
-		stackTrace = errorUtils.ErrorsWithStack(err)
+		stackTrace = errorUtils.RootStackTrace(err)
 		return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Error(), stackTrace)
 	}
 

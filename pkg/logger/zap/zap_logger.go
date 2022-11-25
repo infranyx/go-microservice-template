@@ -1,6 +1,7 @@
 package zap
 
 import (
+	"os"
 	"time"
 
 	"github.com/infranyx/go-grpc-template/config"
@@ -57,8 +58,10 @@ func (l *zapLogger) getLoggerLevel() zapcore.Level {
 func (l *zapLogger) initLogger() {
 	logLevel := l.getLoggerLevel()
 
+	var logWriter zapcore.WriteSyncer
+
 	var encoderCfg zapcore.EncoderConfig
-	var cfg zap.Config
+	var encoder zapcore.Encoder
 
 	if config.IsProduction() {
 		encoderCfg = zap.NewProductionEncoderConfig()
@@ -73,11 +76,9 @@ func (l *zapLogger) initLogger() {
 		encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
-
-		cfg.EncoderConfig = encoderCfg
-		cfg.Encoding = "json"
-		cfg.OutputPaths = []string{"tmp/logs/main.log"}
-		cfg.Level = zap.NewAtomicLevelAt(logLevel)
+		encoder = zapcore.NewJSONEncoder(encoderCfg)
+		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
 		encoderCfg.NameKey = "[SERVICE]"
@@ -92,14 +93,13 @@ func (l *zapLogger) initLogger() {
 		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		encoderCfg.EncodeCaller = zapcore.FullCallerEncoder
 		encoderCfg.ConsoleSeparator = " | "
-
-		cfg = zap.NewDevelopmentConfig()
-		cfg.EncoderConfig = encoderCfg
-		cfg.Level = zap.NewAtomicLevelAt(logLevel)
+		encoder = zapcore.NewConsoleEncoder(encoderCfg)
+		logWriter = zapcore.AddSync(os.Stdout)
 	}
 
-	logger := zap.Must(cfg.Build())
-	defer logger.Sync()
+	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLevel))
+	logger := zap.New(core, zap.AddCaller())
+
 	l.logger = logger
 	l.sugarLogger = logger.Sugar()
 }
@@ -232,7 +232,7 @@ func (l *zapLogger) Sync() error {
 }
 
 func (l *zapLogger) GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error) {
-	l.Info(
+	l.logger.Info(
 		constants.GRPC,
 		zap.String(constants.METHOD, method),
 		zap.Duration(constants.TIME, time),
@@ -242,7 +242,7 @@ func (l *zapLogger) GrpcMiddlewareAccessLogger(method string, time time.Duration
 }
 
 func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
-	l.Info(
+	l.logger.Info(
 		constants.GRPC,
 		zap.String(constants.METHOD, method),
 		zap.Any(constants.REQUEST, req),
@@ -254,7 +254,7 @@ func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interf
 }
 
 func (l *zapLogger) GrpcServerInterceptorLogger(req interface{}, time time.Time) {
-	l.Info(
+	l.logger.Info(
 		constants.GRPC,
 		zap.Any(constants.REQUEST, req),
 		zap.Time(constants.TIME, time),
@@ -262,7 +262,7 @@ func (l *zapLogger) GrpcServerInterceptorLogger(req interface{}, time time.Time)
 }
 
 func (l *zapLogger) GrpcServerInterceptorErrLogger(err grpcErrors.GrpcErr) {
-	l.Error(
+	l.logger.Info(
 		constants.GRPC,
 		zap.String(constants.TITILE, err.GetTitle()),
 		zap.Int(constants.CODE, err.GetCode()),

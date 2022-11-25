@@ -40,29 +40,6 @@ func ErrorsWithoutStack(err error, format bool) string {
 	return res
 }
 
-// StackTrace returns all stack traces with a string contains just stack trace levels for the given error
-func StackTrace(err error) string {
-	var stackTrace contracts.StackTracer
-	var stackStr = ""
-	for {
-		s, ok := err.(contracts.StackTracer)
-		stackTrace = s
-		if ok {
-			stackStr += fmt.Sprintf("%+v\n", stackTrace.StackTrace())
-
-			if !ok {
-				break
-			}
-		}
-		err = errors.Unwrap(err)
-		if err == nil {
-			break
-		}
-	}
-
-	return stackStr
-}
-
 // RootStackTrace returns root stack trace with a string contains just stack trace levels for the given error
 func RootStackTrace(err error) string {
 	var stackTrace contracts.StackTracer
