@@ -58,8 +58,8 @@ repos:
       #
       # Formatters
       #
-      - id: go-fumpt
-      - id: go-fumpt-repo
+      - id: go-fmt
+      - id: go-fmt-repo
       - id: go-imports
       - id: go-imports-repo
       #
