@@ -17,10 +17,6 @@ type EVar struct {
 	defaultVal interface{}
 }
 
-func New(key string, defaultVal interface{}) *EVar {
-	return &EVar{key: key, defaultVal: defaultVal}
-}
-
 func init() {
 	LoadEnv()
 }
@@ -31,6 +27,10 @@ func LoadEnv() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+}
+
+func New(key string, defaultVal interface{}) *EVar {
+	return &EVar{key: key, defaultVal: defaultVal}
 }
 
 func (eVar EVar) GetEnv() interface{} {

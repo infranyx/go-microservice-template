@@ -1,0 +1,18 @@
+version: '3.6'
+
+volumes:
+  pg_data:
+
+services:
+  postgres:
+    container_name: pg_container
+    image: postgres:11.16-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: grpc_template
+    volumes:
+      - 'pg_data:/var/lib/postgresql/data'
+    restart: always

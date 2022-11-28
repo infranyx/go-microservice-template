@@ -18,11 +18,15 @@ type AppConfig struct {
 }
 
 type PostgresConfig struct {
-	Host   string
-	Port   int
-	User   string
-	Pass   string
-	DBName string
+	Host            string
+	Port            string
+	User            string
+	Pass            string
+	DBName          string
+	MaxConn         int
+	MaxIdleConn     int
+	MaxLifeTimeConn int
+	SslMode         string
 }
 type GrpcConfig struct {
 	Port int
@@ -43,11 +47,15 @@ func NewConfig() *Config {
 			Host: env.New("GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Postgres: PostgresConfig{
-			Host:   env.New("PG_HOST", constant.PgHost).AsString(),
-			Port:   env.New("PG_PORT", constant.PgPort).AsInt(),
-			User:   env.New("PG_USER", constant.PgUser).AsString(),
-			Pass:   env.New("PG_PASS", constant.PgPass).AsString(),
-			DBName: env.New("PG_DB", constant.PgDb).AsString(),
+			Host:            env.New("PG_HOST", constant.PgHost).AsString(),
+			Port:            env.New("PG_PORT", constant.PgPort).AsString(),
+			User:            env.New("PG_USER", constant.PgUser).AsString(),
+			Pass:            env.New("PG_PASS", constant.PgPass).AsString(),
+			DBName:          env.New("PG_DB", constant.PgDb).AsString(),
+			MaxConn:         env.New("PG_MAX_CONNECTIONS", constant.PgMaxConn).AsInt(),
+			MaxIdleConn:     env.New("PG_MAX_IDLE_CONNECTIONS", constant.PgMaxIdleConn).AsInt(),
+			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
+			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
 		},
 	}
 }
