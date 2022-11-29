@@ -5,13 +5,13 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/env"
 )
 
-var Conf *Config
-
 type Config struct {
 	App      AppConfig
 	Grpc     GrpcConfig
 	Postgres PostgresConfig
 }
+
+var Conf *Config
 
 type AppConfig struct {
 	AppEnv string
