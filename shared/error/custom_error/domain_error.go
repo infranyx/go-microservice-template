@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewDomainError(message string, code int) error {
+func NewDomainError(message string, code int, details []ErrorDetail) error {
 	de := &domainError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
 	stackErr := errors.WithStack(de)
 
 	return stackErr
 }
 
-func NewDomainErrorWrap(err error, code int, message string) error {
+func NewDomainErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	de := &domainError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(de)
 

@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewForbiddenError(message string, code int) error {
+func NewForbiddenError(message string, code int, details []ErrorDetail) error {
 	ne := &forbiddenError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
 	stackErr := errors.WithStack(ne)
 
 	return stackErr
 }
 
-func NewForbiddenErrorWrap(err error, code int, message string) error {
+func NewForbiddenErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	ne := &forbiddenError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(ne)
 

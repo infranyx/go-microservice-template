@@ -13,6 +13,12 @@ type customError struct {
 	internalCode int
 	message      string
 	err          error
+	details      []ErrorDetail
+}
+
+type ErrorDetail struct {
+	id   string
+	desc string
 }
 
 type CustomError interface {
@@ -23,13 +29,15 @@ type CustomError interface {
 	IsCustomError() bool
 	Message() string
 	Code() int
+	Details() []ErrorDetail
 }
 
-func NewCustomError(err error, internalCode int, message string) CustomError {
+func NewCustomError(err error, internalCode int, message string, details []ErrorDetail) CustomError {
 	m := &customError{
 		internalCode: internalCode,
 		err:          err,
 		message:      message,
+		details:      details,
 	}
 
 	return m
@@ -53,6 +61,10 @@ func (e *customError) Message() string {
 
 func (e *customError) Code() int {
 	return e.internalCode
+}
+
+func (e *customError) Details() []ErrorDetail {
+	return e.details
 }
 
 func (e *customError) Cause() error {

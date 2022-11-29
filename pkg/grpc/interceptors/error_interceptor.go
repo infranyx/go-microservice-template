@@ -20,7 +20,7 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 		if err != nil {
 			grpcErr := grpcErrors.ParseError(err)
-			logger.Defaultlogger.GrpcServerInterceptorErrLogger(grpcErr)
+			logger.Defaultlogger.GrpcServerInterceptorErrLogger(err, grpcErr)
 			return nil, grpcErr.ToGrpcResponseErr()
 		}
 

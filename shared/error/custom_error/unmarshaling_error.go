@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnMarshalingError(message string, code int) error {
-	internal := NewInternalServerError(message, code)
+func NewUnMarshalingError(message string, code int, details []ErrorDetail) error {
+	internal := NewInternalServerError(message, code, details)
 	customErr := GetCustomError(internal)
 	ue := &unMarshalingError{
 		InternalServerError: customErr.(InternalServerError),
@@ -15,8 +15,8 @@ func NewUnMarshalingError(message string, code int) error {
 	return stackErr
 }
 
-func NewUnMarshalingErrorWrap(err error, code int, message string) error {
-	internal := NewInternalServerErrorWrap(err, code, message)
+func NewUnMarshalingErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+	internal := NewInternalServerErrorWrap(err, message, code, details)
 	customErr := GetCustomError(internal)
 	ue := &unMarshalingError{
 		InternalServerError: customErr.(InternalServerError),

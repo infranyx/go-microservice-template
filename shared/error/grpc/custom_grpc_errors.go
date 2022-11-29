@@ -4,15 +4,17 @@ import (
 	"time"
 
 	errorTitles "github.com/infranyx/go-grpc-template/constant/errors"
+	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	"google.golang.org/grpc/codes"
 )
 
-func NewValidationGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewValidationGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	validationError :=
 		&grpcErr{
 			Title:      errorTitles.ErrBadRequestTitle,
 			Code:       code,
-			Detail:     detail,
+			Msg:        message,
+			Details:    details,
 			Status:     codes.InvalidArgument,
 			Timestamp:  time.Now(),
 			StackTrace: stackTrace,
@@ -21,100 +23,109 @@ func NewValidationGrpcError(code int, detail string, stackTrace string) GrpcErr 
 	return validationError
 }
 
-func NewConflictGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewConflictGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrConflictTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.AlreadyExists,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewBadRequestGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewBadRequestGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrBadRequestTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.InvalidArgument,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewNotFoundErrorGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewNotFoundErrorGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrNotFoundTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.NotFound,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewUnAuthorizedErrorGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewUnAuthorizedErrorGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrUnauthorizedTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.Unauthenticated,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewForbiddenGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewForbiddenGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrForbiddenTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.PermissionDenied,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewInternalServerGrpcError(code int, detail string, stackTrace string) GrpcErr {
+func NewInternalServerGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrInternalServerErrorTitle,
 		Code:       code,
-		Detail:     detail,
+		Msg:        message,
+		Details:    details,
 		Status:     codes.Internal,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewDomainGrpcError(status codes.Code, code int, detail string, stackTrace string) GrpcErr {
+func NewDomainGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrDomainTitle,
 		Code:       code,
-		Detail:     detail,
-		Status:     status,
+		Msg:        message,
+		Details:    details,
+		Status:     codes.InvalidArgument,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewApplicationGrpcError(status codes.Code, code int, detail string, stackTrace string) GrpcErr {
+func NewApplicationGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrApplicationTitle,
 		Code:       code,
-		Detail:     detail,
-		Status:     status,
+		Msg:        message,
+		Details:    details,
+		Status:     codes.Internal,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}
 }
 
-func NewApiGrpcError(status codes.Code, code int, detail string, stackTrace string) GrpcErr {
+func NewApiGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrApiTitle,
 		Code:       code,
-		Detail:     detail,
-		Status:     status,
+		Msg:        message,
+		Details:    details,
+		Status:     codes.Internal,
 		Timestamp:  time.Now(),
 		StackTrace: stackTrace,
 	}

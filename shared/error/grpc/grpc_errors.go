@@ -5,18 +5,20 @@ import (
 	"fmt"
 	"time"
 
+	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type grpcErr struct {
-	Status     codes.Code `json:"status,omitempty"`
-	Code       int        `json:"code,omitempty"`
-	Title      string     `json:"title,omitempty"`
-	Detail     string     `json:"detail,omitempty"`
-	Timestamp  time.Time  `json:"timestamp,omitempty"`
-	StackTrace string     `json:"stackTrace,omitempty"`
+	Status     codes.Code                 `json:"status,omitempty"`
+	Code       int                        `json:"code,omitempty"`
+	Title      string                     `json:"title,omitempty"`
+	Msg        string                     `json:"msg,omitempty"`
+	Details    []customErrors.ErrorDetail `json:"errorDetail,omitempty"`
+	Timestamp  time.Time                  `json:"timestamp,omitempty"`
+	StackTrace string                     `json:"stackTrace,omitempty"`
 }
 
 type GrpcErr interface {
@@ -28,8 +30,10 @@ type GrpcErr interface {
 	SetTitle(title string) GrpcErr
 	GetStackTrace() string
 	SetStackTrace(stackTrace string) GrpcErr
-	GetDetail() string
-	SetDetail(detail string) GrpcErr
+	GetMsg() string
+	SetMsg(msg string) GrpcErr
+	GetDetails() []customErrors.ErrorDetail
+	SetDetails(details []customErrors.ErrorDetail) GrpcErr
 	GetTimestamp() time.Time
 	SetTimestamp(time time.Time) GrpcErr
 	Error() string
@@ -38,13 +42,14 @@ type GrpcErr interface {
 	ToGrpcResponseErr() error
 }
 
-func NewGrpcError(status codes.Code, code int, title string, detail string, stackTrace string) GrpcErr {
+func NewGrpcError(status codes.Code, code int, title string, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
 	grpcErr := &grpcErr{
 		Status:     status,
 		Code:       code,
 		Title:      title,
+		Msg:        message,
+		Details:    details,
 		Timestamp:  time.Now(),
-		Detail:     detail,
 		StackTrace: stackTrace,
 	}
 
@@ -58,7 +63,7 @@ func (p *grpcErr) ErrBody() error {
 
 // Error  Error() interface method
 func (p *grpcErr) Error() string {
-	return fmt.Sprintf("Error Title: %s - Error Status: %d - Error Detail: %s", p.Title, p.Status, p.Detail)
+	return fmt.Sprintf("Error Title: %s - Error Status: %d - Error Detail: %s", p.Title, p.Status, p.Msg)
 }
 
 func (p *grpcErr) GetStatus() codes.Code {
@@ -91,12 +96,22 @@ func (p *grpcErr) SetTitle(title string) GrpcErr {
 	return p
 }
 
-func (p *grpcErr) GetDetail() string {
-	return p.Detail
+func (p *grpcErr) GetMsg() string {
+	return p.Msg
 }
 
-func (p *grpcErr) SetDetail(detail string) GrpcErr {
-	p.Detail = detail
+func (p *grpcErr) SetMsg(message string) GrpcErr {
+	p.Msg = message
+
+	return p
+}
+
+func (p *grpcErr) GetDetails() []customErrors.ErrorDetail {
+	return p.Details
+}
+
+func (p *grpcErr) SetDetails(detail []customErrors.ErrorDetail) GrpcErr {
+	p.Details = detail
 
 	return p
 }

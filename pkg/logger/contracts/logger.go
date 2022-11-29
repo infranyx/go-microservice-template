@@ -46,5 +46,5 @@ type Logger interface {
 	GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error)
 	GrpcClientInterceptorLogger(method string, req interface{}, reply interface{}, time time.Duration, metaData map[string][]string, err error)
 	GrpcServerInterceptorLogger(req interface{}, time time.Time)
-	GrpcServerInterceptorErrLogger(err grpcErrors.GrpcErr)
+	GrpcServerInterceptorErrLogger(err error, grpcErr grpcErrors.GrpcErr)
 }
