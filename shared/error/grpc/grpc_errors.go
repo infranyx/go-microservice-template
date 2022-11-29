@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -122,7 +123,23 @@ func (p *grpcErr) SetStackTrace(stackTrace string) GrpcErr {
 
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
 func (p *grpcErr) ToGrpcResponseErr() error {
-	return status.Error(p.GetStatus(), p.ToJson())
+	// x := status.Error(p.GetStatus(), p.ToJson())
+
+	st := status.New(codes.Unknown, "unknown error occurred")
+	br := &errdetails.DebugInfo{
+		Detail: "detail reason of err",
+	}
+
+	// byts, _ := proto.Marshal(br)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	stWithDetails, _ := st.WithDetails(br)
+	// if err != nil {
+	// 	return nil, st.Err()
+	// }
+	fmt.Println(stWithDetails.Err())
+	return stWithDetails.Err()
 }
 
 func (p *grpcErr) ToJson() string {

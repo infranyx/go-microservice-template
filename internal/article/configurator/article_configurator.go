@@ -8,7 +8,7 @@ import (
 	article_usecase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	"github.com/infranyx/go-grpc-template/shared/infrastructure"
-	articlev1 "go.buf.build/grpc/go/infranyx/golang-grpc-template/article/v1"
+	articlev1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 type articleControllerConfigurator struct {

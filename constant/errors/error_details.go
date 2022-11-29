@@ -3,65 +3,65 @@ package errors
 var ErrDetails *errDetails
 
 type errDetails struct {
-	ErrBadRequest      detaill
-	ErrConflict     detaill
-	ErrNotFound detaill
-	ErrUnauthorized    detaill
+	ErrBadRequest     detaill
+	ErrConflict       detaill
+	ErrNotFound       detaill
+	ErrUnauthorized   detaill
 	ErrForbidden      detaill
-	ErrRequestTimeout     detaill
-	ErrInternal detaill
-	ErrDomain    detaill
-	ErrApplication detaill
-	ErrApi    detaill
+	ErrRequestTimeout detaill
+	ErrInternal       detaill
+	ErrDomain         detaill
+	ErrApplication    detaill
+	ErrApi            detaill
 }
 
 type detaill struct {
-	Title     string
-	Code     int
+	Title string
+	Code  int
 }
 
 // init is invoked before main()
 func init() {
 	ErrDetails = &errDetails{
-		ErrBadRequest :detaill{
+		ErrBadRequest: detaill{
 			Title: "Bad Request",
-			Code: 1000,
+			Code:  1000,
 		},
-		ErrConflict :detaill{
+		ErrConflict: detaill{
 			Title: "Conflict Error",
-			Code: 1001,
+			Code:  1001,
 		},
-		ErrNotFound :detaill{
+		ErrNotFound: detaill{
 			Title: "Not Found",
-			Code: 1002,
+			Code:  1002,
 		},
-		ErrUnauthorized :detaill{
+		ErrUnauthorized: detaill{
 			Title: "Unauthorized",
-			Code: 1003,
+			Code:  1003,
 		},
-		ErrForbidden :detaill{
+		ErrForbidden: detaill{
 			Title: "Forbidden",
-			Code: 1004,
+			Code:  1004,
 		},
-		ErrRequestTimeout :detaill{
+		ErrRequestTimeout: detaill{
 			Title: "Request Timeout",
-			Code: 1005,
+			Code:  1005,
 		},
-		ErrInternal :detaill{
+		ErrInternal: detaill{
 			Title: "Internal Server Error",
-			Code: 1006,
+			Code:  1006,
 		},
-		ErrDomain :detaill{
+		ErrDomain: detaill{
 			Title: "Request Timeout",
-			Code: 1007,
+			Code:  1007,
 		},
-		ErrApplication :detaill{
+		ErrApplication: detaill{
 			Title: "Application Service Error",
-			Code: 1008,
+			Code:  1008,
 		},
-		ErrApi :detaill{
+		ErrApi: detaill{
 			Title: "Api Error",
-			Code: 1009,
+			Code:  1009,
 		},
 	}
 }

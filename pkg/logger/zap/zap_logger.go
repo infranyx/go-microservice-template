@@ -262,7 +262,7 @@ func (l *zapLogger) GrpcServerInterceptorLogger(req interface{}, time time.Time)
 }
 
 func (l *zapLogger) GrpcServerInterceptorErrLogger(err grpcErrors.GrpcErr) {
-	l.logger.Info(
+	l.logger.Error(
 		constants.GRPC,
 		zap.String(constants.TITILE, err.GetTitle()),
 		zap.Int(constants.CODE, err.GetCode()),

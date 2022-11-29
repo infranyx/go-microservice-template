@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	article_dto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 )
 
 // Item represents a Item for all sub domains
@@ -22,10 +22,10 @@ type ArticleController interface {
 
 // ArticleUseCase is a contract of business rule layer
 type ArticleUseCase interface {
-	Create(ctx context.Context, article *article_dto.CreateArticle) (*Article, error)
+	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }
 
 // ArticleRepository is a contract of database connection adapter layer
 type ArticleRepository interface {
-	Create(ctx context.Context, article *article_dto.CreateArticle) (*Article, error)
+	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }
