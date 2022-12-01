@@ -1,6 +1,7 @@
 package zap
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -262,14 +263,17 @@ func (l *zapLogger) GrpcServerInterceptorLogger(req interface{}, time time.Time)
 }
 
 func (l *zapLogger) GrpcServerInterceptorErrLogger(err error, grpcErr grpcErrors.GrpcErr) {
+	fmt.Println(zap.Error(err))
 	l.logger.Error(
 		constants.GRPC,
+		// zap.Error(err),
 		zap.String(constants.ERR, grpcErr.Error()),
 		zap.String(constants.TITILE, grpcErr.GetTitle()),
 		zap.Int(constants.CODE, grpcErr.GetCode()),
 		zap.Int(constants.STATUS, int(grpcErr.GetStatus())),
 		zap.Time(constants.TIME, grpcErr.GetTimestamp()),
 		zap.Any(constants.DETAILS, grpcErr.GetDetails()),
+		zap.String(constants.STACK_TRACE, grpcErr.GetStackTrace()),
 	)
 }
 

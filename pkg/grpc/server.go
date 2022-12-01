@@ -9,7 +9,6 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	grpcInterceptors "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	googleGrpc "google.golang.org/grpc"
@@ -73,8 +72,6 @@ func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServ
 	if configGrpc != nil {
 		configGrpc(s.server)
 	}
-
-	grpcPrometheus.Register(s.server)
 
 	if s.config.Development {
 		reflection.Register(s.server)

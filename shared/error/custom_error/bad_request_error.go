@@ -8,9 +8,9 @@ func NewBadRequestError(message string, code int, details []ErrorDetail) error {
 	br := &badRequestError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(br)
+	// stackErr := errors.WithStack(br)
 
-	return stackErr
+	return br
 }
 
 func NewBadRequestErrorWrap(err error, message string, code int, details []ErrorDetail) error {
@@ -37,7 +37,7 @@ func (b *badRequestError) IsBadRequestError() bool {
 
 func IsBadRequestError(err error) bool {
 	var badRequestError BadRequestError
-	//us, ok := grpc_errors.Cause(err).(BadRequestError)
+
 	if errors.As(err, &badRequestError) {
 		return badRequestError.IsBadRequestError()
 	}

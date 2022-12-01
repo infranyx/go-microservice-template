@@ -2,10 +2,7 @@ package customErrors
 
 import (
 	"errors"
-	"fmt"
-	"io"
-
-	"github.com/infranyx/go-grpc-template/shared/error/contracts"
+	// "github.com/infranyx/go-grpc-template/shared/error/contracts"
 )
 
 // https://github.com/pkg/errors/issues/75
@@ -23,9 +20,6 @@ type ErrorDetail struct {
 
 type CustomError interface {
 	error
-	contracts.Wrapper
-	contracts.Causer
-	contracts.Formatter
 	IsCustomError() bool
 	Message() string
 	Code() int
@@ -41,10 +35,6 @@ func NewCustomError(err error, internalCode int, message string, details []Error
 	}
 
 	return m
-}
-
-func (e *customError) IsCustomError() bool {
-	return true
 }
 
 func (e *customError) Error() string {
@@ -67,28 +57,6 @@ func (e *customError) Details() []ErrorDetail {
 	return e.details
 }
 
-func (e *customError) Cause() error {
-	return e.err
-}
-
-func (e *customError) Unwrap() error {
-	return e.err
-}
-
-func (e *customError) Format(s fmt.State, verb rune) {
-	switch verb {
-	case 'v':
-		if s.Flag('+') {
-			fmt.Fprintf(s, "%+v\n", e.Cause())
-			io.WriteString(s, e.message)
-			return
-		}
-		fallthrough
-	case 's', 'q':
-		io.WriteString(s, e.Error())
-	}
-}
-
 func GetCustomError(err error) CustomError {
 	if IsCustomError(err) {
 		var internalErr CustomError
@@ -98,6 +66,10 @@ func GetCustomError(err error) CustomError {
 	}
 
 	return nil
+}
+
+func (e *customError) IsCustomError() bool {
+	return true
 }
 
 func IsCustomError(err error) bool {

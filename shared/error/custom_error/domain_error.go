@@ -8,9 +8,9 @@ func NewDomainError(message string, code int, details []ErrorDetail) error {
 	de := &domainError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(de)
+	// stackErr := errors.WithStack(de)
 
-	return stackErr
+	return de
 }
 
 func NewDomainErrorWrap(err error, message string, code int, details []ErrorDetail) error {
@@ -37,7 +37,7 @@ func (d *domainError) IsDomainError() bool {
 
 func IsDomainError(err error) bool {
 	var domainErr DomainError
-	//us, ok := grpc_errors.Cause(err).(DomainError)
+
 	if errors.As(err, &domainErr) {
 		return domainErr.IsDomainError()
 	}

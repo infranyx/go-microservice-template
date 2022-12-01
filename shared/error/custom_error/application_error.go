@@ -8,9 +8,9 @@ func NewApplicationError(message string, code int, details []ErrorDetail) error 
 	ae := &applicationError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ae)
+	// stackErr := errors.WithStack(ae)
 
-	return stackErr
+	return ae
 }
 
 func NewApplicationErrorWrap(err error, message string, code int, details []ErrorDetail) error {
@@ -37,7 +37,7 @@ func (a *applicationError) IsApplicationError() bool {
 
 func IsApplicationError(err error) bool {
 	var applicationError ApplicationError
-	//us, ok := grpc_errors.Cause(err).(ApplicationError)
+
 	if errors.As(err, &applicationError) {
 		return applicationError.IsApplicationError()
 	}

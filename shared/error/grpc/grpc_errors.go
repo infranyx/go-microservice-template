@@ -6,7 +6,7 @@ import (
 	"time"
 
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
+	sharedBuf "github.com/infranyx/protobuf-template-go/shared/error"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -138,22 +138,16 @@ func (p *grpcErr) SetStackTrace(stackTrace string) GrpcErr {
 
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
 func (p *grpcErr) ToGrpcResponseErr() error {
-	// x := status.Error(p.GetStatus(), p.ToJson())
-
-	st := status.New(codes.Unknown, "unknown error occurred")
-	br := &errdetails.DebugInfo{
-		Detail: "detail reason of err",
+	st := status.New(codes.Code(p.Code), p.Error())
+	mappedErr := &sharedBuf.CustomError{
+		Title:      p.Title,
+		Code:       "1",
+		Detail:     p.Msg,
+		Timestamp:  p.Timestamp.Format(time.RFC3339),
+		StackTrace: &p.StackTrace,
 	}
-
-	// byts, _ := proto.Marshal(br)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	stWithDetails, _ := st.WithDetails(br)
-	// if err != nil {
-	// 	return nil, st.Err()
-	// }
-	fmt.Println(stWithDetails.Err())
+	// byts, _ := proto.Marshal(mappedErr)
+	stWithDetails, _ := st.WithDetails(mappedErr)
 	return stWithDetails.Err()
 }
 
@@ -164,4 +158,24 @@ func (p *grpcErr) ToJson() string {
 func (p *grpcErr) json() []byte {
 	b, _ := json.Marshal(&p)
 	return b
+}
+
+func ParseExternalGrpcErr(err error) GrpcErr {
+	st := status.Convert(err)
+	for _, detail := range st.Details() {
+		switch t := detail.(type) {
+		case *sharedBuf.CustomError:
+			timestamp, _ := time.Parse(time.RFC3339, t.Timestamp)
+			return &grpcErr{
+				Status: st.Code(),
+				Code:   1,
+				Title:  t.Title,
+				// Msg:        message,
+				// Details:    details,
+				Timestamp: timestamp,
+				// StackTrace: stackTrace,
+			}
+		}
+	}
+	return nil
 }

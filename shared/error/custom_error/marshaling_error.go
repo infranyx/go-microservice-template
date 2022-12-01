@@ -5,33 +5,29 @@ import (
 )
 
 func NewMarshalingError(message string, code int, details []ErrorDetail) error {
-	internal := NewInternalServerError(message, code, details)
-	customErr := GetCustomError(internal)
-	ue := &marshalingError{
-		InternalServerError: customErr.(InternalServerError),
+	me := &marshalingError{
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	// stackErr := errors.WithStack(ne)
 
-	return stackErr
+	return me
 }
 
 func NewMarshalingErrorWrap(err error, message string, code int, details []ErrorDetail) error {
-	internal := NewInternalServerErrorWrap(err, message, code, details)
-	customErr := GetCustomError(internal)
-	ue := &marshalingError{
-		InternalServerError: customErr.(InternalServerError),
+	me := &marshalingError{
+		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	stackErr := errors.WithStack(me)
 
 	return stackErr
 }
 
 type marshalingError struct {
-	InternalServerError
+	CustomError
 }
 
 type MarshalingError interface {
-	InternalServerError
+	CustomError
 	IsMarshalingError() bool
 }
 
@@ -42,7 +38,6 @@ func (m *marshalingError) IsMarshalingError() bool {
 func IsMarshalingError(err error) bool {
 	var me MarshalingError
 
-	//us, ok := grpc_errors.Cause(err).(MarshalingError)
 	if errors.As(err, &me) {
 		return me.IsMarshalingError()
 	}

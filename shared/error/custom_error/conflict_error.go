@@ -8,9 +8,9 @@ func NewConflictError(message string, code int, details []ErrorDetail) error {
 	ce := &conflictError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ce)
+	// stackErr := errors.WithStack(ce)
 
-	return stackErr
+	return ce
 }
 
 func NewConflictErrorWrap(err error, message string, code int, details []ErrorDetail) error {
@@ -37,7 +37,7 @@ func (c *conflictError) IsConflictError() bool {
 
 func IsConflictError(err error) bool {
 	var conflictError ConflictError
-	//us, ok := grpc_errors.Cause(err).(ConflictError)
+
 	if errors.As(err, &conflictError) {
 		return conflictError.IsConflictError()
 	}
