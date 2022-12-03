@@ -15,7 +15,7 @@ import (
 var IC *IContainer
 
 type IContainer struct {
-	GrpcServer grpc.GrpcServer //interface
+	GrpcServer grpc.GrpcServer // Interface
 	Logger     *zap.Logger
 	Cfg        *config.Config
 	Pg         *postgres.Postgres
@@ -57,7 +57,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		return nil, cleanupfn, fmt.Errorf("could not initialize database connection using sqlx %s", err)
 	}
 	cleanup = append(cleanup, func() {
-		pg.Sqlx.Close()
+		_ = pg.Sqlx.Close()
 	})
 	ic.Pg = pg
 

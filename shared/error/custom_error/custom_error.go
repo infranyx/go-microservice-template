@@ -13,6 +13,7 @@ type customError struct {
 	details      []ErrorDetail
 }
 
+//lint:ignore U1000 Ignore unused function temporarily for debugging
 type ErrorDetail struct {
 	id   string
 	desc string

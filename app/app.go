@@ -31,7 +31,7 @@ func (a *App) Run() error {
 
 	//
 	articleConfigurator := article_configurator.NewArticleConfigurator(ic)
-	articleConfigurator.ConfigureArticle(ctx)
+	_ = articleConfigurator.ConfigureArticle(ctx)
 
 	//
 
