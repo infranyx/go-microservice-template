@@ -23,5 +23,7 @@ out/*
 # Go workspace file
 go.work
 
-# tmp dir
 tmp
+
+vendor/
+
