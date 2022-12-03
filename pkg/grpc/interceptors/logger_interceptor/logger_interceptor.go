@@ -1,18 +1,28 @@
-package grpc_interceptors
+package logger_interceptors
 
 import (
 	"context"
 	"time"
 
+	loggerConst "github.com/infranyx/go-grpc-template/constant/logger"
+
 	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client
-func UnaryLoggerInterceptor() grpc.UnaryServerInterceptor {
+func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now()
-		logger.Defaultlogger.GrpcServerInterceptorLogger(req, startTime)
+		l := logger.Zap
+
+		l.Sugar().Info(
+			zap.String(loggerConst.TYPE, loggerConst.GRPC),
+			zap.Any(loggerConst.REQUEST, req),
+			zap.Time(loggerConst.TIME, startTime),
+		)
+
 		resp, err := handler(ctx, req)
 
 		return resp, err

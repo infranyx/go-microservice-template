@@ -1,11 +1,14 @@
-package grpc_interceptors
+package error_interceptors
 
 import (
 	"context"
 
+	loggerConst "github.com/infranyx/go-grpc-template/constant/logger"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client
@@ -16,11 +19,20 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-
+		l := logger.Zap
 		resp, err := handler(ctx, req)
 		if err != nil {
 			grpcErr := grpcErrors.ParseError(err)
-			logger.Defaultlogger.GrpcServerInterceptorErrLogger(err, grpcErr)
+			l.Error(
+				err.Error(),
+				zap.String(loggerConst.TYPE, loggerConst.GRPC),
+				zap.String(loggerConst.TITILE, grpcErr.GetTitle()),
+				zap.Int(loggerConst.CODE, grpcErr.GetCode()),
+				zap.String(loggerConst.STATUS, codes.Code(grpcErr.GetStatus()).String()),
+				zap.Time(loggerConst.TIME, grpcErr.GetTimestamp()),
+				zap.Any(loggerConst.DETAILS, grpcErr.GetDetails()),
+				zap.String(loggerConst.STACK_TRACE, grpcErr.GetStackTrace()),
+			)
 			return nil, grpcErr.ToGrpcResponseErr()
 		}
 

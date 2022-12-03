@@ -7,12 +7,12 @@ import (
 func NewValidationError(message string, code int, details []ErrorDetail) error {
 	bad := NewBadRequestError(message, code, details)
 	customErr := GetCustomError(bad)
-	ue := &validationError{
+	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
-	stackErr := errors.WithStack(ue)
+	// stackErr := errors.WithStack(ue)
 
-	return stackErr
+	return ve
 }
 
 func NewValidationErrorWrap(err error, message string, code int, details []ErrorDetail) error {

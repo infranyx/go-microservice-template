@@ -2,7 +2,6 @@ package grpc_errors
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
@@ -63,7 +62,7 @@ func (p *grpcErr) ErrBody() error {
 
 // Error  Error() interface method
 func (p *grpcErr) Error() string {
-	return fmt.Sprintf("Error Title: %s - Error Status: %d - Error Detail: %s", p.Title, p.Status, p.Msg)
+	return p.Msg
 }
 
 func (p *grpcErr) GetStatus() codes.Code {

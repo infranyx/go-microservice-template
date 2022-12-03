@@ -9,7 +9,8 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpcInterceptors "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors"
+	grpcErr "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/error_interceptor"
+	grpcLogger "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/logger_interceptor"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	googleGrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -37,11 +38,10 @@ type GrpcConfig struct {
 
 type grpcServer struct {
 	server *googleGrpc.Server
-	logger *logger.Logger
 	config *GrpcConfig
 }
 
-func NewGrpcServer(conf *GrpcConfig, logger *logger.Logger) *grpcServer {
+func NewGrpcServer(conf *GrpcConfig) GrpcServer {
 	s := googleGrpc.NewServer(
 		googleGrpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle: maxConnectionIdle * time.Minute,
@@ -51,20 +51,21 @@ func NewGrpcServer(conf *GrpcConfig, logger *logger.Logger) *grpcServer {
 		}),
 
 		googleGrpc.StreamInterceptor(grpcMiddleware.ChainStreamServer(
-			grpcInterceptors.StreamServerInterceptor(),
+			grpcErr.StreamServerInterceptor(),
 		)),
 		googleGrpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(
-			grpcInterceptors.UnaryLoggerInterceptor(),
-			grpcInterceptors.UnaryServerInterceptor(),
+			grpcErr.UnaryServerInterceptor(),
+			grpcLogger.UnaryServerInterceptor(),
 			grpcCtxTags.UnaryServerInterceptor(),
 			grpcRecovery.UnaryServerInterceptor(),
 		)),
 	)
 
-	return &grpcServer{server: s, logger: logger, config: conf}
+	return &grpcServer{server: s, config: conf}
 }
 
 func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error {
+	log := logger.Zap
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.Port))
 	if err != nil {
 		return err
@@ -80,17 +81,17 @@ func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServ
 	go func() {
 		for {
 			<-ctx.Done()
-			s.logger.Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
+			log.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
 			s.GracefulShutdown()
 			return
 		}
 	}()
 
-	s.logger.Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
+	log.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
 
 	err = s.server.Serve(l)
 	if err != nil {
-		s.logger.Error(fmt.Sprintf("[grpcServer_RunGrpcServer.Serve] grpc server serve error: %+v", err))
+		log.Sugar().Error(fmt.Sprintf("[grpcServer_RunGrpcServer.Serve] grpc server serve error: %+v", err))
 	}
 	return err
 }

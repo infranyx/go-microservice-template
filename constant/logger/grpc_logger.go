@@ -15,4 +15,5 @@ const (
 	MSG         = "MSG"
 	DETAILS     = "DETAILS"
 	ERR         = "ERR"
+	TYPE        = "TYPE"
 )

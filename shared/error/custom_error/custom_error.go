@@ -58,13 +58,10 @@ func (e *customError) Details() []ErrorDetail {
 }
 
 func GetCustomError(err error) CustomError {
-	if IsCustomError(err) {
-		var internalErr CustomError
-		errors.As(err, &internalErr)
-
-		return internalErr
+	var customErr CustomError
+	if errors.As(err, &customErr) {
+		return customErr
 	}
-
 	return nil
 }
 
@@ -74,15 +71,12 @@ func (e *customError) IsCustomError() bool {
 
 func IsCustomError(err error) bool {
 	var customErr CustomError
-
-	_, ok := err.(CustomError)
-	if ok {
-		return true
-	}
-
+	// _, ok := err.(CustomError)
+	// if ok {
+	// 	return true
+	// }
 	if errors.As(err, &customErr) {
 		return customErr.IsCustomError()
 	}
-
 	return false
 }
