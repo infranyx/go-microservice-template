@@ -4,34 +4,30 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnMarshalingError(message string, code int) error {
-	internal := NewInternalServerError(message, code)
-	customErr := GetCustomError(internal)
-	ue := &unMarshalingError{
-		InternalServerError: customErr.(InternalServerError),
+func NewUnMarshalingError(message string, code int, details []ErrorDetail) error {
+	ume := &unMarshalingError{
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	// stackErr := errors.WithStack(ne)
 
-	return stackErr
+	return ume
 }
 
-func NewUnMarshalingErrorWrap(err error, code int, message string) error {
-	internal := NewInternalServerErrorWrap(err, code, message)
-	customErr := GetCustomError(internal)
-	ue := &unMarshalingError{
-		InternalServerError: customErr.(InternalServerError),
+func NewUnMarshalingErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+	ume := &unMarshalingError{
+		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	stackErr := errors.WithStack(ume)
 
 	return stackErr
 }
 
 type unMarshalingError struct {
-	InternalServerError
+	CustomError
 }
 
 type UnMarshalingError interface {
-	InternalServerError
+	CustomError
 	IsUnMarshalingError() bool
 }
 
@@ -41,7 +37,7 @@ func (u *unMarshalingError) IsUnMarshalingError() bool {
 
 func IsUnMarshalingError(err error) bool {
 	var unMarshalingError UnMarshalingError
-	//us, ok := grpc_errors.Cause(err).(UnMarshalingError)
+
 	if errors.As(err, &unMarshalingError) {
 		return unMarshalingError.IsUnMarshalingError()
 	}

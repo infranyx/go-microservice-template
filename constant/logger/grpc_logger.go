@@ -12,5 +12,8 @@ const (
 	STACK_TRACE = "STACK_TRACE"
 	CODE        = "CODE"
 	STATUS      = "STATUS"
+	MSG         = "MSG"
+	DETAILS     = "DETAILS"
 	ERR         = "ERR"
+	TYPE        = "TYPE"
 )

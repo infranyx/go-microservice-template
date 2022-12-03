@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewBadRequestError(message string, code int) error {
+func NewBadRequestError(message string, code int, details []ErrorDetail) error {
 	br := &badRequestError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(br)
+	// stackErr := errors.WithStack(br)
 
-	return stackErr
+	return br
 }
 
-func NewBadRequestErrorWrap(err error, code int, message string) error {
+func NewBadRequestErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	br := &badRequestError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(br)
 
@@ -37,7 +37,7 @@ func (b *badRequestError) IsBadRequestError() bool {
 
 func IsBadRequestError(err error) bool {
 	var badRequestError BadRequestError
-	//us, ok := grpc_errors.Cause(err).(BadRequestError)
+
 	if errors.As(err, &badRequestError) {
 		return badRequestError.IsBadRequestError()
 	}

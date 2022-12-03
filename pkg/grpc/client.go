@@ -17,7 +17,7 @@ type GrpcClient interface {
 }
 
 func NewGrpcClient(config *GrpcConfig) (GrpcClient, error) {
-	conn, err := grpc.Dial(fmt.Sprintf("%s%d", config.Host, config.Port),
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", config.Host, config.Port),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

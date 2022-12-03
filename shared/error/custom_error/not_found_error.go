@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewNotFoundError(message string, code int) error {
+func NewNotFoundError(message string, code int, details []ErrorDetail) error {
 	ne := &notFoundError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
 	stackErr := errors.WithStack(ne)
 
 	return stackErr
 }
 
-func NewNotFoundErrorWrap(err error, code int, message string) error {
+func NewNotFoundErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	ne := &notFoundError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(ne)
 
@@ -37,7 +37,7 @@ func (n *notFoundError) IsNotFoundError() bool {
 
 func IsNotFoundError(err error) bool {
 	var notFoundError NotFoundError
-	//us, ok := grpc_errors.Cause(err).(NotFoundError)
+
 	if errors.As(err, &notFoundError) {
 		return notFoundError.IsNotFoundError()
 	}

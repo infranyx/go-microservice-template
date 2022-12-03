@@ -8,11 +8,11 @@ import (
 
 func main() {
 	config.NewConfig()
-	l := logger.NewLogger()
+	l := logger.Zap
 
-	application := app.NewServer(l)
+	application := app.New()
 	err := application.Run()
 	if err != nil {
-		l.Error(err)
+		l.Sugar().Error(err)
 	}
 }

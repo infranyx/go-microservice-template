@@ -4,19 +4,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewValidationError(message string, code int) error {
-	bad := NewBadRequestError(message, code)
+func NewValidationError(message string, code int, details []ErrorDetail) error {
+	bad := NewBadRequestError(message, code, details)
 	customErr := GetCustomError(bad)
-	ue := &validationError{
+	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
-	stackErr := errors.WithStack(ue)
+	// stackErr := errors.WithStack(ue)
 
-	return stackErr
+	return ve
 }
 
-func NewValidationErrorWrap(err error, code int, message string) error {
-	bad := NewBadRequestErrorWrap(err, code, message)
+func NewValidationErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+	bad := NewBadRequestErrorWrap(err, message, code, details)
 	customErr := GetCustomError(bad)
 	ue := &validationError{
 		BadRequestError: customErr.(BadRequestError),
@@ -41,7 +41,7 @@ func (v *validationError) IsValidationError() bool {
 
 func IsValidationError(err error) bool {
 	var validationError ValidationError
-	//us, ok := grpc_errors.Cause(err).(ValidationError)
+
 	if errors.As(err, &validationError) {
 		return validationError.IsValidationError()
 	}

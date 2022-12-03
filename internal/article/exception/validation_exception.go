@@ -5,6 +5,6 @@ import (
 )
 
 func NewCreateArticleValidationErr(err error) error {
-	bad := customErrors.NewBadRequestErrorWrap(err, 2000, "Article validation failed")
+	bad := customErrors.NewBadRequestError("validation failed", 2000, nil)
 	return bad
 }

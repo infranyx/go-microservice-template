@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewForbiddenError(message string, code int) error {
+func NewForbiddenError(message string, code int, details []ErrorDetail) error {
 	ne := &forbiddenError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ne)
+	// stackErr := errors.WithStack(ne)
 
-	return stackErr
+	return ne
 }
 
-func NewForbiddenErrorWrap(err error, code int, message string) error {
+func NewForbiddenErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	ne := &forbiddenError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(ne)
 
@@ -37,7 +37,7 @@ func (f *forbiddenError) IsForbiddenError() bool {
 
 func IsForbiddenError(err error) bool {
 	var forbiddenError ForbiddenError
-	//us, ok := grpc_errors.Cause(err).(ForbiddenError)
+
 	if errors.As(err, &forbiddenError) {
 		return forbiddenError.IsForbiddenError()
 	}

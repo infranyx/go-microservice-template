@@ -4,20 +4,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewInternalServerError(message string, code int) error {
-	br := &internalServerError{
-		CustomError: NewCustomError(nil, code, message),
+func NewInternalServerError(message string, code int, details []ErrorDetail) error {
+	ie := &internalServerError{
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(br)
+	// stackErr := errors.WithStack(br)
 
-	return stackErr
+	return ie
 }
 
-func NewInternalServerErrorWrap(err error, code int, message string) error {
-	br := &internalServerError{
-		CustomError: NewCustomError(err, code, message),
+func NewInternalServerErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+	ie := &internalServerError{
+		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(br)
+	stackErr := errors.WithStack(ie)
 
 	return stackErr
 }
@@ -37,7 +37,7 @@ func (i *internalServerError) IsInternalServerError() bool {
 
 func IsInternalServerError(err error) bool {
 	var internalErr InternalServerError
-	//us, ok := grpc_errors.Cause(err).(InternalServerError)
+
 	if errors.As(err, &internalErr) {
 		return internalErr.IsInternalServerError()
 	}

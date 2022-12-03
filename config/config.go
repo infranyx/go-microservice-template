@@ -45,6 +45,7 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("No .env file found")
 	}
+	NewConfig()
 }
 
 // New returns a new Config struct

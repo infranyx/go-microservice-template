@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewApiError(message string, code int) error {
+func NewApiError(message string, code int, details []ErrorDetail) error {
 	ae := &apiError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ae)
+	// stackErr := errors.WithStack(ae)
 
-	return stackErr
+	return ae
 }
 
-func NewApiErrorWrap(err error, code int, message string) error {
+func NewApiErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	ae := &apiError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(ae)
 
@@ -37,7 +37,7 @@ func (a *apiError) IsApiError() bool {
 
 func IsApiError(err error) bool {
 	var apiError ApiError
-	//us, ok := grpc_errors.Cause(err).(ApiError)
+
 	if errors.As(err, &apiError) {
 		return apiError.IsApiError()
 	}

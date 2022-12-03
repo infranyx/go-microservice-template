@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnAuthorizedError(message string, code int) error {
+func NewUnAuthorizedError(message string, code int, details []ErrorDetail) error {
 	ue := &unauthorizedError{
-		CustomError: NewCustomError(nil, code, message),
+		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	// stackErr := errors.WithStack(ue)
 
-	return stackErr
+	return ue
 }
 
-func NewUnAuthorizedErrorWrap(err error, code int, message string) error {
+func NewUnAuthorizedErrorWrap(err error, message string, code int, details []ErrorDetail) error {
 	ue := &unauthorizedError{
-		CustomError: NewCustomError(err, code, message),
+		CustomError: NewCustomError(err, code, message, details),
 	}
 	stackErr := errors.WithStack(ue)
 
@@ -37,7 +37,7 @@ func (u *unauthorizedError) IsUnAuthorizedError() bool {
 
 func IsUnAuthorizedError(err error) bool {
 	var unauthorizedError UnauthorizedError
-	//us, ok := grpc_errors.Cause(err).(UnauthorizedError)
+
 	if errors.As(err, &unauthorizedError) {
 		return unauthorizedError.IsUnAuthorizedError()
 	}

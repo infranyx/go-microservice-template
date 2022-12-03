@@ -6,7 +6,7 @@ import (
 	article_domain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	article_dto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	article_exception "github.com/infranyx/go-grpc-template/internal/article/exception"
-	articlev1 "go.buf.build/grpc/go/infranyx/golang-grpc-template/article/v1"
+	articlev1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 type ArticleController struct {
