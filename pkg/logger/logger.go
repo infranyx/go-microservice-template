@@ -15,10 +15,7 @@ func init() {
 }
 
 func newLogger() *zap.Logger {
-	logLevel := zapcore.DebugLevel
-
 	var logWriter zapcore.WriteSyncer
-
 	var encoderCfg zapcore.EncoderConfig
 	var encoder zapcore.Encoder
 
@@ -56,10 +53,8 @@ func newLogger() *zap.Logger {
 		logWriter = zapcore.AddSync(os.Stdout)
 	}
 
-	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLevel))
-	logger := zap.New(core, zap.AddCaller())
-
-	return logger
+	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(zapcore.DebugLevel))
+	return zap.New(core, zap.AddCaller())
 }
 
 // func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {

@@ -73,7 +73,5 @@ func (eVar EVar) AsBool() bool {
 func (eVar EVar) AsStringSlice(sep string) []string {
 	valStr := eVar.AsString()
 
-	val := strings.Split(valStr, sep)
-
-	return val
+	return strings.Split(valStr, sep)
 }

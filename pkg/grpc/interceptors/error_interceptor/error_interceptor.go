@@ -19,11 +19,11 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		l := logger.Zap
+
 		resp, err := handler(ctx, req)
 		if err != nil {
 			grpcErr := grpcErrors.ParseError(err)
-			l.Error(
+			logger.Zap.Error(
 				err.Error(),
 				zap.String(grpcLoggerConst.TYPE, grpcLoggerConst.GRPC),
 				zap.String(grpcLoggerConst.TITILE, grpcErr.GetTitle()),
