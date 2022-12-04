@@ -8,7 +8,7 @@ func NewInternalServerError(message string, code int, details []ErrorDetail) err
 	ie := &internalServerError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(br)
+	// stackErr := error.WithStack(br)
 
 	return ie
 }

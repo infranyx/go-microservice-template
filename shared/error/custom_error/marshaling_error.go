@@ -8,7 +8,7 @@ func NewMarshalingError(message string, code int, details []ErrorDetail) error {
 	me := &marshalingError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ne)
+	// stackErr := error.WithStack(ne)
 
 	return me
 }

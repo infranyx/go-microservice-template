@@ -2,9 +2,8 @@ package logger_interceptors
 
 import (
 	"context"
+	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
 	"time"
-
-	loggerConst "github.com/infranyx/go-grpc-template/constant/logger"
 
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
@@ -18,9 +17,9 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		l := logger.Zap
 
 		l.Sugar().Info(
-			zap.String(loggerConst.TYPE, loggerConst.GRPC),
-			zap.Any(loggerConst.REQUEST, req),
-			zap.Time(loggerConst.TIME, startTime),
+			zap.String(grpcLoggerConst.TYPE, grpcLoggerConst.GRPC),
+			zap.Any(grpcLoggerConst.REQUEST, req),
+			zap.Time(grpcLoggerConst.TIME, startTime),
 		)
 
 		resp, err := handler(ctx, req)

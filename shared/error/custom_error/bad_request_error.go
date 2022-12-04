@@ -8,7 +8,7 @@ func NewBadRequestError(message string, code int, details []ErrorDetail) error {
 	br := &badRequestError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(br)
+	// stackErr := error.WithStack(br)
 
 	return br
 }

@@ -8,7 +8,7 @@ func NewDomainError(message string, code int, details []ErrorDetail) error {
 	de := &domainError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(de)
+	// stackErr := error.WithStack(de)
 
 	return de
 }

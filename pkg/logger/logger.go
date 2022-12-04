@@ -1,23 +1,20 @@
 package logger
 
 import (
+	"github.com/infranyx/go-grpc-template/pkg/config"
 	"os"
 
-	"github.com/infranyx/go-grpc-template/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	Zap *zap.Logger
-)
+var Zap *zap.Logger
 
 func init() {
-	Zap = initLogger()
+	Zap = newLogger()
 }
 
-// Init logger
-func initLogger() *zap.Logger {
+func newLogger() *zap.Logger {
 	logLevel := zapcore.DebugLevel
 
 	var logWriter zapcore.WriteSyncer
@@ -25,7 +22,7 @@ func initLogger() *zap.Logger {
 	var encoderCfg zapcore.EncoderConfig
 	var encoder zapcore.Encoder
 
-	if config.IsProduction() {
+	if config.IsProdEnv() {
 		encoderCfg = zap.NewProductionEncoderConfig()
 		encoderCfg.NameKey = "[SERVICE]"
 		encoderCfg.TimeKey = "[TIME]"
@@ -39,7 +36,7 @@ func initLogger() *zap.Logger {
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
-		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 600)
 		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()

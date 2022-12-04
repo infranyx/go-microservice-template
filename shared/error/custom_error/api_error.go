@@ -8,7 +8,7 @@ func NewApiError(message string, code int, details []ErrorDetail) error {
 	ae := &apiError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ae)
+	// stackErr := error.WithStack(ae)
 
 	return ae
 }

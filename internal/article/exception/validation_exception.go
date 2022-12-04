@@ -1,4 +1,4 @@
-package article_exception
+package articleValidationException
 
 import (
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"

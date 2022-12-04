@@ -8,7 +8,7 @@ func NewForbiddenError(message string, code int, details []ErrorDetail) error {
 	ne := &forbiddenError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ne)
+	// stackErr := error.WithStack(ne)
 
 	return ne
 }

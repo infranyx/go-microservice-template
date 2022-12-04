@@ -8,7 +8,7 @@ func NewUnMarshalingError(message string, code int, details []ErrorDetail) error
 	ume := &unMarshalingError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ne)
+	// stackErr := error.WithStack(ne)
 
 	return ume
 }

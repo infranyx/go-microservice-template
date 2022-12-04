@@ -1,4 +1,4 @@
-package errors
+package errConst
 
 var ErrDetails *errDetails
 
@@ -11,7 +11,6 @@ type detaill struct {
 	Code int
 }
 
-// init is invoked before main()
 func init() {
 	ErrDetails = &errDetails{
 		ValidationErr: detaill{

@@ -8,7 +8,7 @@ func NewConflictError(message string, code int, details []ErrorDetail) error {
 	ce := &conflictError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ce)
+	// stackErr := error.WithStack(ce)
 
 	return ce
 }

@@ -49,7 +49,7 @@ func ParseError(err error) GrpcErr {
 
 		case customErrors.IsCustomError(err):
 			return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Message(), customErr.Details(), stackTrace)
-		// case errors.Is(err, context.DeadlineExceeded):
+		// case error.Is(err, context.DeadlineExceeded):
 		// 	return NewGrpcError(codes.DeadlineExceeded, customErr.Code(), errorTitles.ErrRequestTimeoutTitle, err.Error(), stackTrace)
 		default:
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)

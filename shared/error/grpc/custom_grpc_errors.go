@@ -1,9 +1,9 @@
 package grpc_errors
 
 import (
+	errorTitles "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	"time"
 
-	errorTitles "github.com/infranyx/go-grpc-template/constant/errors"
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	"google.golang.org/grpc/codes"
 )

@@ -10,7 +10,7 @@ func NewValidationError(message string, code int, details []ErrorDetail) error {
 	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
-	// stackErr := errors.WithStack(ue)
+	// stackErr := error.WithStack(ue)
 
 	return ve
 }

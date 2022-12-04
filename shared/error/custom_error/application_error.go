@@ -8,7 +8,7 @@ func NewApplicationError(message string, code int, details []ErrorDetail) error 
 	ae := &applicationError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ae)
+	// stackErr := error.WithStack(ae)
 
 	return ae
 }

@@ -8,7 +8,7 @@ func NewUnAuthorizedError(message string, code int, details []ErrorDetail) error
 	ue := &unauthorizedError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ue)
+	// stackErr := error.WithStack(ue)
 
 	return ue
 }
