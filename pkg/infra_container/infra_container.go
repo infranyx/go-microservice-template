@@ -11,8 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var IC *IContainer
-
 type IContainer struct {
 	GrpcServer grpc.GrpcServer // grpc.GrpcServer : Interface
 	Logger     *zap.Logger

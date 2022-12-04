@@ -1,4 +1,4 @@
-package error_interceptors
+package errorInterceptors
 
 import (
 	"context"

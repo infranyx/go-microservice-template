@@ -1,4 +1,4 @@
-package grpc_errors
+package grpcError
 
 import (
 	"encoding/json"

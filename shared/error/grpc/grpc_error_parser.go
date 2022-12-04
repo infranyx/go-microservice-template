@@ -1,13 +1,10 @@
-package grpc_errors
+package grpcError
 
 import (
+	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/utils/error_utils"
 	"google.golang.org/grpc/codes"
 )
-
-//https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md
-//https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
 
 func ParseError(err error) GrpcErr {
 	customErr := customErrors.GetCustomError(err)

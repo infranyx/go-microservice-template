@@ -1,4 +1,4 @@
-package grpc_errors
+package grpcError
 
 import (
 	errorTitles "github.com/infranyx/go-grpc-template/pkg/constant/error"
