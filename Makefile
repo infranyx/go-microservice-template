@@ -104,7 +104,7 @@ help: ## Show this help.
 
 
 
-#env:
+##env:
 #	export PG_URL=postgres://postgres:postgrespw@localhost:5432/postgres
 #
 #rollback:
@@ -118,7 +118,7 @@ help: ## Show this help.
 #.PHONY: migrate-create
 #
 #migrate-up: ### migration up
-#	migrate -path db/migrations -database 'postgres://postgres:postgrespw@localhost:5432/postgres?sslmode=disable' up
+#	migrate -path db/migrations -database 'postgres://admin:admin@localhost:5432/grpc_template?sslmode=disable' up
 #.PHONY: migrate-up
 #
 #force: ### migration up

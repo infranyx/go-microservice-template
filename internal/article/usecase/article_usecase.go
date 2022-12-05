@@ -17,7 +17,7 @@ func NewArticleUseCase(articleRepo articleDomain.ArticleRepository) articleDomai
 	}
 }
 
-func (u *articleUseCase) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
-	result, err := u.articleRepo.Create(ctx, article)
+func (au *articleUseCase) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
+	result, err := au.articleRepo.Create(ctx, article)
 	return result, err
 }

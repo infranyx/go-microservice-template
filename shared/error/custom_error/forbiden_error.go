@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewForbiddenError(message string, code int, details []ErrorDetail) error {
+func NewForbiddenError(message string, code int, details map[string]string) error {
 	ne := &forbiddenError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewForbiddenError(message string, code int, details []ErrorDetail) error {
 	return ne
 }
 
-func NewForbiddenErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewForbiddenErrorWrap(err error, message string, code int, details map[string]string) error {
 	ne := &forbiddenError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewBadRequestError(message string, code int, details []ErrorDetail) error {
+func NewBadRequestError(message string, code int, details map[string]string) error {
 	br := &badRequestError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewBadRequestError(message string, code int, details []ErrorDetail) error {
 	return br
 }
 
-func NewBadRequestErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewBadRequestErrorWrap(err error, message string, code int, details map[string]string) error {
 	br := &badRequestError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

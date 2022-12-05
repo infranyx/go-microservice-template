@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewApiError(message string, code int, details []ErrorDetail) error {
+func NewApiError(message string, code int, details map[string]string) error {
 	ae := &apiError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewApiError(message string, code int, details []ErrorDetail) error {
 	return ae
 }
 
-func NewApiErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewApiErrorWrap(err error, message string, code int, details map[string]string) error {
 	ae := &apiError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

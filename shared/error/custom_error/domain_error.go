@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewDomainError(message string, code int, details []ErrorDetail) error {
+func NewDomainError(message string, code int, details map[string]string) error {
 	de := &domainError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewDomainError(message string, code int, details []ErrorDetail) error {
 	return de
 }
 
-func NewDomainErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewDomainErrorWrap(err error, message string, code int, details map[string]string) error {
 	de := &domainError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

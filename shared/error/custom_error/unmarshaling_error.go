@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnMarshalingError(message string, code int, details []ErrorDetail) error {
+func NewUnMarshalingError(message string, code int, details map[string]string) error {
 	ume := &unMarshalingError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewUnMarshalingError(message string, code int, details []ErrorDetail) error
 	return ume
 }
 
-func NewUnMarshalingErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewUnMarshalingErrorWrap(err error, message string, code int, details map[string]string) error {
 	ume := &unMarshalingError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

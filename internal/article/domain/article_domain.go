@@ -2,10 +2,9 @@ package articleDomain
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/google/uuid"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 type Article struct {
@@ -14,8 +13,16 @@ type Article struct {
 	Description string    `db:"description"`
 }
 
-type ArticleController interface {
-	Create(response http.ResponseWriter, request *http.Request)
+type ArticleConfigurator interface {
+	ConfigureArticle(ctx context.Context) error
+}
+
+//type ArticleHttpController interface {
+//	Create(response http.ResponseWriter, request *http.Request)
+//}
+
+type ArticleGrpcController interface {
+	Create(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
 }
 
 type ArticleUseCase interface {

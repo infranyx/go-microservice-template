@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/google/uuid v1.3.0
-	github.com/infranyx/protobuf-template-go v0.0.0-20221128174142-d979bc78d00e
+	github.com/infranyx/protobuf-template-go v0.0.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.7

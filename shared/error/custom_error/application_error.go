@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewApplicationError(message string, code int, details []ErrorDetail) error {
+func NewApplicationError(message string, code int, details map[string]string) error {
 	ae := &applicationError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewApplicationError(message string, code int, details []ErrorDetail) error 
 	return ae
 }
 
-func NewApplicationErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewApplicationErrorWrap(err error, message string, code int, details map[string]string) error {
 	ae := &applicationError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

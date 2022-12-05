@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewValidationError(message string, code int, details []ErrorDetail) error {
+func NewValidationError(message string, code int, details map[string]string) error {
 	bad := NewBadRequestError(message, code, details)
 	customErr := GetCustomError(bad)
 	ve := &validationError{
@@ -15,7 +15,7 @@ func NewValidationError(message string, code int, details []ErrorDetail) error {
 	return ve
 }
 
-func NewValidationErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
 	bad := NewBadRequestErrorWrap(err, message, code, details)
 	customErr := GetCustomError(bad)
 	ue := &validationError{

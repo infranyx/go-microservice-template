@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewInternalServerError(message string, code int, details []ErrorDetail) error {
+func NewInternalServerError(message string, code int, details map[string]string) error {
 	ie := &internalServerError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewInternalServerError(message string, code int, details []ErrorDetail) err
 	return ie
 }
 
-func NewInternalServerErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewInternalServerErrorWrap(err error, message string, code int, details map[string]string) error {
 	ie := &internalServerError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

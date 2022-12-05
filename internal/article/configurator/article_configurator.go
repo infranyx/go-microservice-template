@@ -3,6 +3,7 @@ package articleConfigurator
 import (
 	"context"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
@@ -14,7 +15,7 @@ type articleConfigurator struct {
 	ic *infraContainer.IContainer
 }
 
-func NewArticleConfigurator(ic *infraContainer.IContainer) *articleConfigurator {
+func NewArticleConfigurator(ic *infraContainer.IContainer) articleDomain.ArticleConfigurator {
 	return &articleConfigurator{ic: ic}
 }
 

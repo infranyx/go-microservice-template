@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewNotFoundError(message string, code int, details []ErrorDetail) error {
+func NewNotFoundError(message string, code int, details map[string]string) error {
 	ne := &notFoundError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
@@ -13,7 +13,7 @@ func NewNotFoundError(message string, code int, details []ErrorDetail) error {
 	return stackErr
 }
 
-func NewNotFoundErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewNotFoundErrorWrap(err error, message string, code int, details map[string]string) error {
 	ne := &notFoundError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
