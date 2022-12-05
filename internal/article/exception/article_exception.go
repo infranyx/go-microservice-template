@@ -7,11 +7,8 @@ import (
 
 func CreateArticleValidationExc(err error) error {
 	ve, ie := errorUtils.ValidationErrHandler(err)
-
 	if ie != nil {
 		return ie
 	}
-
-	bad := customErrors.NewBadRequestError("validation failed", 2000, ve)
-	return bad
+	return customErrors.NewBadRequestError("validation failed", 2000, ve)
 }

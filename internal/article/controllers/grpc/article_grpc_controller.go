@@ -11,17 +11,17 @@ import (
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
-type ArticleGrpcController struct {
+type articleGrpcController struct {
 	articleUC articleDomain.ArticleUseCase
 }
 
-func New(uc articleDomain.ArticleUseCase) *ArticleGrpcController {
-	return &ArticleGrpcController{
+func NewArticleGrpcController(uc articleDomain.ArticleUseCase) articleDomain.ArticleGrpcController {
+	return &articleGrpcController{
 		articleUC: uc,
 	}
 }
 
-func (ac *ArticleGrpcController) CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error) {
+func (ac *articleGrpcController) CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error) {
 	aDto := &articleDto.CreateArticle{
 		Name:        req.Name,
 		Description: req.Desc,
@@ -41,6 +41,6 @@ func (ac *ArticleGrpcController) CreateArticle(ctx context.Context, req *article
 	}, nil
 }
 
-func (ac *ArticleGrpcController) GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error) {
+func (ac *articleGrpcController) GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }

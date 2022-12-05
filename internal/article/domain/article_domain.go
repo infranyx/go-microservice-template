@@ -22,7 +22,8 @@ type ArticleConfigurator interface {
 //}
 
 type ArticleGrpcController interface {
-	Create(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
+	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
+	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
 }
 
 type ArticleUseCase interface {

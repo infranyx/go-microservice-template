@@ -22,7 +22,7 @@ func NewArticleConfigurator(ic *infraContainer.IContainer) articleDomain.Article
 func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 	rp := articleRepo.NewArticleRepository(ac.ic.Pg)
 	uc := articleUseCase.NewArticleUseCase(rp)
-	gc := articleGrpc.New(uc)
+	gc := articleGrpc.NewArticleGrpcController(uc)
 	articleV1.RegisterArticleServiceServer(ac.ic.GrpcServer.GetCurrentGrpcServer(), gc)
 
 	return nil

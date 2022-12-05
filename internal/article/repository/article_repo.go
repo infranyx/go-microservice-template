@@ -10,7 +10,7 @@ import (
 )
 
 type articleRepository struct {
-	Conn *postgres.Postgres
+	conn *postgres.Postgres
 }
 
 func NewArticleRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
@@ -20,15 +20,14 @@ func NewArticleRepository(Conn *postgres.Postgres) articleDomain.ArticleReposito
 func (ar *articleRepository) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
-	var result articleDomain.Article
-	x, err := ar.Conn.SqlxDB.QueryContext(ctx, query, article.Name, article.Description)
-
+	res, err := ar.conn.SqlxDB.QueryContext(ctx, query, article.Name, article.Description)
 	if err != nil {
 		return &articleDomain.Article{}, fmt.Errorf("error inserting article record")
 	}
 
-	for x.Next() {
-		err = x.Scan(&result.ID, &result.Name, &result.Description)
+	var result articleDomain.Article
+	for res.Next() {
+		err = res.Scan(&result.ID, &result.Name, &result.Description)
 		if err != nil {
 			return nil, err
 		}
