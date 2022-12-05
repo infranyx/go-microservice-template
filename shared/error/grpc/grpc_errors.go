@@ -1,23 +1,22 @@
-package grpc_errors
+package grpcError
 
 import (
 	"encoding/json"
 	"time"
 
-	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	sharedBuf "github.com/infranyx/protobuf-template-go/shared/error"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type grpcErr struct {
-	Status     codes.Code                 `json:"status,omitempty"`
-	Code       int                        `json:"code,omitempty"`
-	Title      string                     `json:"title,omitempty"`
-	Msg        string                     `json:"msg,omitempty"`
-	Details    []customErrors.ErrorDetail `json:"errorDetail,omitempty"`
-	Timestamp  time.Time                  `json:"timestamp,omitempty"`
-	StackTrace string                     `json:"stackTrace,omitempty"`
+	Status     codes.Code        `json:"status,omitempty"`
+	Code       int               `json:"code,omitempty"`
+	Title      string            `json:"title,omitempty"`
+	Msg        string            `json:"msg,omitempty"`
+	Details    map[string]string `json:"errorDetail,omitempty"`
+	Timestamp  time.Time         `json:"timestamp,omitempty"`
+	StackTrace string            `json:"stackTrace,omitempty"`
 }
 
 type GrpcErr interface {
@@ -31,8 +30,8 @@ type GrpcErr interface {
 	SetStackTrace(stackTrace string) GrpcErr
 	GetMsg() string
 	SetMsg(msg string) GrpcErr
-	GetDetails() []customErrors.ErrorDetail
-	SetDetails(details []customErrors.ErrorDetail) GrpcErr
+	GetDetails() map[string]string
+	SetDetails(details map[string]string) GrpcErr
 	GetTimestamp() time.Time
 	SetTimestamp(time time.Time) GrpcErr
 	Error() string
@@ -41,7 +40,7 @@ type GrpcErr interface {
 	ToGrpcResponseErr() error
 }
 
-func NewGrpcError(status codes.Code, code int, title string, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewGrpcError(status codes.Code, code int, title string, message string, details map[string]string, stackTrace string) GrpcErr {
 	grpcErr := &grpcErr{
 		Status:     status,
 		Code:       code,
@@ -105,11 +104,11 @@ func (p *grpcErr) SetMsg(message string) GrpcErr {
 	return p
 }
 
-func (p *grpcErr) GetDetails() []customErrors.ErrorDetail {
+func (p *grpcErr) GetDetails() map[string]string {
 	return p.Details
 }
 
-func (p *grpcErr) SetDetails(detail []customErrors.ErrorDetail) GrpcErr {
+func (p *grpcErr) SetDetails(detail map[string]string) GrpcErr {
 	p.Details = detail
 
 	return p
@@ -137,11 +136,12 @@ func (p *grpcErr) SetStackTrace(stackTrace string) GrpcErr {
 
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
 func (p *grpcErr) ToGrpcResponseErr() error {
-	st := status.New(codes.Code(p.Code), p.Error())
+	st := status.New(codes.Code(p.Status), p.Error())
 	mappedErr := &sharedBuf.CustomError{
 		Title:      p.Title,
-		Code:       "1",
-		Detail:     p.Msg,
+		Code:       int64(p.Code),
+		Msg:        p.Msg,
+		Details:    p.Details,
 		Timestamp:  p.Timestamp.Format(time.RFC3339),
 		StackTrace: &p.StackTrace,
 	}
@@ -166,13 +166,13 @@ func ParseExternalGrpcErr(err error) GrpcErr {
 		case *sharedBuf.CustomError:
 			timestamp, _ := time.Parse(time.RFC3339, t.Timestamp)
 			return &grpcErr{
-				Status: st.Code(),
-				Code:   1,
-				Title:  t.Title,
-				// Msg:        message,
-				// Details:    details,
-				Timestamp: timestamp,
-				// StackTrace: stackTrace,
+				Status:     st.Code(),
+				Code:       int(t.Code),
+				Title:      t.Title,
+				Msg:        t.Msg,
+				Details:    t.Details,
+				Timestamp:  timestamp,
+				StackTrace: *t.StackTrace,
 			}
 		}
 	}

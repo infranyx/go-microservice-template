@@ -4,16 +4,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewInternalServerError(message string, code int, details []ErrorDetail) error {
+func NewInternalServerError(message string, code int, details map[string]string) error {
 	ie := &internalServerError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(br)
+	// stackErr := error.WithStack(br)
 
 	return ie
 }
 
-func NewInternalServerErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewInternalServerErrorWrap(err error, message string, code int, details map[string]string) error {
 	ie := &internalServerError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

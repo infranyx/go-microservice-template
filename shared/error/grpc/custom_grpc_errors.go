@@ -1,14 +1,13 @@
-package grpc_errors
+package grpcError
 
 import (
+	errorTitles "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	"time"
 
-	errorTitles "github.com/infranyx/go-grpc-template/constant/errors"
-	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	"google.golang.org/grpc/codes"
 )
 
-func NewValidationGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewValidationGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	validationError :=
 		&grpcErr{
 			Title:      errorTitles.ErrBadRequestTitle,
@@ -23,7 +22,7 @@ func NewValidationGrpcError(code int, message string, details []customErrors.Err
 	return validationError
 }
 
-func NewConflictGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewConflictGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrConflictTitle,
 		Code:       code,
@@ -35,7 +34,7 @@ func NewConflictGrpcError(code int, message string, details []customErrors.Error
 	}
 }
 
-func NewBadRequestGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewBadRequestGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrBadRequestTitle,
 		Code:       code,
@@ -47,7 +46,7 @@ func NewBadRequestGrpcError(code int, message string, details []customErrors.Err
 	}
 }
 
-func NewNotFoundErrorGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewNotFoundErrorGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrNotFoundTitle,
 		Code:       code,
@@ -59,7 +58,7 @@ func NewNotFoundErrorGrpcError(code int, message string, details []customErrors.
 	}
 }
 
-func NewUnAuthorizedErrorGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewUnAuthorizedErrorGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrUnauthorizedTitle,
 		Code:       code,
@@ -71,7 +70,7 @@ func NewUnAuthorizedErrorGrpcError(code int, message string, details []customErr
 	}
 }
 
-func NewForbiddenGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewForbiddenGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrForbiddenTitle,
 		Code:       code,
@@ -83,7 +82,7 @@ func NewForbiddenGrpcError(code int, message string, details []customErrors.Erro
 	}
 }
 
-func NewInternalServerGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewInternalServerGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrInternalServerErrorTitle,
 		Code:       code,
@@ -95,7 +94,7 @@ func NewInternalServerGrpcError(code int, message string, details []customErrors
 	}
 }
 
-func NewDomainGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewDomainGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrDomainTitle,
 		Code:       code,
@@ -107,7 +106,7 @@ func NewDomainGrpcError(code int, message string, details []customErrors.ErrorDe
 	}
 }
 
-func NewApplicationGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewApplicationGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrApplicationTitle,
 		Code:       code,
@@ -119,7 +118,7 @@ func NewApplicationGrpcError(code int, message string, details []customErrors.Er
 	}
 }
 
-func NewApiGrpcError(code int, message string, details []customErrors.ErrorDetail, stackTrace string) GrpcErr {
+func NewApiGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errorTitles.ErrApiTitle,
 		Code:       code,

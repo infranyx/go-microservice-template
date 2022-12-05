@@ -1,28 +1,29 @@
-package article_configurator
+package articleConfigurator
 
 import (
 	"context"
+	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
+	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
+	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
+	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 
-	article_grpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
-	article_repo "github.com/infranyx/go-grpc-template/internal/article/repository"
-	article_usecase "github.com/infranyx/go-grpc-template/internal/article/usecase"
-	infra "github.com/infranyx/go-grpc-template/shared/infra_container"
-	articlev1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
-type articleControllerConfigurator struct {
-	ic *infra.IContainer
+type articleConfigurator struct {
+	ic *infraContainer.IContainer
 }
 
-func NewArticleConfigurator(ic *infra.IContainer) *articleControllerConfigurator {
-	return &articleControllerConfigurator{ic: ic}
+func NewArticleConfigurator(ic *infraContainer.IContainer) articleDomain.ArticleConfigurator {
+	return &articleConfigurator{ic: ic}
 }
 
-func (c *articleControllerConfigurator) ConfigureArticle(ctx context.Context) error {
-	articleRepo := article_repo.NewArticleRepository(c.ic.Pg)
-	articleUC := article_usecase.NewArticleUseCase(articleRepo)
-	articleGrpcControllers := article_grpc.New(articleUC)
-	articlev1.RegisterArticleServiceServer(c.ic.GrpcServer.GetCurrentGrpcServer(), articleGrpcControllers)
+func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
+	rp := articleRepo.NewArticleRepository(ac.ic.Pg)
+	uc := articleUseCase.NewArticleUseCase(rp)
+	gc := articleGrpc.NewArticleGrpcController(uc)
+	articleV1.RegisterArticleServiceServer(ac.ic.GrpcServer.GetCurrentGrpcServer(), gc)
 
 	return nil
 }

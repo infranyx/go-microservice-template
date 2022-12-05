@@ -1,23 +1,23 @@
-package article_usecases
+package articleUseCase
 
 import (
 	"context"
 
-	article_domain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	article_dto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
+	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 )
 
 type articleUseCase struct {
-	articleRepo article_domain.ArticleRepository
+	articleRepo articleDomain.ArticleRepository
 }
 
-func NewArticleUseCase(articleRepo article_domain.ArticleRepository) article_domain.ArticleUseCase {
+func NewArticleUseCase(articleRepo articleDomain.ArticleRepository) articleDomain.ArticleUseCase {
 	return &articleUseCase{
 		articleRepo: articleRepo,
 	}
 }
 
-func (u *articleUseCase) Create(ctx context.Context, article *article_dto.CreateArticle) (*article_domain.Article, error) {
-	result, err := u.articleRepo.Create(ctx, article)
+func (au *articleUseCase) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
+	result, err := au.articleRepo.Create(ctx, article)
 	return result, err
 }

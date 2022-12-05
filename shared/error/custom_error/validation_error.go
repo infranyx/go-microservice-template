@@ -4,18 +4,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewValidationError(message string, code int, details []ErrorDetail) error {
+func NewValidationError(message string, code int, details map[string]string) error {
 	bad := NewBadRequestError(message, code, details)
 	customErr := GetCustomError(bad)
 	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
-	// stackErr := errors.WithStack(ue)
+	// stackErr := error.WithStack(ue)
 
 	return ve
 }
 
-func NewValidationErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
 	bad := NewBadRequestErrorWrap(err, message, code, details)
 	customErr := GetCustomError(bad)
 	ue := &validationError{

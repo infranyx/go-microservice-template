@@ -2,43 +2,40 @@ package app
 
 import (
 	"context"
+	"errors"
+	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
+	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 	"os"
 	"os/signal"
 	"syscall"
-
-	article_configurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
-	iContainer "github.com/infranyx/go-grpc-template/shared/infra_container"
 )
 
-type App struct {
-}
+type App struct{}
 
-// Server constructor
 func New() *App {
 	return &App{}
 }
 
 func (a *App) Run() error {
-	var serverError error
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	ic, infraCleanup, err := iContainer.NewIC(ctx)
+	ic, infraDown, err := iContainer.NewIC(ctx)
 	if err != nil {
 		return err
 	}
-	defer infraCleanup()
+	defer infraDown()
 
-	//
-	articleConfigurator := article_configurator.NewArticleConfigurator(ic)
-	articleConfigurator.ConfigureArticle(ctx)
+	me := configureModule(ctx, ic)
+	if me != nil {
+		return me
+	}
 
-	//
-
+	var grpcServerError error
 	go func() {
 		if err := ic.GrpcServer.RunGrpcServer(ctx, nil); err != nil {
 			ic.Logger.Sugar().Errorf("(s.RunGrpcServer) err: {%v}", err)
-			serverError = err
+			grpcServerError = err
 			cancel()
 		}
 	}()
@@ -54,5 +51,14 @@ func (a *App) Run() error {
 	}
 
 	ic.Logger.Sugar().Info("Server Exited Properly")
-	return serverError
+	return grpcServerError
+}
+
+func configureModule(ctx context.Context, ic *iContainer.IContainer) error {
+	e := articleConfigurator.NewArticleConfigurator(ic).ConfigureArticle(ctx)
+	if e != nil {
+		return e
+	}
+	return errors.New("fffffff")
+	//return nil
 }

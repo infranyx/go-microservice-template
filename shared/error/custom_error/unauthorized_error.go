@@ -4,16 +4,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnAuthorizedError(message string, code int, details []ErrorDetail) error {
+func NewUnAuthorizedError(message string, code int, details map[string]string) error {
 	ue := &unauthorizedError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ue)
+	// stackErr := error.WithStack(ue)
 
 	return ue
 }
 
-func NewUnAuthorizedErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewUnAuthorizedErrorWrap(err error, message string, code int, details map[string]string) error {
 	ue := &unauthorizedError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

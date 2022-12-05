@@ -4,16 +4,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewConflictError(message string, code int, details []ErrorDetail) error {
+func NewConflictError(message string, code int, details map[string]string) error {
 	ce := &conflictError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ce)
+	// stackErr := error.WithStack(ce)
 
 	return ce
 }
 
-func NewConflictErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewConflictErrorWrap(err error, message string, code int, details map[string]string) error {
 	ce := &conflictError{
 		CustomError: NewCustomError(err, code, message, details),
 	}

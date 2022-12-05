@@ -1,10 +1,9 @@
-package article_dto
+package articleDto
 
 import (
 	validator "github.com/go-ozzo/ozzo-validation"
 )
 
-// CreateArticleRequest is an representation request body to create a new Article
 type CreateArticle struct {
 	Name        string `json:"name"`
 	Description string `json:"desc"`

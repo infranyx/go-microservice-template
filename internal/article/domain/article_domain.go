@@ -1,31 +1,35 @@
-package article_domain
+package articleDomain
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/google/uuid"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
-// Item represents a Item for all sub domains
 type Article struct {
 	ID          uuid.UUID `db:"id"`
 	Name        string    `db:"name"`
 	Description string    `db:"description"`
 }
 
-// ArticleService is a contract of http adapter layer
-type ArticleController interface {
-	Create(response http.ResponseWriter, request *http.Request)
+type ArticleConfigurator interface {
+	ConfigureArticle(ctx context.Context) error
 }
 
-// ArticleUseCase is a contract of business rule layer
+//type ArticleHttpController interface {
+//	Create(response http.ResponseWriter, request *http.Request)
+//}
+
+type ArticleGrpcController interface {
+	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
+	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
+}
+
 type ArticleUseCase interface {
 	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }
 
-// ArticleRepository is a contract of database connection adapter layer
 type ArticleRepository interface {
 	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }

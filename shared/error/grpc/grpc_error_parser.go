@@ -1,13 +1,10 @@
-package grpc_errors
+package grpcError
 
 import (
+	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/utils/error_utils"
 	"google.golang.org/grpc/codes"
 )
-
-//https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md
-//https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
 
 func ParseError(err error) GrpcErr {
 	customErr := customErrors.GetCustomError(err)
@@ -49,7 +46,7 @@ func ParseError(err error) GrpcErr {
 
 		case customErrors.IsCustomError(err):
 			return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Message(), customErr.Details(), stackTrace)
-		// case errors.Is(err, context.DeadlineExceeded):
+		// case error.Is(err, context.DeadlineExceeded):
 		// 	return NewGrpcError(codes.DeadlineExceeded, customErr.Code(), errorTitles.ErrRequestTimeoutTitle, err.Error(), stackTrace)
 		default:
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)

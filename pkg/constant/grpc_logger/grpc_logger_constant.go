@@ -1,4 +1,4 @@
-package logger
+package grpcLoggerConst
 
 const (
 	GRPC        = "GRPC"

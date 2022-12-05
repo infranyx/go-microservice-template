@@ -4,16 +4,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewMarshalingError(message string, code int, details []ErrorDetail) error {
+func NewMarshalingError(message string, code int, details map[string]string) error {
 	me := &marshalingError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := errors.WithStack(ne)
+	// stackErr := error.WithStack(ne)
 
 	return me
 }
 
-func NewMarshalingErrorWrap(err error, message string, code int, details []ErrorDetail) error {
+func NewMarshalingErrorWrap(err error, message string, code int, details map[string]string) error {
 	me := &marshalingError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
