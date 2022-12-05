@@ -2,12 +2,11 @@ package app
 
 import (
 	"context"
+	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/infranyx/go-grpc-template/internal/article/configurator"
 )
 
 type App struct{}
@@ -26,9 +25,7 @@ func (a *App) Run() error {
 	}
 	defer infraDown()
 
-	//
-	articleConfigurator.NewArticleConfigurator(ic).ConfigureArticle(ctx)
-	//
+	configureModule(ctx, ic)
 
 	var grpcServerError error
 	go func() {
@@ -51,4 +48,8 @@ func (a *App) Run() error {
 
 	ic.Logger.Sugar().Info("Server Exited Properly")
 	return grpcServerError
+}
+
+func configureModule(ctx context.Context, ic *iContainer.IContainer) {
+	articleConfigurator.NewArticleConfigurator(ic).ConfigureArticle(ctx)
 }

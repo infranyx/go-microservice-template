@@ -6,8 +6,7 @@ import (
 )
 
 func main() {
-	application := app.New()
-	err := application.Run()
+	err := app.New().Run()
 	if err != nil {
 		logger.Zap.Sugar().Error(err)
 	}
