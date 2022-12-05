@@ -33,7 +33,7 @@ func newLogger() *zap.Logger {
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
-		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 600)
+		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()

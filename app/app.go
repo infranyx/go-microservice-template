@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 	"os"
@@ -25,7 +26,10 @@ func (a *App) Run() error {
 	}
 	defer infraDown()
 
-	configureModule(ctx, ic)
+	me := configureModule(ctx, ic)
+	if me != nil {
+		return me
+	}
 
 	var grpcServerError error
 	go func() {
@@ -50,6 +54,11 @@ func (a *App) Run() error {
 	return grpcServerError
 }
 
-func configureModule(ctx context.Context, ic *iContainer.IContainer) {
-	articleConfigurator.NewArticleConfigurator(ic).ConfigureArticle(ctx)
+func configureModule(ctx context.Context, ic *iContainer.IContainer) error {
+	e := articleConfigurator.NewArticleConfigurator(ic).ConfigureArticle(ctx)
+	if e != nil {
+		return e
+	}
+	return errors.New("fffffff")
+	//return nil
 }

@@ -8,6 +8,6 @@ import (
 func main() {
 	err := app.New().Run()
 	if err != nil {
-		logger.Zap.Sugar().Error(err)
+		logger.Zap.Sugar().Fatal(err)
 	}
 }
