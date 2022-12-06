@@ -2,10 +2,10 @@ package errorInterceptors
 
 import (
 	"context"
-	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
 
+	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
+	grpcErrors "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

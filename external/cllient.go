@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	grpcErrors "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
-	grpcErrors "github.com/infranyx/go-grpc-template/shared/error/grpc"
-	articlev1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 func main() {
@@ -14,8 +14,8 @@ func main() {
 	ctx := context.Background()
 	c, _ := grpc.NewGrpcClient(&grpc.GrpcConfig{Port: 3000, Host: "0.0.0.0"})
 
-	articleGrpcClient := articlev1.NewArticleServiceClient(c.GetGrpcConnection())
-	res, err := articleGrpcClient.CreateArticle(ctx, &articlev1.CreateArticleRequest{
+	articleGrpcClient := articleV1.NewArticleServiceClient(c.GetGrpcConnection())
+	res, err := articleGrpcClient.CreateArticle(ctx, &articleV1.CreateArticleRequest{
 		Name: "te",
 		Desc: "re",
 	})

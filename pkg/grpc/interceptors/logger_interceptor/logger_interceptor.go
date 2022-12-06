@@ -2,9 +2,9 @@ package loggerInterceptors
 
 import (
 	"context"
-	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
 	"time"
 
+	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"

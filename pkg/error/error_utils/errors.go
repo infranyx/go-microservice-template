@@ -2,11 +2,12 @@ package errorUtils
 
 import (
 	"fmt"
-	validator "github.com/go-ozzo/ozzo-validation"
-	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
+	"github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"strings"
 
-	"github.com/infranyx/go-grpc-template/shared/error/contracts"
+	validator "github.com/go-ozzo/ozzo-validation"
+	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
+
 	"github.com/pkg/errors"
 )
 
@@ -20,37 +21,13 @@ func CheckErrMessages(err error, messages ...string) bool {
 	return false
 }
 
-// ErrorsWithStack returns a string contains grpc_errors messages in the stack with its stack trace levels for given error
-func ErrorsWithStack(err error) string {
-	res := fmt.Sprintf("%+v\n", err)
-	return res
-}
-
-// ErrorsWithoutStack just returns error messages without its callstack
-func ErrorsWithoutStack(err error, format bool) string {
-	res := fmt.Sprintf("%v\n", err)
-
-	if format {
-		var errStr string
-		items := strings.Split(res, ":")
-		for _, item := range items {
-			errStr += fmt.Sprintf("%s\n", strings.TrimSpace(item))
-		}
-		return errStr
-	}
-
-	return res
-}
-
 // RootStackTrace returns root stack trace with a string contains just stack trace levels for the given error
 func RootStackTrace(err error) string {
-	var stackTrace contracts.StackTracer
-	stackStr := ""
+	var stackStr string
 	for {
-		s, ok := err.(contracts.StackTracer)
-		stackTrace = s
+		st, ok := err.(errorContract.StackTracer)
 		if ok {
-			stackStr = fmt.Sprintf("%+v\n", stackTrace.StackTrace())
+			stackStr = fmt.Sprintf("%+v\n", st.StackTrace())
 
 			if !ok {
 				break
@@ -75,5 +52,5 @@ func ValidationErrHandler(err error) (map[string]string, error) {
 		return details, nil
 	}
 	// TODO : get internal error from constant.
-	return nil, customErrors.NewInternalServerErrorWrap(err, "internal error", 8585, nil)
+	return nil, customError.NewInternalServerErrorWrap(err, "internal error", 8585, nil)
 }

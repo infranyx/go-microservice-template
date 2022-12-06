@@ -1,4 +1,4 @@
-package contracts
+package errorContract
 
 import (
 	"github.com/pkg/errors"

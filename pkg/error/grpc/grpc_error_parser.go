@@ -1,50 +1,50 @@
 package grpcError
 
 import (
+	"github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
-	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 	"google.golang.org/grpc/codes"
 )
 
 func ParseError(err error) GrpcErr {
-	customErr := customErrors.GetCustomError(err)
+	customErr := customError.GetCustomError(err)
 	stackTrace := errorUtils.RootStackTrace(err)
 
 	if customErr == nil {
-		err = customErrors.NewApiErrorWrap(err, "Unkown Error", 0, nil)
-		customErr = customErrors.GetCustomError(err)
+		err = customError.NewApiErrorWrap(err, "Unkown Error", 0, nil)
+		customErr = customError.GetCustomError(err)
 		stackTrace = errorUtils.RootStackTrace(err)
 		return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Error(), customErr.Details(), stackTrace)
 	}
 
 	if err != nil {
 		switch {
-		case customErrors.IsDomainError(err):
+		case customError.IsDomainError(err):
 			return NewDomainGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsApplicationError(err):
+		case customError.IsApplicationError(err):
 			return NewApplicationGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsApiError(err):
+		case customError.IsApiError(err):
 			return NewApiGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsBadRequestError(err):
+		case customError.IsBadRequestError(err):
 			return NewBadRequestGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsNotFoundError(err):
+		case customError.IsNotFoundError(err):
 			return NewNotFoundErrorGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsValidationError(err):
+		case customError.IsValidationError(err):
 			return NewValidationGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsUnAuthorizedError(err):
+		case customError.IsUnAuthorizedError(err):
 			return NewUnAuthorizedErrorGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsForbiddenError(err):
+		case customError.IsForbiddenError(err):
 			return NewForbiddenGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsConflictError(err):
+		case customError.IsConflictError(err):
 			return NewConflictGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsInternalServerError(err):
+		case customError.IsInternalServerError(err):
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsUnMarshalingError(err):
+		case customError.IsUnMarshalingError(err):
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
-		case customErrors.IsMarshalingError(err):
+		case customError.IsMarshalingError(err):
 			return NewInternalServerGrpcError(customErr.Code(), customErr.Message(), customErr.Details(), stackTrace)
 
-		case customErrors.IsCustomError(err):
+		case customError.IsCustomError(err):
 			return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Message(), customErr.Details(), stackTrace)
 		// case error.Is(err, context.DeadlineExceeded):
 		// 	return NewGrpcError(codes.DeadlineExceeded, customErr.Code(), errorTitles.ErrRequestTimeoutTitle, err.Error(), stackTrace)

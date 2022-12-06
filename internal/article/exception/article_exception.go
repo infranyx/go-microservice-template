@@ -1,8 +1,8 @@
 package articleException
 
 import (
+	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
-	customErrors "github.com/infranyx/go-grpc-template/shared/error/custom_error"
 )
 
 func CreateArticleValidationExc(err error) error {
