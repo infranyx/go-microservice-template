@@ -9,6 +9,27 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type GrpcErr interface {
+	GetStatus() codes.Code
+	SetStatus(status codes.Code) GrpcErr
+	GetCode() int
+	SetCode(code int) GrpcErr
+	GetTitle() string
+	SetTitle(title string) GrpcErr
+	GetMsg() string
+	SetMsg(msg string) GrpcErr
+	GetDetails() map[string]string
+	SetDetails(details map[string]string) GrpcErr
+	GetTimestamp() time.Time
+	SetTimestamp(time time.Time) GrpcErr
+	GetStackTrace() string
+	SetStackTrace(stackTrace string) GrpcErr
+	Error() string
+	ErrBody() error
+	ToJson() string
+	ToGrpcResponseErr() error
+}
+
 type grpcErr struct {
 	Status     codes.Code        `json:"status,omitempty"`
 	Code       int               `json:"code,omitempty"`
@@ -17,27 +38,6 @@ type grpcErr struct {
 	Details    map[string]string `json:"errorDetail,omitempty"`
 	Timestamp  time.Time         `json:"timestamp,omitempty"`
 	StackTrace string            `json:"stackTrace,omitempty"`
-}
-
-type GrpcErr interface {
-	GetStatus() codes.Code
-	SetStatus(status codes.Code) GrpcErr
-	GetCode() int
-	SetCode(code int) GrpcErr
-	GetTitle() string
-	SetTitle(title string) GrpcErr
-	GetStackTrace() string
-	SetStackTrace(stackTrace string) GrpcErr
-	GetMsg() string
-	SetMsg(msg string) GrpcErr
-	GetDetails() map[string]string
-	SetDetails(details map[string]string) GrpcErr
-	GetTimestamp() time.Time
-	SetTimestamp(time time.Time) GrpcErr
-	Error() string
-	ErrBody() error
-	ToJson() string
-	ToGrpcResponseErr() error
 }
 
 func NewGrpcError(status codes.Code, code int, title string, message string, details map[string]string, stackTrace string) GrpcErr {
@@ -54,109 +54,107 @@ func NewGrpcError(status codes.Code, code int, title string, message string, det
 	return grpcErr
 }
 
-// ErrBody Error body
-func (p *grpcErr) ErrBody() error {
-	return p
+func (ge *grpcErr) ErrBody() error {
+	return ge
 }
 
-// Error  Error() interface method
-func (p *grpcErr) Error() string {
-	return p.Msg
+func (ge *grpcErr) Error() string {
+	return ge.Msg
 }
 
-func (p *grpcErr) GetStatus() codes.Code {
-	return p.Status
+func (ge *grpcErr) GetStatus() codes.Code {
+	return ge.Status
 }
 
-func (p *grpcErr) SetStatus(status codes.Code) GrpcErr {
-	p.Status = status
+func (ge *grpcErr) SetStatus(status codes.Code) GrpcErr {
+	ge.Status = status
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetCode() int {
-	return p.Code
+func (ge *grpcErr) GetCode() int {
+	return ge.Code
 }
 
-func (p *grpcErr) SetCode(code int) GrpcErr {
-	p.Code = code
+func (ge *grpcErr) SetCode(code int) GrpcErr {
+	ge.Code = code
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetTitle() string {
-	return p.Title
+func (ge *grpcErr) GetTitle() string {
+	return ge.Title
 }
 
-func (p *grpcErr) SetTitle(title string) GrpcErr {
-	p.Title = title
+func (ge *grpcErr) SetTitle(title string) GrpcErr {
+	ge.Title = title
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetMsg() string {
-	return p.Msg
+func (ge *grpcErr) GetMsg() string {
+	return ge.Msg
 }
 
-func (p *grpcErr) SetMsg(message string) GrpcErr {
-	p.Msg = message
+func (ge *grpcErr) SetMsg(message string) GrpcErr {
+	ge.Msg = message
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetDetails() map[string]string {
-	return p.Details
+func (ge *grpcErr) GetDetails() map[string]string {
+	return ge.Details
 }
 
-func (p *grpcErr) SetDetails(detail map[string]string) GrpcErr {
-	p.Details = detail
+func (ge *grpcErr) SetDetails(detail map[string]string) GrpcErr {
+	ge.Details = detail
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetTimestamp() time.Time {
-	return p.Timestamp
+func (ge *grpcErr) GetTimestamp() time.Time {
+	return ge.Timestamp
 }
 
-func (p *grpcErr) SetTimestamp(time time.Time) GrpcErr {
-	p.Timestamp = time
+func (ge *grpcErr) SetTimestamp(time time.Time) GrpcErr {
+	ge.Timestamp = time
 
-	return p
+	return ge
 }
 
-func (p *grpcErr) GetStackTrace() string {
-	return p.StackTrace
+func (ge *grpcErr) GetStackTrace() string {
+	return ge.StackTrace
 }
 
-func (p *grpcErr) SetStackTrace(stackTrace string) GrpcErr {
-	p.StackTrace = stackTrace
+func (ge *grpcErr) SetStackTrace(stackTrace string) GrpcErr {
+	ge.StackTrace = stackTrace
 
-	return p
+	return ge
+}
+
+func (ge *grpcErr) ToJson() string {
+	return string(ge.json())
+}
+
+func (ge *grpcErr) json() []byte {
+	b, _ := json.Marshal(&ge)
+	return b
 }
 
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
-func (p *grpcErr) ToGrpcResponseErr() error {
-	st := status.New(codes.Code(p.Status), p.Error())
+func (ge *grpcErr) ToGrpcResponseErr() error {
+	st := status.New(codes.Code(ge.Status), ge.Error())
 	mappedErr := &sharedBuf.CustomError{
-		Title:      p.Title,
-		Code:       int64(p.Code),
-		Msg:        p.Msg,
-		Details:    p.Details,
-		Timestamp:  p.Timestamp.Format(time.RFC3339),
-		StackTrace: &p.StackTrace,
+		Title:      ge.Title,
+		Code:       int64(ge.Code),
+		Msg:        ge.Msg,
+		Details:    ge.Details,
+		Timestamp:  ge.Timestamp.Format(time.RFC3339),
+		StackTrace: &ge.StackTrace,
 	}
 	// byts, _ := proto.Marshal(mappedErr)
 	stWithDetails, _ := st.WithDetails(mappedErr)
 	return stWithDetails.Err()
-}
-
-func (p *grpcErr) ToJson() string {
-	return string(p.json())
-}
-
-func (p *grpcErr) json() []byte {
-	b, _ := json.Marshal(&p)
-	return b
 }
 
 func ParseExternalGrpcErr(err error) GrpcErr {
