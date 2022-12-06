@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 	"os"
@@ -59,6 +58,5 @@ func configureModule(ctx context.Context, ic *iContainer.IContainer) error {
 	if e != nil {
 		return e
 	}
-	return errors.New("fffffff")
-	//return nil
+	return nil
 }
