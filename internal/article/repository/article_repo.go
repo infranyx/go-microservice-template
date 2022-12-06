@@ -25,13 +25,13 @@ func (ar *articleRepository) Create(ctx context.Context, article *articleDto.Cre
 		return &articleDomain.Article{}, fmt.Errorf("error inserting article record")
 	}
 
-	var result articleDomain.Article
+	var result *articleDomain.Article
 	for res.Next() {
-		err = res.Scan(&result.ID, &result.Name, &result.Description)
+		err = res.Scan(result.ID, result.Name, result.Description)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return &result, nil
+	return result, nil
 }

@@ -17,10 +17,6 @@ type ArticleConfigurator interface {
 	ConfigureArticle(ctx context.Context) error
 }
 
-//type ArticleHttpController interface {
-//	Create(response http.ResponseWriter, request *http.Request)
-//}
-
 type ArticleGrpcController interface {
 	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
 	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
@@ -33,3 +29,7 @@ type ArticleUseCase interface {
 type ArticleRepository interface {
 	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }
+
+//type ArticleHttpController interface {
+//	Create(response http.ResponseWriter, request *http.Request)
+//}
