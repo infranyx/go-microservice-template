@@ -2,12 +2,12 @@ package articleGrpc
 
 import (
 	"context"
-	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
@@ -30,10 +30,12 @@ func (ac *articleGrpcController) CreateArticle(ctx context.Context, req *article
 	if err != nil {
 		return nil, articleException.CreateArticleValidationExc(err)
 	}
+
 	article, err := ac.articleUC.Create(ctx, aDto)
 	if err != nil {
 		return nil, err
 	}
+
 	return &articleV1.CreateArticleResponse{
 		Id:   article.ID.String(),
 		Name: article.Name,
