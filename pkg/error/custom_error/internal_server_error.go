@@ -4,11 +4,33 @@ import (
 	"github.com/pkg/errors"
 )
 
+type internalServerError struct {
+	CustomError
+}
+
+func (ie *internalServerError) IsInternalServerError() bool {
+	return true
+}
+
+type InternalServerError interface {
+	CustomError
+	IsInternalServerError() bool
+}
+
+func IsInternalServerError(err error) bool {
+	var internalErr InternalServerError
+
+	if errors.As(err, &internalErr) {
+		return internalErr.IsInternalServerError()
+	}
+
+	return false
+}
+
 func NewInternalServerError(message string, code int, details map[string]string) error {
 	ie := &internalServerError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := error.WithStack(br)
 
 	return ie
 }
@@ -20,27 +42,4 @@ func NewInternalServerErrorWrap(err error, message string, code int, details map
 	stackErr := errors.WithStack(ie)
 
 	return stackErr
-}
-
-type internalServerError struct {
-	CustomError
-}
-
-type InternalServerError interface {
-	CustomError
-	IsInternalServerError() bool
-}
-
-func (i *internalServerError) IsInternalServerError() bool {
-	return true
-}
-
-func IsInternalServerError(err error) bool {
-	var internalErr InternalServerError
-
-	if errors.As(err, &internalErr) {
-		return internalErr.IsInternalServerError()
-	}
-
-	return false
 }

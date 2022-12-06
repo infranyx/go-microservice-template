@@ -7,7 +7,6 @@ import (
 
 	validator "github.com/go-ozzo/ozzo-validation"
 	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
-
 	"github.com/pkg/errors"
 )
 

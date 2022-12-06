@@ -4,6 +4,29 @@ import (
 	"github.com/pkg/errors"
 )
 
+type notFoundError struct {
+	CustomError
+}
+
+func (ne *notFoundError) IsNotFoundError() bool {
+	return true
+}
+
+type NotFoundError interface {
+	CustomError
+	IsNotFoundError() bool
+}
+
+func IsNotFoundError(err error) bool {
+	var notFoundError NotFoundError
+
+	if errors.As(err, &notFoundError) {
+		return notFoundError.IsNotFoundError()
+	}
+
+	return false
+}
+
 func NewNotFoundError(message string, code int, details map[string]string) error {
 	ne := &notFoundError{
 		CustomError: NewCustomError(nil, code, message, details),
@@ -20,27 +43,4 @@ func NewNotFoundErrorWrap(err error, message string, code int, details map[strin
 	stackErr := errors.WithStack(ne)
 
 	return stackErr
-}
-
-type notFoundError struct {
-	CustomError
-}
-
-type NotFoundError interface {
-	CustomError
-	IsNotFoundError() bool
-}
-
-func (n *notFoundError) IsNotFoundError() bool {
-	return true
-}
-
-func IsNotFoundError(err error) bool {
-	var notFoundError NotFoundError
-
-	if errors.As(err, &notFoundError) {
-		return notFoundError.IsNotFoundError()
-	}
-
-	return false
 }

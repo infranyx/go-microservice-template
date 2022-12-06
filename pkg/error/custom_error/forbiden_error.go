@@ -4,11 +4,33 @@ import (
 	"github.com/pkg/errors"
 )
 
+type forbiddenError struct {
+	CustomError
+}
+
+func (fe *forbiddenError) IsForbiddenError() bool {
+	return true
+}
+
+type ForbiddenError interface {
+	CustomError
+	IsForbiddenError() bool
+}
+
+func IsForbiddenError(err error) bool {
+	var forbiddenError ForbiddenError
+
+	if errors.As(err, &forbiddenError) {
+		return forbiddenError.IsForbiddenError()
+	}
+
+	return false
+}
+
 func NewForbiddenError(message string, code int, details map[string]string) error {
 	ne := &forbiddenError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := error.WithStack(ne)
 
 	return ne
 }
@@ -20,27 +42,4 @@ func NewForbiddenErrorWrap(err error, message string, code int, details map[stri
 	stackErr := errors.WithStack(ne)
 
 	return stackErr
-}
-
-type forbiddenError struct {
-	CustomError
-}
-
-type ForbiddenError interface {
-	CustomError
-	IsForbiddenError() bool
-}
-
-func (f *forbiddenError) IsForbiddenError() bool {
-	return true
-}
-
-func IsForbiddenError(err error) bool {
-	var forbiddenError ForbiddenError
-
-	if errors.As(err, &forbiddenError) {
-		return forbiddenError.IsForbiddenError()
-	}
-
-	return false
 }

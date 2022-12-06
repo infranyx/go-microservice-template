@@ -4,39 +4,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewValidationError(message string, code int, details map[string]string) error {
-	bad := NewBadRequestError(message, code, details)
-	customErr := GetCustomError(bad)
-	ve := &validationError{
-		BadRequestError: customErr.(BadRequestError),
-	}
-	// stackErr := error.WithStack(ue)
-
-	return ve
-}
-
-func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
-	bad := NewBadRequestErrorWrap(err, message, code, details)
-	customErr := GetCustomError(bad)
-	ue := &validationError{
-		BadRequestError: customErr.(BadRequestError),
-	}
-	stackErr := errors.WithStack(ue)
-
-	return stackErr
-}
-
 type validationError struct {
 	BadRequestError
+}
+
+func (ve *validationError) IsValidationError() bool {
+	return true
 }
 
 type ValidationError interface {
 	BadRequestError
 	IsValidationError() bool
-}
-
-func (v *validationError) IsValidationError() bool {
-	return true
 }
 
 func IsValidationError(err error) bool {
@@ -47,4 +25,25 @@ func IsValidationError(err error) bool {
 	}
 
 	return false
+}
+
+func NewValidationError(message string, code int, details map[string]string) error {
+	be := NewBadRequestError(message, code, details)
+	customErr := GetCustomError(be)
+	ve := &validationError{
+		BadRequestError: customErr.(BadRequestError),
+	}
+
+	return ve
+}
+
+func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
+	be := NewBadRequestErrorWrap(err, message, code, details)
+	customErr := GetCustomError(be)
+	ve := &validationError{
+		BadRequestError: customErr.(BadRequestError),
+	}
+	stackErr := errors.WithStack(ve)
+
+	return stackErr
 }

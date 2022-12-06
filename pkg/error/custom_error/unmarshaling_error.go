@@ -4,35 +4,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewUnMarshalingError(message string, code int, details map[string]string) error {
-	ume := &unMarshalingError{
-		CustomError: NewCustomError(nil, code, message, details),
-	}
-	// stackErr := error.WithStack(ne)
-
-	return ume
-}
-
-func NewUnMarshalingErrorWrap(err error, message string, code int, details map[string]string) error {
-	ume := &unMarshalingError{
-		CustomError: NewCustomError(err, code, message, details),
-	}
-	stackErr := errors.WithStack(ume)
-
-	return stackErr
-}
-
 type unMarshalingError struct {
 	CustomError
+}
+
+func (ue *unMarshalingError) IsUnMarshalingError() bool {
+	return true
 }
 
 type UnMarshalingError interface {
 	CustomError
 	IsUnMarshalingError() bool
-}
-
-func (u *unMarshalingError) IsUnMarshalingError() bool {
-	return true
 }
 
 func IsUnMarshalingError(err error) bool {
@@ -43,4 +25,21 @@ func IsUnMarshalingError(err error) bool {
 	}
 
 	return false
+}
+
+func NewUnMarshalingError(message string, code int, details map[string]string) error {
+	ue := &unMarshalingError{
+		CustomError: NewCustomError(nil, code, message, details),
+	}
+
+	return ue
+}
+
+func NewUnMarshalingErrorWrap(err error, message string, code int, details map[string]string) error {
+	ue := &unMarshalingError{
+		CustomError: NewCustomError(err, code, message, details),
+	}
+	stackErr := errors.WithStack(ue)
+
+	return stackErr
 }

@@ -4,11 +4,33 @@ import (
 	"github.com/pkg/errors"
 )
 
+type conflictError struct {
+	CustomError
+}
+
+func (ce *conflictError) IsConflictError() bool {
+	return true
+}
+
+type ConflictError interface {
+	CustomError
+	IsConflictError() bool
+}
+
+func IsConflictError(err error) bool {
+	var conflictError ConflictError
+
+	if errors.As(err, &conflictError) {
+		return conflictError.IsConflictError()
+	}
+
+	return false
+}
+
 func NewConflictError(message string, code int, details map[string]string) error {
 	ce := &conflictError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := error.WithStack(ce)
 
 	return ce
 }
@@ -20,27 +42,4 @@ func NewConflictErrorWrap(err error, message string, code int, details map[strin
 	stackErr := errors.WithStack(ce)
 
 	return stackErr
-}
-
-type conflictError struct {
-	CustomError
-}
-
-type ConflictError interface {
-	CustomError
-	IsConflictError() bool
-}
-
-func (c *conflictError) IsConflictError() bool {
-	return true
-}
-
-func IsConflictError(err error) bool {
-	var conflictError ConflictError
-
-	if errors.As(err, &conflictError) {
-		return conflictError.IsConflictError()
-	}
-
-	return false
 }

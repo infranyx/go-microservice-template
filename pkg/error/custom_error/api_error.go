@@ -4,11 +4,33 @@ import (
 	"github.com/pkg/errors"
 )
 
+type apiError struct {
+	CustomError
+}
+
+func (ae *apiError) IsApiError() bool {
+	return true
+}
+
+type ApiError interface {
+	CustomError
+	IsApiError() bool
+}
+
+func IsApiError(err error) bool {
+	var apiError ApiError
+
+	if errors.As(err, &apiError) {
+		return apiError.IsApiError()
+	}
+
+	return false
+}
+
 func NewApiError(message string, code int, details map[string]string) error {
 	ae := &apiError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	// stackErr := error.WithStack(ae)
 
 	return ae
 }
@@ -20,27 +42,4 @@ func NewApiErrorWrap(err error, message string, code int, details map[string]str
 	stackErr := errors.WithStack(ae)
 
 	return stackErr
-}
-
-type apiError struct {
-	CustomError
-}
-
-type ApiError interface {
-	CustomError
-	IsApiError() bool
-}
-
-func (a *apiError) IsApiError() bool {
-	return true
-}
-
-func IsApiError(err error) bool {
-	var apiError ApiError
-
-	if errors.As(err, &apiError) {
-		return apiError.IsApiError()
-	}
-
-	return false
 }
