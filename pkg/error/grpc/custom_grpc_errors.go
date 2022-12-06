@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-func NewValidationGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcValidationError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	validationError :=
 		&grpcErr{
 			Title:      errConst.ErrBadRequestTitle,
@@ -22,7 +22,7 @@ func NewValidationGrpcError(code int, message string, details map[string]string,
 	return validationError
 }
 
-func NewConflictGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcConflictError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrConflictTitle,
 		Code:       code,
@@ -34,7 +34,7 @@ func NewConflictGrpcError(code int, message string, details map[string]string, s
 	}
 }
 
-func NewBadRequestGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcBadRequestError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrBadRequestTitle,
 		Code:       code,
@@ -46,7 +46,7 @@ func NewBadRequestGrpcError(code int, message string, details map[string]string,
 	}
 }
 
-func NewNotFoundErrorGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcNotFoundError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrNotFoundTitle,
 		Code:       code,
@@ -58,7 +58,7 @@ func NewNotFoundErrorGrpcError(code int, message string, details map[string]stri
 	}
 }
 
-func NewUnAuthorizedErrorGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcUnAuthorizedError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrUnauthorizedTitle,
 		Code:       code,
@@ -70,7 +70,7 @@ func NewUnAuthorizedErrorGrpcError(code int, message string, details map[string]
 	}
 }
 
-func NewForbiddenGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcForbiddenError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrForbiddenTitle,
 		Code:       code,
@@ -82,7 +82,7 @@ func NewForbiddenGrpcError(code int, message string, details map[string]string, 
 	}
 }
 
-func NewInternalServerGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcInternalServerError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrInternalServerErrorTitle,
 		Code:       code,
@@ -94,7 +94,7 @@ func NewInternalServerGrpcError(code int, message string, details map[string]str
 	}
 }
 
-func NewDomainGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcDomainError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrDomainTitle,
 		Code:       code,
@@ -106,7 +106,7 @@ func NewDomainGrpcError(code int, message string, details map[string]string, sta
 	}
 }
 
-func NewApplicationGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcApplicationError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrApplicationTitle,
 		Code:       code,
@@ -118,7 +118,7 @@ func NewApplicationGrpcError(code int, message string, details map[string]string
 	}
 }
 
-func NewApiGrpcError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
+func NewGrpcApiError(code int, message string, details map[string]string, stackTrace string) GrpcErr {
 	return &grpcErr{
 		Title:      errConst.ErrApiTitle,
 		Code:       code,
