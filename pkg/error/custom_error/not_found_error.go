@@ -31,9 +31,8 @@ func NewNotFoundError(message string, code int, details map[string]string) error
 	ne := &notFoundError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
-	stackErr := errors.WithStack(ne)
 
-	return stackErr
+	return ne
 }
 
 func NewNotFoundErrorWrap(err error, message string, code int, details map[string]string) error {

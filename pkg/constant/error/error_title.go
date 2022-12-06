@@ -11,4 +11,5 @@ const (
 	ErrDomainTitle              = "Domain Model Error"
 	ErrApplicationTitle         = "Application Service Error"
 	ErrApiTitle                 = "Api Error"
+	ErrValidationFailedTitle    = "Validation Failed"
 )

@@ -60,7 +60,7 @@ func NewCustomError(err error, internalCode int, message string, details map[str
 	return ce
 }
 
-func GetCustomError(err error) CustomError {
+func AsCustomError(err error) CustomError {
 	var customErr CustomError
 	if errors.As(err, &customErr) {
 		return customErr
