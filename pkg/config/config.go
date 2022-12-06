@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	App      AppConfig
-	Grpc     GrpcConfig
-	Postgres PostgresConfig
+	App                  AppConfig
+	Grpc                 GrpcConfig
+	Postgres             PostgresConfig
+	GoTemplateGrpcClient GrpcConfig
 }
 
 var Conf *Config
@@ -56,6 +57,10 @@ func newConfig() *Config {
 			MaxIdleConn:     env.New("PG_MAX_IDLE_CONNECTIONS", constant.PgMaxIdleConn).AsInt(),
 			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
 			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
+		},
+		GoTemplateGrpcClient: GrpcConfig{
+			Port: env.New("GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
+			Host: env.New("GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 	}
 }
