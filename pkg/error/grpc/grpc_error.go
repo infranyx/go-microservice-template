@@ -1,13 +1,22 @@
 package grpcError
 
 import (
-	"encoding/json"
 	"time"
 
 	sharedBuf "github.com/infranyx/protobuf-template-go/shared/error"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+type grpcErr struct {
+	Status    codes.Code        `json:"status,omitempty"`
+	Code      int               `json:"code,omitempty"`
+	Title     string            `json:"title,omitempty"`
+	Msg       string            `json:"msg,omitempty"`
+	Details   map[string]string `json:"errorDetail,omitempty"`
+	Timestamp time.Time         `json:"timestamp,omitempty"`
+}
 
 type GrpcErr interface {
 	GetStatus() codes.Code
@@ -24,17 +33,7 @@ type GrpcErr interface {
 	SetTimestamp(time time.Time) GrpcErr
 	Error() string
 	ErrBody() error
-	ToJson() string
 	ToGrpcResponseErr() error
-}
-
-type grpcErr struct {
-	Status    codes.Code        `json:"status,omitempty"`
-	Code      int               `json:"code,omitempty"`
-	Title     string            `json:"title,omitempty"`
-	Msg       string            `json:"msg,omitempty"`
-	Details   map[string]string `json:"errorDetail,omitempty"`
-	Timestamp time.Time         `json:"timestamp,omitempty"`
 }
 
 func NewGrpcError(status codes.Code, code int, title string, message string, details map[string]string) GrpcErr {
@@ -118,13 +117,17 @@ func (ge *grpcErr) SetTimestamp(time time.Time) GrpcErr {
 	return ge
 }
 
-func (ge *grpcErr) ToJson() string {
-	return string(ge.json())
+func IsGrpcError(err error) bool {
+	var grpcErr GrpcErr
+	return errors.As(err, &grpcErr)
 }
 
-func (ge *grpcErr) json() []byte {
-	b, _ := json.Marshal(&ge)
-	return b
+func AsGrpcError(err error) GrpcErr {
+	var grpcErr GrpcErr
+	if errors.As(err, &grpcErr) {
+		return grpcErr
+	}
+	return nil
 }
 
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
@@ -137,7 +140,6 @@ func (ge *grpcErr) ToGrpcResponseErr() error {
 		Details:   ge.Details,
 		Timestamp: ge.Timestamp.Format(time.RFC3339),
 	}
-
 	stWithDetails, _ := st.WithDetails(mappedErr)
 	return stWithDetails.Err()
 }

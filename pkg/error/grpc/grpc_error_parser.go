@@ -2,15 +2,19 @@ package grpcError
 
 import (
 	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	"github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"google.golang.org/grpc/codes"
 )
 
 func ParseError(err error) GrpcErr {
+	// check if it is grpc error (if it came from an external grpc client)
+	grpcErr := AsGrpcError(err)
+	if grpcErr != nil {
+		return grpcErr
+	}
+
 	customErr := customError.AsCustomError(err)
-
 	if customErr == nil {
-
 		err =
 			customError.NewInternalServerErrorWrap(err, errConst.ErrInfo.InternalServerErr.Msg, errConst.ErrInfo.InternalServerErr.Code, nil)
 		customErr = customError.AsCustomError(err)
@@ -19,7 +23,6 @@ func ParseError(err error) GrpcErr {
 
 	if err != nil {
 		switch {
-
 		case customError.IsDomainError(err):
 			return NewGrpcDomainError(customErr.Code(), customErr.Message(), customErr.Details())
 
