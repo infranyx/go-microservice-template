@@ -1,7 +1,8 @@
-package customEcho
+package httpEcho
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/infranyx/go-grpc-template/pkg/constant"
@@ -18,7 +19,6 @@ type echoHttpServer struct {
 type EchoHttpServer interface {
 	RunHttpServer(ctx context.Context, configEcho func(echoServer *echo.Echo)) error
 	GracefulShutdown(ctx context.Context) error
-	ApplyVersioningFromHeader()
 	GetEchoInstance() *echo.Echo
 	SetupDefaultMiddlewares()
 	AddMiddlewares(middlewares ...echo.MiddlewareFunc)
@@ -26,14 +26,14 @@ type EchoHttpServer interface {
 }
 
 type EchoHttpConfig struct {
-	Port        string
+	Port        int
 	Development bool
-	Timeout     int
-	Host        string
+	// Timeout     int
+	// Host        string
 }
 
 func NewEchoHttpServer(config *EchoHttpConfig) *echoHttpServer {
-	return &echoHttpServer{echo: echo.New()}
+	return &echoHttpServer{echo: echo.New(), config: config}
 }
 
 func (s *echoHttpServer) RunHttpServer(ctx context.Context, configEcho func(echo *echo.Echo)) error {
@@ -48,13 +48,14 @@ func (s *echoHttpServer) RunHttpServer(ctx context.Context, configEcho func(echo
 	go func() {
 		for {
 			<-ctx.Done()
-			logger.Zap.Sugar().Infof("Http server is shutting down PORT: {%s}", s.config.Port)
+			logger.Zap.Sugar().Infof("Http server is shutting down PORT: {%d}", s.config.Port)
 			if err := s.GracefulShutdown(ctx); err != nil {
 				logger.Zap.Sugar().Warnf("(Shutdown) err: {%v}", err)
 			}
+			return
 		}
 	}()
-	return s.echo.Start(s.config.Port)
+	return s.echo.Start(fmt.Sprintf(":%d", s.config.Port))
 }
 
 func (s *echoHttpServer) AddMiddlewares(middlewares ...echo.MiddlewareFunc) {

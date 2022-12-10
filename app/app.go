@@ -38,11 +38,19 @@ func (a *App) Run() error {
 		return me
 	}
 
-	var grpcServerError error
+	var serverError error
 	go func() {
 		if err := ic.GrpcServer.RunGrpcServer(ctx, nil); err != nil {
 			ic.Logger.Sugar().Errorf("(s.RunGrpcServer) err: {%v}", err)
-			grpcServerError = err
+			serverError = err
+			cancel()
+		}
+	}()
+
+	go func() {
+		if err := ic.EchoServer.RunHttpServer(ctx, nil); err != nil {
+			ic.Logger.Sugar().Errorf("(s.RunEchoServer) err: {%v}", err)
+			serverError = err
 			cancel()
 		}
 	}()
@@ -58,7 +66,7 @@ func (a *App) Run() error {
 	}
 
 	ic.Logger.Sugar().Info("Server Exited Properly")
-	return grpcServerError
+	return serverError
 }
 
 func configureModule(ctx context.Context, ic *iContainer.IContainer, cc *cContainer.CContainer) error {

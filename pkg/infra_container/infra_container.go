@@ -3,8 +3,10 @@ package infraContainer
 import (
 	"context"
 	"fmt"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
+	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
 	"github.com/infranyx/go-grpc-template/pkg/kafka"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
@@ -13,6 +15,7 @@ import (
 
 type IContainer struct {
 	GrpcServer grpc.GrpcServer // grpc.GrpcServer : Interface
+	EchoServer httpEcho.EchoHttpServer
 	Logger     *zap.Logger
 	Cfg        *config.Config
 	Pg         *postgres.Postgres
@@ -37,6 +40,15 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		grpcServer.GracefulShutdown()
 	})
 
+	echoServerConfig := &httpEcho.EchoHttpConfig{
+		Port:        4000,
+		Development: config.IsDevEnv(),
+	}
+	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
+	downFns = append(downFns, func() {
+		echoServer.GracefulShutdown(ctx)
+	})
+
 	pg, err := postgres.NewPgConn(ctx, &postgres.PgConf{
 		Host:    config.Conf.Postgres.Host,
 		Port:    config.Conf.Postgres.Port,
@@ -52,7 +64,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		pg.Close()
 	})
 
-	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, Pg: pg}
+	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg}
 
 	return ic, down, nil
 }
