@@ -24,13 +24,13 @@ type EchoHttpServer interface {
 	GetEchoInstance() *echo.Echo
 	SetupDefaultMiddlewares()
 	AddMiddlewares(middlewares ...echo.MiddlewareFunc)
-	// ConfigGroup(groupName string, groupFunc func(group *echo.Group))
+	GetBasePath() string
 }
 
 type EchoHttpConfig struct {
 	Port        int
 	Development bool
-	// Timeout     int
+	BasePath    string
 	// Host        string
 }
 
@@ -79,6 +79,7 @@ func (s *echoHttpServer) GracefulShutdown(ctx context.Context) error {
 func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	// handling internal echo middlewares logs with our log provider
 	s.echo.HideBanner = false
+	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
 	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
@@ -91,7 +92,7 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 		LogResponseSize:  true,
 		LogURIPath:       true,
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
-			// logger.Zap.Sugar().Infow(fmt.Sprintf("[Request Middleware] REQUEST: uri: %v, status: %v\n", v.URI, v.Status), logger.Fields{"URI": v.URI, "Status": v.Status})
+			logger.Zap.Sugar().Infow(fmt.Sprintf("[Request Middleware] REQUEST: uri: %v, status: %v\n", v.URI, v.Status))
 			return nil
 		},
 	}))
@@ -107,4 +108,8 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 
 func (s *echoHttpServer) GetEchoInstance() *echo.Echo {
 	return s.echo
+}
+
+func (s *echoHttpServer) GetBasePath() string {
+	return s.config.BasePath
 }

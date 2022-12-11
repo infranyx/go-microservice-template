@@ -130,12 +130,17 @@ func AsHttpError(err error) HttpErr {
 	return nil
 }
 
+const (
+	ContentTypeJSON = "application/problem+json"
+)
+
 // WriteTo writes the JSON Problem to an HTTP Response Writer
 func (he *httpErr) WriteTo(w http.ResponseWriter) (int, error) {
 	status := he.GetStatus()
 	if status == 0 {
 		status = http.StatusInternalServerError
 	}
+	w.Header().Set("Content-Type", ContentTypeJSON)
 	w.WriteHeader(status)
 	return w.Write(he.json())
 }

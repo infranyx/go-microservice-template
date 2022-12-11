@@ -10,5 +10,9 @@ func CreateArticleValidationExc(err error) error {
 	if ie != nil {
 		return ie
 	}
-	return customErrors.NewBadRequestError("validation failed", 2000, ve)
+	return customErrors.NewValidationError("validation failed", 2000, ve)
+}
+
+func ArticleBindingExc() error {
+	return customErrors.NewBadRequestError("binding failed", 3000, nil)
 }

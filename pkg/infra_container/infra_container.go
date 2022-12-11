@@ -43,8 +43,10 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	echoServerConfig := &httpEcho.EchoHttpConfig{
 		Port:        config.Conf.Http.Port,
 		Development: config.IsDevEnv(),
+		BasePath:    "/api/v1",
 	}
 	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
+	echoServer.SetupDefaultMiddlewares()
 	downFns = append(downFns, func() {
 		echoServer.GracefulShutdown(ctx)
 	})

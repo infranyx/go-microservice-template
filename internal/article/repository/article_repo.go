@@ -22,12 +22,12 @@ func (ar *articleRepository) Create(ctx context.Context, article *articleDto.Cre
 
 	res, err := ar.conn.SqlxDB.QueryContext(ctx, query, article.Name, article.Description)
 	if err != nil {
-		return &articleDomain.Article{}, fmt.Errorf("error inserting article record")
+		return nil, fmt.Errorf("error inserting article record")
 	}
 
-	var result *articleDomain.Article
+	result := new(articleDomain.Article)
 	for res.Next() {
-		err = res.Scan(result.ID, result.Name, result.Description)
+		err = res.Scan(&result.ID, &result.Name, &result.Description)
 		if err != nil {
 			return nil, err
 		}

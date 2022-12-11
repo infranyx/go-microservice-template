@@ -1,11 +1,12 @@
 package articleHttp
 
 import (
-	"encoding/json"
 	"net/http"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
+	"github.com/labstack/echo/v4"
 )
 
 type articleHttpController struct {
@@ -18,18 +19,20 @@ func NewArticleHttpController(uc articleDomain.ArticleUseCase) articleDomain.Art
 	}
 }
 
-func (ac articleHttpController) Create(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var aDto articleDto.CreateArticle
-	err := decoder.Decode(&aDto)
-	if err != nil {
-		// respondError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	defer r.Body.Close()
-	if err = aDto.ValidateCreateArticleDto(); err != nil {
-		//
-		return
+func (ac articleHttpController) Create(c echo.Context) error {
+	aDto := new(articleDto.CreateArticle)
+	if err := c.Bind(aDto); err != nil {
+		return articleException.ArticleBindingExc()
 	}
 
+	if err := aDto.ValidateCreateArticleDto(); err != nil {
+		return articleException.CreateArticleValidationExc(err)
+	}
+
+	article, err := ac.articleUC.Create(c.Request().Context(), aDto)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, article)
 }

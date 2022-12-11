@@ -5,6 +5,7 @@ import (
 
 	goTemplateUseCase "github.com/infranyx/go-grpc-template/external/go_template/usecase"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
+	articleHttp "github.com/infranyx/go-grpc-template/internal/article/controllers/http"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
@@ -33,7 +34,9 @@ func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 	articleV1.RegisterArticleServiceServer(ac.ic.GrpcServer.GetCurrentGrpcServer(), gc)
 
 	// http
-	// hc := articleHttp.NewArticleGrpcController(uc)
+	g := ac.ic.EchoServer.GetEchoInstance().Group(ac.ic.EchoServer.GetBasePath())
+	hc := articleHttp.NewArticleHttpController(uc)
+	articleHttp.NewArticleAPI(hc).Register(g)
 
 	return nil
 }
