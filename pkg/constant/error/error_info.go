@@ -5,6 +5,7 @@ var ErrInfo *errInfo
 type errInfo struct {
 	ValidationErr     eInfo
 	InternalServerErr eInfo
+	NotFoundErr       eInfo
 }
 
 type eInfo struct {
@@ -30,6 +31,11 @@ func init() {
 		InternalServerErr: eInfo{
 			Msg:  "internal server error",
 			Code: 1001,
+		},
+
+		NotFoundErr: eInfo{
+			Msg:  "not found",
+			Code: 1002,
 		},
 	}
 }

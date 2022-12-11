@@ -9,12 +9,6 @@ import (
 )
 
 func ParseError(err error) HttpErr {
-	// check if it is http error (if it came from an external http client)
-	httpErr := AsHttpError(err)
-	if httpErr != nil {
-		return httpErr
-	}
-
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
 		err =

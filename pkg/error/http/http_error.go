@@ -122,14 +122,6 @@ func IsHttpError(err error) bool {
 	return errors.As(err, &httpErr)
 }
 
-func AsHttpError(err error) HttpErr {
-	var httpErr HttpErr
-	if errors.As(err, &httpErr) {
-		return httpErr
-	}
-	return nil
-}
-
 const (
 	ContentTypeJSON = "application/problem+json"
 )

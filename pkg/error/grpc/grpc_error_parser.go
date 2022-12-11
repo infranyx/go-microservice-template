@@ -7,12 +7,6 @@ import (
 )
 
 func ParseError(err error) GrpcErr {
-	// check if it is grpc error (if it came from an external grpc client)
-	grpcErr := AsGrpcError(err)
-	if grpcErr != nil {
-		return grpcErr
-	}
-
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
 		err =

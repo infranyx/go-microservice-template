@@ -31,7 +31,6 @@ type EchoHttpConfig struct {
 	Port        int
 	Development bool
 	BasePath    string
-	// Host        string
 }
 
 func NewEchoHttpServer(config *EchoHttpConfig) *echoHttpServer {

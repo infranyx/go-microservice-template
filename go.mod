@@ -8,13 +8,13 @@ require (
 	github.com/infranyx/protobuf-template-go v0.0.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
+	github.com/labstack/echo/v4 v4.9.1
 	github.com/lib/pq v1.10.7
 )
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/labstack/echo/v4 v4.9.1 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
