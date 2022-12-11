@@ -9,6 +9,7 @@ const (
 )
 
 const (
+	HttpPort = 4000
 	GrpcPort = 3000
 	GrpcHost = "localhost"
 )

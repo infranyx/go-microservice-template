@@ -41,7 +41,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	echoServerConfig := &httpEcho.EchoHttpConfig{
-		Port:        4000,
+		Port:        config.Conf.Http.Port,
 		Development: config.IsDevEnv(),
 	}
 	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
