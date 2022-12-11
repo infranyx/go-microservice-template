@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
+	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -16,9 +16,9 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		startTime := time.Now()
 
 		logger.Zap.Sugar().Info(
-			zap.String(grpcLoggerConst.TYPE, grpcLoggerConst.GRPC),
-			zap.Any(grpcLoggerConst.REQUEST, req),
-			zap.Time(grpcLoggerConst.TIME, startTime),
+			zap.String(loggerConst.TYPE, loggerConst.GRPC),
+			zap.Any(loggerConst.REQUEST, req),
+			zap.Time(loggerConst.TIME, startTime),
 		)
 
 		resp, err := handler(ctx, req)

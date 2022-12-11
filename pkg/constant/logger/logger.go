@@ -1,7 +1,8 @@
-package grpcLoggerConst
+package loggerConst
 
 const (
 	GRPC        = "GRPC"
+	HTTP        = "HTTP"
 	METHOD      = "METHOD"
 	NAME        = "NAME"
 	METADATA    = "METADATA"

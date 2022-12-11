@@ -4,7 +4,7 @@ import (
 	"context"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 
-	grpcLoggerConst "github.com/infranyx/go-grpc-template/pkg/constant/grpc_logger"
+	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	grpcErrors "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
@@ -25,13 +25,13 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			grpcErr := grpcErrors.ParseError(err)
 			logger.Zap.Error(
 				err.Error(),
-				zap.String(grpcLoggerConst.TYPE, grpcLoggerConst.GRPC),
-				zap.String(grpcLoggerConst.TITILE, grpcErr.GetTitle()),
-				zap.Int(grpcLoggerConst.CODE, grpcErr.GetCode()),
-				zap.String(grpcLoggerConst.STATUS, grpcErr.GetStatus().String()),
-				zap.Time(grpcLoggerConst.TIME, grpcErr.GetTimestamp()),
-				zap.Any(grpcLoggerConst.DETAILS, grpcErr.GetDetails()),
-				zap.String(grpcLoggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
+				zap.String(loggerConst.TYPE, loggerConst.GRPC),
+				zap.String(loggerConst.TITILE, grpcErr.GetTitle()),
+				zap.Int(loggerConst.CODE, grpcErr.GetCode()),
+				zap.String(loggerConst.STATUS, grpcErr.GetStatus().String()),
+				zap.Time(loggerConst.TIME, grpcErr.GetTimestamp()),
+				zap.Any(loggerConst.DETAILS, grpcErr.GetDetails()),
+				zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
 			)
 			return nil, grpcErr.ToGrpcResponseErr()
 		}

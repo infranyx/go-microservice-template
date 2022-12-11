@@ -1,6 +1,8 @@
 package httpError
 
 import (
+	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/pkg/errors"
@@ -30,6 +32,7 @@ type HttpErr interface {
 	SetTimestamp(time time.Time) HttpErr
 	Error() string
 	ErrBody() error
+	WriteTo(w http.ResponseWriter) (int, error)
 	// ToGrpcResponseErr() error
 }
 
@@ -125,6 +128,21 @@ func AsHttpError(err error) HttpErr {
 		return httpErr
 	}
 	return nil
+}
+
+// WriteTo writes the JSON Problem to an HTTP Response Writer
+func (he *httpErr) WriteTo(w http.ResponseWriter) (int, error) {
+	status := he.GetStatus()
+	if status == 0 {
+		status = http.StatusInternalServerError
+	}
+	w.WriteHeader(status)
+	return w.Write(he.json())
+}
+
+func (he *httpErr) json() []byte {
+	b, _ := json.Marshal(&he)
+	return b
 }
 
 // // ToGrpcResponseErr creates a gRPC error response to send grpc engine

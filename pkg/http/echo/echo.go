@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/infranyx/go-grpc-template/pkg/constant"
+	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
+
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -76,11 +78,9 @@ func (s *echoHttpServer) GracefulShutdown(ctx context.Context) error {
 
 func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	// handling internal echo middlewares logs with our log provider
-	// s.echo.Use(echozap.ZapLogger(logger.Zap))
 	s.echo.HideBanner = false
-	// s.echo.HTTPErrorHandler = customHadnlers.ProblemHandler
+	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
-	// s.echo.Use(otelTracer.Middleware(s.config.Name))
 	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogContentLength: true,
 		LogLatency:       true,
