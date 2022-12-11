@@ -3,10 +3,14 @@ package httpEcho
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/infranyx/go-grpc-template/pkg/constant"
+	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
+	"go.uber.org/zap"
 
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/labstack/echo/v4"
@@ -82,16 +86,24 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
 	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogContentLength: true,
-		LogLatency:       true,
-		LogError:         false,
-		LogMethod:        true,
-		LogRequestID:     true,
-		LogURI:           true,
-		LogResponseSize:  true,
-		LogURIPath:       true,
+		LogError:     false,
+		LogMethod:    true,
+		LogRequestID: true,
+		LogURI:       true,
+		LogStatus:    true,
+		LogLatency:   true,
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
-			logger.Zap.Sugar().Infow(fmt.Sprintf("[Request Middleware] REQUEST: uri: %v, status: %v\n", v.URI, v.Status))
+			t := time.Now()
+			logger.Zap.Info(
+				"Incoming Request",
+				zap.String(loggerConst.TYPE, loggerConst.HTTP),
+				zap.String(loggerConst.METHOD, v.Method),
+				zap.String(loggerConst.REQUEST_ID, v.RequestID),
+				zap.String(loggerConst.URI, v.URI),
+				zap.String(loggerConst.STATUS, http.StatusText(v.Status)),
+				zap.Duration(loggerConst.LATENCY, v.Latency),
+				zap.Time(loggerConst.TIME, t),
+			)
 			return nil
 		},
 	}))

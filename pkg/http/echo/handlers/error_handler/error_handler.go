@@ -29,16 +29,17 @@ func ErrorHandler(err error, c echo.Context) {
 	he := httpError.ParseError(err)
 	if !c.Response().Committed {
 		if _, err := he.WriteTo(c.Response()); err != nil {
-			logger.Zap.Error(
-				err.Error(),
-				zap.String(loggerConst.TYPE, loggerConst.GRPC),
-				zap.String(loggerConst.TITILE, he.GetTitle()),
-				zap.Int(loggerConst.CODE, he.GetCode()),
-				zap.String(loggerConst.STATUS, http.StatusText(he.GetStatus())),
-				zap.Time(loggerConst.TIME, he.GetTimestamp()),
-				zap.Any(loggerConst.DETAILS, he.GetDetails()),
-				zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
-			)
+			logger.Zap.Sugar().Error(`error while writing http error response: %v`, err)
 		}
+		logger.Zap.Error(
+			err.Error(),
+			zap.String(loggerConst.TYPE, loggerConst.HTTP),
+			zap.String(loggerConst.TITILE, he.GetTitle()),
+			zap.Int(loggerConst.CODE, he.GetCode()),
+			zap.String(loggerConst.STATUS, http.StatusText(he.GetStatus())),
+			zap.Time(loggerConst.TIME, he.GetTimestamp()),
+			zap.Any(loggerConst.DETAILS, he.GetDetails()),
+			zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
+		)
 	}
 }

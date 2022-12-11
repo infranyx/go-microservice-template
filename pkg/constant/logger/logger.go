@@ -17,4 +17,7 @@ const (
 	DETAILS     = "DETAILS"
 	ERR         = "ERR"
 	TYPE        = "TYPE"
+	REQUEST_ID  = "REQUEST_ID"
+	URI         = "URI"
+	LATENCY     = "LATENCY"
 )
