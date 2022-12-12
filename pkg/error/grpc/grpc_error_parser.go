@@ -41,9 +41,6 @@ func ParseError(err error) GrpcErr {
 		case customError.IsApplicationError(err):
 			return NewGrpcApplicationError(customErr.Code(), customErr.Message(), customErr.Details())
 
-		case customError.IsApiError(err):
-			return NewGrpcApiError(customErr.Code(), customErr.Message(), customErr.Details())
-
 		case customError.IsConflictError(err):
 			return NewGrpcConflictError(customErr.Code(), customErr.Message(), customErr.Details())
 

@@ -43,9 +43,6 @@ func ParseError(err error) HttpErr {
 		case customError.IsApplicationError(err):
 			return NewHttpApplicationError(customErr.Code(), customErr.Message(), customErr.Details())
 
-		case customError.IsApiError(err):
-			return NewHttpApiError(customErr.Code(), customErr.Message(), customErr.Details())
-
 		case customError.IsConflictError(err):
 			return NewHttpConflictError(customErr.Code(), customErr.Message(), customErr.Details())
 
