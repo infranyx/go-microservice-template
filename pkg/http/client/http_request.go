@@ -128,6 +128,9 @@ func (hr *HttpRequest) SetQueryParams(params map[string]string) *HttpRequest {
 
 func (hr *HttpRequest) SetBody(body interface{}) (*HttpRequest, error) {
 	mbody, err := json.Marshal(body)
+	if err != nil {
+		return hr, err
+	}
 
 	reader := bytes.NewReader(mbody)
 	rc := io.NopCloser(reader)
