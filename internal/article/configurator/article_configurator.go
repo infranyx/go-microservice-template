@@ -4,8 +4,8 @@ import (
 	"context"
 
 	goTemplateUseCase "github.com/infranyx/go-grpc-template/external/go_template/usecase"
-	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/controllers/grpc"
-	articleHttp "github.com/infranyx/go-grpc-template/internal/article/controllers/http"
+	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
+	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"

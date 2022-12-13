@@ -25,11 +25,3 @@ func NewKafkaConn(ctx context.Context, conf *Config) (*Kafka, error) {
 		Conn: conn,
 	}, nil
 }
-
-func (kc *Kafka) CreateTopic(topicConfigs []kafka.TopicConfig) error {
-	err := kc.Conn.CreateTopics(topicConfigs...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
