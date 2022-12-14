@@ -11,6 +11,7 @@ type Config struct {
 	Http                 HttpConfig
 	Postgres             PostgresConfig
 	GoTemplateGrpcClient GrpcConfig
+	Kafka                KafkaConfig
 }
 
 var Conf *Config
@@ -39,6 +40,15 @@ type HttpConfig struct {
 	Port int
 }
 
+type KafkaConfig struct {
+	kafkaEnabled       bool
+	kafkaLogEvents     bool
+	KafkaClientId      string
+	KafkaClientGroupId string
+	KafkaClientBrokers string
+	KafkaNameSpace     string
+}
+
 func init() {
 	Conf = newConfig()
 }
@@ -53,14 +63,14 @@ func newConfig() *Config {
 			Host: env.New("GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Http: HttpConfig{
-			Port:  env.New("HTTP_PORT", constant.HttpPort).AsInt(),
+			Port: env.New("HTTP_PORT", constant.HttpPort).AsInt(),
 		},
 		Postgres: PostgresConfig{
-			Host:            env.New("PG_HOST", constant.PgHost).AsString(),
-			Port:            env.New("PG_PORT", constant.PgPort).AsString(),
-			User:            env.New("PG_USER", constant.PgUser).AsString(),
-			Pass:            env.New("PG_PASS", constant.PgPass).AsString(),
-			DBName:          env.New("PG_DB", constant.PgDb).AsString(),
+			Host:            env.New("PG_HOST", nil).AsString(),
+			Port:            env.New("PG_PORT", nil).AsString(),
+			User:            env.New("PG_USER", nil).AsString(),
+			Pass:            env.New("PG_PASS", nil).AsString(),
+			DBName:          env.New("PG_DB", nil).AsString(),
 			MaxConn:         env.New("PG_MAX_CONNECTIONS", constant.PgMaxConn).AsInt(),
 			MaxIdleConn:     env.New("PG_MAX_IDLE_CONNECTIONS", constant.PgMaxIdleConn).AsInt(),
 			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
@@ -69,6 +79,14 @@ func newConfig() *Config {
 		GoTemplateGrpcClient: GrpcConfig{
 			Port: env.New("GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
 			Host: env.New("GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+		},
+		Kafka: KafkaConfig{
+			kafkaEnabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
+			kafkaLogEvents:     env.New("KAFKA_LOG_EVENTS", nil).AsBool(),
+			KafkaClientId:      env.New("KAFKA_CLIENT_ID", nil).AsString(),
+			KafkaClientGroupId: env.New("KAFKA_CLIENT_GROUP_ID", nil).AsString(),
+			KafkaClientBrokers: env.New("KAFKA_CLIENT_BROKERS", nil).AsString(),
+			KafkaNameSpace:     env.New("KAFKA_NAMESPACE", nil).AsString(),
 		},
 	}
 }
