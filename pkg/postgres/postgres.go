@@ -3,10 +3,11 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"time"
 )
 
 type PgConf struct {
@@ -36,8 +37,6 @@ func NewPgConn(ctx context.Context, conf *PgConf) (*Postgres, error) {
 		conf.DBName,
 		conf.SslMode,
 	)
-
-	fmt.Println(connString)
 
 	db, err := sqlx.ConnectContext(ctx, "postgres", connString)
 	if err != nil {

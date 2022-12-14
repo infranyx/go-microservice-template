@@ -8,6 +8,7 @@ import (
 type Config struct {
 	App                  AppConfig
 	Grpc                 GrpcConfig
+	Http                 HttpConfig
 	Postgres             PostgresConfig
 	GoTemplateGrpcClient GrpcConfig
 }
@@ -34,6 +35,10 @@ type GrpcConfig struct {
 	Host string
 }
 
+type HttpConfig struct {
+	Port int
+}
+
 func init() {
 	Conf = newConfig()
 }
@@ -47,6 +52,9 @@ func newConfig() *Config {
 			Port: env.New("GRPC_PORT", constant.GrpcPort).AsInt(),
 			Host: env.New("GRPC_HOST", constant.GrpcHost).AsString(),
 		},
+		Http: HttpConfig{
+			Port:  env.New("HTTP_PORT", constant.HttpPort).AsInt(),
+		},
 		Postgres: PostgresConfig{
 			Host:            env.New("PG_HOST", constant.PgHost).AsString(),
 			Port:            env.New("PG_PORT", constant.PgPort).AsString(),
@@ -59,8 +67,8 @@ func newConfig() *Config {
 			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
 		},
 		GoTemplateGrpcClient: GrpcConfig{
-			Port: env.New("GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
-			Host: env.New("GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
+			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 	}
 }

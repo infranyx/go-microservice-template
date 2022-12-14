@@ -122,14 +122,6 @@ func IsGrpcError(err error) bool {
 	return errors.As(err, &grpcErr)
 }
 
-func AsGrpcError(err error) GrpcErr {
-	var grpcErr GrpcErr
-	if errors.As(err, &grpcErr) {
-		return grpcErr
-	}
-	return nil
-}
-
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
 func (ge *grpcErr) ToGrpcResponseErr() error {
 	st := status.New(ge.Status, ge.Error())
