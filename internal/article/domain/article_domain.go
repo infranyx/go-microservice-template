@@ -32,10 +32,6 @@ type ArticleHttpController interface {
 // ProductsProducer interface
 type ArticleProducer interface {
 	PublishCreate(ctx context.Context, msgs ...kafka.Message) error
-	PublishUpdate(ctx context.Context, msgs ...kafka.Message) error
-	Close()
-	Run()
-	GetNewKafkaWriter(topic string) *kafka.Writer
 }
 
 type ArticleUseCase interface {
