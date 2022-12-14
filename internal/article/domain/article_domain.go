@@ -29,9 +29,12 @@ type ArticleHttpController interface {
 	Create(c echo.Context) error
 }
 
-// ProductsProducer interface
 type ArticleProducer interface {
 	PublishCreate(ctx context.Context, msgs ...kafka.Message) error
+}
+
+type ArticleConsumer interface {
+	RunConsumers(ctx context.Context)
 }
 
 type ArticleUseCase interface {

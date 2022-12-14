@@ -1,8 +1,9 @@
-package articleKafka
+package articleKafkaProducer
 
 import (
 	"context"
 
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	"github.com/infranyx/go-grpc-template/pkg/kafka"
 	kafkaGo "github.com/segmentio/kafka-go"
 )
@@ -11,7 +12,7 @@ type articleProducer struct {
 	createWriter *kafka.KafkaWriter
 }
 
-func NewArticleProducer(w *kafka.KafkaWriter) *articleProducer {
+func NewArticleProducer(w *kafka.KafkaWriter) articleDomain.ArticleProducer {
 	return &articleProducer{createWriter: w}
 }
 
