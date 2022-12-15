@@ -79,12 +79,9 @@ func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServ
 	}
 
 	go func() {
-		for {
-			<-ctx.Done()
-			log.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
-			s.GracefulShutdown()
-			return
-		}
+		<-ctx.Done()
+		log.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
+		s.GracefulShutdown()
 	}()
 
 	log.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)

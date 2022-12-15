@@ -51,13 +51,10 @@ func (s *echoHttpServer) RunHttpServer(ctx context.Context, configEcho func(echo
 	}
 
 	go func() {
-		for {
-			<-ctx.Done()
-			logger.Zap.Sugar().Infof("Http server is shutting down PORT: %d", s.config.Port)
-			if err := s.GracefulShutdown(ctx); err != nil {
-				logger.Zap.Sugar().Warnf("(Shutdown) err: {%v}", err)
-			}
-			return
+		<-ctx.Done()
+		logger.Zap.Sugar().Infof("Http server is shutting down PORT: %d", s.config.Port)
+		if err := s.GracefulShutdown(ctx); err != nil {
+			logger.Zap.Sugar().Warnf("(Shutdown) err: {%v}", err)
 		}
 	}()
 

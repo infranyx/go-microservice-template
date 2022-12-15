@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 volumes:
   pg_data:
@@ -12,7 +12,7 @@ services:
     container_name: pg_container
     image: postgres:11.16-alpine
     volumes:
-      - 'pg_data:/var/lib/postgresql/data'
+      - "pg_data:/var/lib/postgresql/data"
     restart: always
     ports:
       - 5432:5432
@@ -27,7 +27,7 @@ services:
       - 2181:2181
     hostname: zookeeper
     environment:
-      ALLOW_ANONYMOUS_LOGIN: 'true'
+      ALLOW_ANONYMOUS_LOGIN: "true"
 
   kafka:
     image: bitnami/kafka
@@ -36,17 +36,16 @@ services:
     hostname: kafka
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_CFG_LISTENERS: 'PLAINTEXT://:9092'
-      KAFKA_CFG_ADVERTISED_LISTENERS: 'PLAINTEXT://127.0.0.1:9092'
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://127.0.0.1:9092"
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      ALLOW_PLAINTEXT_LISTENER: 'yes'
-      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      # KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - zookeeper
-
 #  kafdrop:
 #    container_name: kafdrop
 #    restart: always
