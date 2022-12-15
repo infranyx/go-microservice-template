@@ -20,8 +20,8 @@ type IContainer struct {
 	Logger      *zap.Logger
 	Cfg         *config.Config
 	Pg          *postgres.Postgres
-	KafkaWriter *kafka.KafkaWriter
-	KafkaReader *kafka.KafkaReader
+	KafkaWriter *kafka.Writer
+	KafkaReader *kafka.Reader
 }
 
 func NewIC(ctx context.Context) (*IContainer, func(), error) {
@@ -68,18 +68,20 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		pg.Close()
 	})
 
-	kwc := kafka.NewKafkaWriterConfig()
-	kwc.Brokers = []string{"localhost:9092", "localhost:9093", "localhost:9094"}
-	kwc.Topic = "test-topic"
+	kwc := &kafka.WriterConf{
+		Brokers: []string{"localhost:9092"},
+		Topic:   "test-topic",
+	}
 	kw := kafka.NewKafkaWriter(kwc)
 	downFns = append(downFns, func() {
 		kw.Client.Close()
 	})
 
-	krc := kafka.NewKafkaReaderConfig()
-	krc.Brokers = []string{"localhost:9092", "localhost:9093", "localhost:9094"}
-	krc.Topic = "test-topic"
-	krc.GroupID = "test-groupId"
+	krc := &kafka.ReaderConf{
+		Brokers: []string{"localhost:9092"},
+		Topic:   "test-topic",
+		GroupID: "test-id",
+	}
 	kr := kafka.NewKafkaReader(krc)
 	downFns = append(downFns, func() {
 		kr.Client.Close()

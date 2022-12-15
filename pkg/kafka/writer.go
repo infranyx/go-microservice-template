@@ -1,9 +1,10 @@
 package kafka
 
 import (
+	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/segmentio/kafka-go/compress"
 	"time"
 
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -23,27 +24,57 @@ const (
 	writerMaxAttempts  = 3
 )
 
-type KafkaWriter struct {
+type Writer struct {
 	Client *kafka.Writer
 }
 
-func NewKafkaWriter(wc kafka.WriterConfig) *KafkaWriter {
-	return &KafkaWriter{
-		Client: kafka.NewWriter(wc),
+type WriterConf struct {
+	Brokers []string
+	Topic   string
+}
+
+func NewKafkaWriter(cfg *WriterConf) *Writer {
+	w := &kafka.Writer{
+		Addr:         kafka.TCP(cfg.Brokers...),
+		Topic:        cfg.Topic,
+		Balancer:     &kafka.LeastBytes{},
+		RequiredAcks: writerRequiredAcks,
+		MaxAttempts:  writerMaxAttempts,
+		Logger:       kafka.LoggerFunc(logger.Zap.Sugar().Debugf),
+		ErrorLogger:  kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
+		Compression:  compress.Snappy,
+		ReadTimeout:  writerReadTimeout,
+		WriteTimeout: writerWriteTimeout,
+	}
+	return &Writer{
+		Client: w,
 	}
 }
 
-func NewKafkaWriterConfig() kafka.WriterConfig {
-	return kafka.WriterConfig{
-		// Brokers:      []string{"localhost:9092", "localhost:9093", "localhost:9094"},
-		// Topic:        "topic-A",
-		QueueCapacity: queueCapacity,
-		Balancer:      &kafka.LeastBytes{},
-		RequiredAcks:  writerRequiredAcks,
-		MaxAttempts:   writerMaxAttempts,
-		Logger:        kafka.LoggerFunc(logger.Zap.Sugar().Debugf),
-		ErrorLogger:   kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
-		ReadTimeout:   writerReadTimeout,
-		WriteTimeout:  writerWriteTimeout,
-	}
-}
+//func NewKafkaWriterConfig() *KafkaWriter {
+//	w := &kafka.Writer{
+//		Addr:         kafka.TCP(pcg.Brokers...),
+//		Topic:        topic,
+//		Balancer:     &kafka.LeastBytes{},
+//		RequiredAcks: writerRequiredAcks,
+//		MaxAttempts:  writerMaxAttempts,
+//		Logger:       kafka.LoggerFunc(pcg.log.Debugf),
+//		ErrorLogger:  kafka.LoggerFunc(pcg.log.Errorf),
+//		Compression:  compress.Snappy,
+//		ReadTimeout:  writerReadTimeout,
+//		WriteTimeout: writerWriteTimeout,
+//	}
+//	return w
+//	//return kafka.WriterConfig{
+//	//	// Brokers:      []string{"localhost:9092", "localhost:9093", "localhost:9094"},
+//	//	// Topic:        "topic-A",
+//	//	QueueCapacity: queueCapacity,
+//	//	Balancer:      &kafka.LeastBytes{},
+//	//	RequiredAcks:  writerRequiredAcks,
+//	//	MaxAttempts:   writerMaxAttempts,
+//	//	Logger:        kafka.LoggerFunc(logger.Zap.Sugar().Debugf),
+//	//	ErrorLogger:   kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
+//	//	ReadTimeout:   writerReadTimeout,
+//	//	WriteTimeout:  writerWriteTimeout,
+//	//}
+//}

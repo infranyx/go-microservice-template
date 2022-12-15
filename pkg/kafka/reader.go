@@ -5,21 +5,21 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type KafkaReader struct {
+type Reader struct {
 	Client *kafka.Reader
 }
 
-func NewKafkaReader(rc kafka.ReaderConfig) *KafkaReader {
-	return &KafkaReader{
-		Client: kafka.NewReader(rc),
-	}
+type ReaderConf struct {
+	Brokers []string
+	GroupID string
+	Topic   string
 }
 
-func NewKafkaReaderConfig() kafka.ReaderConfig {
-	return kafka.ReaderConfig{
-		// Brokers:   []string{"localhost:9092", "localhost:9093", "localhost:9094"},
-		// GroupID:                groupID,
-		// Topic:                  topic,
+func NewKafkaReader(cfg *ReaderConf) *Reader {
+	rc := kafka.ReaderConfig{
+		Brokers:                cfg.Brokers,
+		GroupID:                cfg.GroupID,
+		Topic:                  cfg.Topic,
 		QueueCapacity:          queueCapacity,
 		MinBytes:               minBytes,
 		MaxBytes:               maxBytes,
@@ -32,5 +32,8 @@ func NewKafkaReaderConfig() kafka.ReaderConfig {
 		Dialer: &kafka.Dialer{
 			Timeout: dialTimeout,
 		},
+	}
+	return &Reader{
+		Client: kafka.NewReader(rc),
 	}
 }
