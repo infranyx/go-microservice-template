@@ -10,10 +10,10 @@ import (
 )
 
 type articleConsumer struct {
-	createReader *kafka.KafkaReader
+	createReader *kafka.Reader
 }
 
-func NewArticleConsumer(r *kafka.KafkaReader) articleDomain.ArticleConsumer {
+func NewArticleConsumer(r *kafka.Reader) articleDomain.ArticleConsumer {
 	return &articleConsumer{createReader: r}
 }
 

@@ -9,10 +9,10 @@ import (
 )
 
 type articleProducer struct {
-	createWriter *kafka.KafkaWriter
+	createWriter *kafka.Writer
 }
 
-func NewArticleProducer(w *kafka.KafkaWriter) articleDomain.ArticleProducer {
+func NewArticleProducer(w *kafka.Writer) articleDomain.ArticleProducer {
 	return &articleProducer{createWriter: w}
 }
 
