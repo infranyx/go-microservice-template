@@ -2,8 +2,11 @@ package articleKafkaConsumer
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"sync"
 
+	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
 
@@ -29,15 +32,15 @@ func (ac *articleConsumer) createArticleWorker(
 			string(m.Value),
 		)
 
-		// if err := json.Unmarshal(m.Value, &); err != nil {
-
-		// 	continue
-		// }
+		aDto := new(articleDto.CreateArticle)
+		if err := json.Unmarshal(m.Value, &aDto); err != nil {
+			continue
+		}
 
 		// run some usecase
+		fmt.Println(aDto)
 
 		if err := ac.createReader.Client.CommitMessages(ctx, m); err != nil {
-
 			continue
 		}
 	}

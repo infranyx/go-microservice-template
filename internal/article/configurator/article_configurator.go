@@ -6,6 +6,8 @@ import (
 	goTemplateUseCase "github.com/infranyx/go-grpc-template/external/go_template/usecase"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
 	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
+	articleKafkaConsumer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/consumer"
+	articleKafkaProducer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/producer"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
@@ -27,7 +29,8 @@ func NewArticleConfigurator(ic *infraContainer.IContainer, cc *clientContainer.C
 func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 	gtuc := goTemplateUseCase.NewGoTemplateUseCase(ac.cc.GoTemplateGrpc)
 	rp := articleRepo.NewArticleRepository(ac.ic.Pg)
-	uc := articleUseCase.NewArticleUseCase(rp, gtuc)
+	ap := articleKafkaProducer.NewArticleProducer(ac.ic.KafkaWriter)
+	uc := articleUseCase.NewArticleUseCase(rp, gtuc, ap)
 
 	// grpc
 	gc := articleGrpc.NewArticleGrpcController(uc)
@@ -37,6 +40,9 @@ func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 	g := ac.ic.EchoServer.GetEchoInstance().Group(ac.ic.EchoServer.GetBasePath())
 	hc := articleHttp.NewArticleHttpController(uc)
 	articleHttp.NewArticleAPI(hc).Register(g)
+
+	// Consumers
+	articleKafkaConsumer.NewArticleConsumer(ac.ic.KafkaReader).RunConsumers(ctx)
 
 	return nil
 }
