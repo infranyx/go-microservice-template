@@ -77,8 +77,8 @@ func newConfig() *Config {
 			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
 		},
 		GoTemplateGrpcClient: GrpcConfig{
-			Port: env.New("GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
-			Host: env.New("GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
+			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Kafka: KafkaConfig{
 			kafkaEnabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
