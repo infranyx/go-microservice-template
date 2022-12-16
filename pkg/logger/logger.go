@@ -2,10 +2,10 @@ package logger
 
 import (
 	"github.com/infranyx/go-grpc-template/pkg/config"
-	"os"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
+	"path/filepath"
 )
 
 var Zap *zap.Logger
@@ -33,6 +33,10 @@ func newLogger() *zap.Logger {
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
+
+		if _, err := os.Stat("/path/to/your-file"); os.IsNotExist(err) {
+			os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
+		}
 		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		logWriter = zapcore.AddSync(logFile)
 	} else {
