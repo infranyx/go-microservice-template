@@ -7,19 +7,22 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
-	"github.com/infranyx/go-grpc-template/pkg/kafka"
+	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
+	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
+	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )
 
 type IContainer struct {
-	GrpcServer grpc.GrpcServer // grpc.GrpcServer : Interface
-	EchoServer httpEcho.EchoHttpServer
-	Logger     *zap.Logger
-	Cfg        *config.Config
-	Pg         *postgres.Postgres
-	Kafka      *kafka.Kafka
+	GrpcServer  grpc.GrpcServer
+	EchoServer  httpEcho.EchoHttpServer
+	Logger      *zap.Logger
+	Cfg         *config.Config
+	Pg          *postgres.Postgres
+	KafkaWriter *kafkaProducer.Writer
+	KafkaReader *kafkaConsumer.Reader
 }
 
 func NewIC(ctx context.Context) (*IContainer, func(), error) {
@@ -66,7 +69,27 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		pg.Close()
 	})
 
-	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg}
+	kwc := &kafkaProducer.WriterConf{
+		Brokers:      config.Conf.Kafka.ClientBrokers,
+		Topic:        config.Conf.Kafka.Topic,
+		RequiredAcks: kafka.RequireAll,
+	}
+	kw := kafkaProducer.NewKafkaWriter(kwc)
+	downFns = append(downFns, func() {
+		kw.Client.Close()
+	})
+
+	krc := &kafkaConsumer.ReaderConf{
+		Brokers: config.Conf.Kafka.ClientBrokers,
+		Topic:   config.Conf.Kafka.Topic,
+		GroupID: config.Conf.Kafka.ClientGroupId,
+	}
+	kr := kafkaConsumer.NewKafkaReader(krc)
+	downFns = append(downFns, func() {
+		kr.Client.Close()
+	})
+
+	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
 
 	return ic, down, nil
 }
