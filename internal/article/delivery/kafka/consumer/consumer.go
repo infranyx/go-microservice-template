@@ -5,15 +5,15 @@ import (
 	"sync"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	"github.com/infranyx/go-grpc-template/pkg/kafka"
+	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
 
 type articleConsumer struct {
-	createReader *kafka.Reader
+	createReader *kafkaConsumer.Reader
 }
 
-func NewArticleConsumer(r *kafka.Reader) articleDomain.ArticleConsumer {
+func NewArticleConsumer(r *kafkaConsumer.Reader) articleDomain.ArticleConsumer {
 	return &articleConsumer{createReader: r}
 }
 

@@ -41,12 +41,12 @@ type HttpConfig struct {
 }
 
 type KafkaConfig struct {
-	kafkaEnabled       bool
-	kafkaLogEvents     bool
-	KafkaClientId      string
-	KafkaClientGroupId string
-	KafkaClientBrokers string
-	KafkaNameSpace     string
+	Enabled       bool
+	LogEvents     bool
+	ClientId      string
+	ClientGroupId string
+	ClientBrokers []string
+	Topic         string
 }
 
 func init() {
@@ -81,12 +81,12 @@ func newConfig() *Config {
 			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Kafka: KafkaConfig{
-			kafkaEnabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
-			kafkaLogEvents:     env.New("KAFKA_LOG_EVENTS", nil).AsBool(),
-			KafkaClientId:      env.New("KAFKA_CLIENT_ID", nil).AsString(),
-			KafkaClientGroupId: env.New("KAFKA_CLIENT_GROUP_ID", nil).AsString(),
-			KafkaClientBrokers: env.New("KAFKA_CLIENT_BROKERS", nil).AsString(),
-			KafkaNameSpace:     env.New("KAFKA_NAMESPACE", nil).AsString(),
+			Enabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
+			LogEvents:     env.New("KAFKA_LOG_EVENTS", nil).AsBool(),
+			ClientId:      env.New("KAFKA_CLIENT_ID", nil).AsString(),
+			ClientGroupId: env.New("KAFKA_CLIENT_GROUP_ID", nil).AsString(),
+			ClientBrokers: env.New("KAFKA_CLIENT_BROKERS", nil).AsStringSlice(","),
+			Topic:         env.New("KAFKA_TOPIC", nil).AsString(),
 		},
 	}
 }
