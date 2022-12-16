@@ -8,9 +8,9 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
 	"github.com/infranyx/go-grpc-template/pkg/kafka"
-
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
+	kk "github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )
 
@@ -73,9 +73,29 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		Topic:   "test-topic",
 	}
 	kw := kafka.NewKafkaWriter(kwc)
+
 	downFns = append(downFns, func() {
 		kw.Client.Close()
 	})
+
+	// TODO : rm after test
+	errr := kw.Client.WriteMessages(context.Background(),
+		kk.Message{
+			Key:   []byte("Key-A"),
+			Value: []byte("Hello World!"),
+		},
+		kk.Message{
+			Key:   []byte("Key-B"),
+			Value: []byte("One!"),
+		},
+		kk.Message{
+			Key:   []byte("Key-C"),
+			Value: []byte("Two!"),
+		},
+	)
+	if errr != nil {
+		fmt.Println("failed to write messages:", errr)
+	}
 
 	krc := &kafka.ReaderConf{
 		Brokers: []string{"localhost:9092"},
@@ -86,6 +106,17 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	downFns = append(downFns, func() {
 		kr.Client.Close()
 	})
+
+	// TODO : rm after test
+	kr.Client.SetOffset(42)
+
+	for {
+		m, err := kr.Client.ReadMessage(context.Background())
+		if err != nil {
+			break
+		}
+		fmt.Printf("message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
+	}
 
 	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
 

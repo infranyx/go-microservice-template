@@ -40,7 +40,7 @@ func NewKafkaWriter(cfg *WriterConf) *Writer {
 		Balancer:     &kafka.LeastBytes{},
 		RequiredAcks: writerRequiredAcks,
 		MaxAttempts:  writerMaxAttempts,
-		Logger:       kafka.LoggerFunc(logger.Zap.Sugar().Debugf),
+		Logger:       kafka.LoggerFunc(logger.Zap.Sugar().Infof),
 		ErrorLogger:  kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
 		Compression:  compress.Snappy,
 		ReadTimeout:  writerReadTimeout,

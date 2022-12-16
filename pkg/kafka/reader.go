@@ -26,7 +26,7 @@ func NewKafkaReader(cfg *ReaderConf) *Reader {
 		HeartbeatInterval:      heartbeatInterval,
 		CommitInterval:         commitInterval,
 		PartitionWatchInterval: partitionWatchInterval,
-		Logger:                 kafka.LoggerFunc(logger.Zap.Sugar().Debugf),
+		Logger:                 kafka.LoggerFunc(logger.Zap.Sugar().Infof),
 		ErrorLogger:            kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
 		MaxAttempts:            maxAttempts,
 		Dialer: &kafka.Dialer{
