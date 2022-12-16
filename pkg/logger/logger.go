@@ -37,6 +37,7 @@ func newLogger() *zap.Logger {
 		if _, err := os.Stat("/path/to/your-file"); os.IsNotExist(err) {
 			os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
 		}
+
 		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		logWriter = zapcore.AddSync(logFile)
 	} else {
