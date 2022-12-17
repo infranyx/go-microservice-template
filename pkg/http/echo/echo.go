@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	sentryecho "github.com/getsentry/sentry-go/echo"
@@ -81,17 +80,14 @@ func (s *echoHttpServer) GracefulShutdown(ctx context.Context) error {
 }
 
 func (s *echoHttpServer) SetupDefaultMiddlewares() {
-	// handling internal echo middlewares logs with our log provider
 	s.echo.HideBanner = false
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
 	s.echo.Use(middleware.Recover())
-
 	s.echo.Use(sentryecho.New(sentryecho.Options{
 		Repanic: true,
 	}))
-
 	s.echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			if hub := sentryecho.GetHubFromContext(ctx); hub != nil {
@@ -125,13 +121,13 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 			return nil
 		},
 	}))
-	s.echo.Use(middleware.BodyLimit(constant.BodyLimit))
+
 	s.echo.Use(middleware.RequestID())
 	s.echo.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: constant.GzipLevel,
-		Skipper: func(c echo.Context) bool {
-			return strings.Contains(c.Request().URL.Path, "swagger")
-		},
+		//Skipper: func(c echo.Context) bool {
+		//	return strings.Contains(c.Request().URL.Path, "swagger")
+		//},
 	}))
 }
 
