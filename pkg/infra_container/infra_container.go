@@ -3,6 +3,7 @@ package infraContainer
 import (
 	"context"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
@@ -10,6 +11,8 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 	"go.uber.org/zap"
+	"log"
+	"time"
 )
 
 type IContainer struct {
@@ -28,6 +31,18 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 			df()
 		}
 	}
+
+	se := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.Conf.Sentry.Dsn,
+		TracesSampleRate: 1.0,
+		EnableTracing:    config.IsDevEnv(),
+	})
+	if se != nil {
+		log.Fatalf("sentry.Init: %s", se)
+	}
+	downFns = append(downFns, func() {
+		sentry.Flush(2 * time.Second)
+	})
 
 	grpcServerConfig := &grpc.GrpcConfig{
 		Port:        config.Conf.Grpc.Port,
