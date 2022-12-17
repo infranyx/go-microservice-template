@@ -2,9 +2,13 @@ package app
 
 import (
 	"context"
+	"github.com/getsentry/sentry-go"
+	"github.com/infranyx/go-grpc-template/pkg/config"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	cContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
@@ -18,6 +22,15 @@ func New() *App {
 }
 
 func (a *App) Run() error {
+	se := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.Conf.Sentry.Dsn,
+		TracesSampleRate: 1.0,
+	})
+	if se != nil {
+		log.Fatalf("sentry.Init: %s", se)
+	}
+	defer sentry.Flush(2 * time.Second)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

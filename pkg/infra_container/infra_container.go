@@ -3,7 +3,6 @@ package infraContainer
 import (
 	"context"
 	"fmt"
-
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"

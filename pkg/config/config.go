@@ -11,6 +11,7 @@ type Config struct {
 	Http                 HttpConfig
 	Postgres             PostgresConfig
 	GoTemplateGrpcClient GrpcConfig
+	Sentry               SentryConfig
 }
 
 var Conf *Config
@@ -39,6 +40,10 @@ type HttpConfig struct {
 	Port int
 }
 
+type SentryConfig struct {
+	Dsn string
+}
+
 func init() {
 	Conf = newConfig()
 }
@@ -53,7 +58,7 @@ func newConfig() *Config {
 			Host: env.New("GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Http: HttpConfig{
-			Port:  env.New("HTTP_PORT", constant.HttpPort).AsInt(),
+			Port: env.New("HTTP_PORT", constant.HttpPort).AsInt(),
 		},
 		Postgres: PostgresConfig{
 			Host:            env.New("PG_HOST", constant.PgHost).AsString(),
@@ -69,6 +74,9 @@ func newConfig() *Config {
 		GoTemplateGrpcClient: GrpcConfig{
 			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
 			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+		},
+		Sentry: SentryConfig{
+			Dsn: env.New("SENTRY_DSN", nil).AsString(),
 		},
 	}
 }
