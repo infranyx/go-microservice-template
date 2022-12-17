@@ -65,7 +65,6 @@ func NewGrpcServer(conf *GrpcConfig) GrpcServer {
 }
 
 func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error {
-	log := logger.Zap
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.Port))
 	if err != nil {
 		return err
@@ -80,15 +79,15 @@ func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServ
 
 	go func() {
 		<-ctx.Done()
-		log.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
+		logger.Zap.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
 		s.GracefulShutdown()
 	}()
 
-	log.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
+	logger.Zap.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
 
 	err = s.server.Serve(l)
 	if err != nil {
-		log.Sugar().Error(fmt.Sprintf("[grpcServer_RunGrpcServer.Serve] grpc server serve error: %+v", err))
+		logger.Zap.Sugar().Error(fmt.Sprintf("[grpcServer_RunGrpcServer.Serve] grpc server serve error: %+v", err))
 	}
 	return err
 }
