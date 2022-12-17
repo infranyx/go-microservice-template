@@ -86,7 +86,6 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
-	s.echo.Use(middleware.Logger())
 	s.echo.Use(middleware.Recover())
 
 	s.echo.Use(sentryecho.New(sentryecho.Options{
