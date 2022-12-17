@@ -7,6 +7,7 @@ import (
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 	"github.com/labstack/echo/v4"
+	"github.com/segmentio/kafka-go"
 )
 
 type Article struct {
@@ -26,6 +27,14 @@ type ArticleGrpcController interface {
 
 type ArticleHttpController interface {
 	Create(c echo.Context) error
+}
+
+type ArticleProducer interface {
+	PublishCreate(ctx context.Context, msgs ...kafka.Message) error
+}
+
+type ArticleConsumer interface {
+	RunConsumers(ctx context.Context)
 }
 
 type ArticleUseCase interface {

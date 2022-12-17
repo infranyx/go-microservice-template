@@ -11,6 +11,7 @@ type Config struct {
 	Http                 HttpConfig
 	Postgres             PostgresConfig
 	GoTemplateGrpcClient GrpcConfig
+	Kafka                KafkaConfig
 	Sentry               SentryConfig
 }
 
@@ -40,6 +41,15 @@ type HttpConfig struct {
 	Port int
 }
 
+type KafkaConfig struct {
+	Enabled       bool
+	LogEvents     bool
+	ClientId      string
+	ClientGroupId string
+	ClientBrokers []string
+	Topic         string
+}
+
 type SentryConfig struct {
 	Dsn string
 }
@@ -61,11 +71,11 @@ func newConfig() *Config {
 			Port: env.New("HTTP_PORT", constant.HttpPort).AsInt(),
 		},
 		Postgres: PostgresConfig{
-			Host:            env.New("PG_HOST", constant.PgHost).AsString(),
-			Port:            env.New("PG_PORT", constant.PgPort).AsString(),
-			User:            env.New("PG_USER", constant.PgUser).AsString(),
-			Pass:            env.New("PG_PASS", constant.PgPass).AsString(),
-			DBName:          env.New("PG_DB", constant.PgDb).AsString(),
+			Host:            env.New("PG_HOST", nil).AsString(),
+			Port:            env.New("PG_PORT", nil).AsString(),
+			User:            env.New("PG_USER", nil).AsString(),
+			Pass:            env.New("PG_PASS", nil).AsString(),
+			DBName:          env.New("PG_DB", nil).AsString(),
 			MaxConn:         env.New("PG_MAX_CONNECTIONS", constant.PgMaxConn).AsInt(),
 			MaxIdleConn:     env.New("PG_MAX_IDLE_CONNECTIONS", constant.PgMaxIdleConn).AsInt(),
 			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
@@ -74,6 +84,14 @@ func newConfig() *Config {
 		GoTemplateGrpcClient: GrpcConfig{
 			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
 			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+		},
+		Kafka: KafkaConfig{
+			Enabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
+			LogEvents:     env.New("KAFKA_LOG_EVENTS", nil).AsBool(),
+			ClientId:      env.New("KAFKA_CLIENT_ID", nil).AsString(),
+			ClientGroupId: env.New("KAFKA_CLIENT_GROUP_ID", nil).AsString(),
+			ClientBrokers: env.New("KAFKA_CLIENT_BROKERS", nil).AsStringSlice(","),
+			Topic:         env.New("KAFKA_TOPIC", nil).AsString(),
 		},
 		Sentry: SentryConfig{
 			Dsn: env.New("SENTRY_DSN", nil).AsString(),
