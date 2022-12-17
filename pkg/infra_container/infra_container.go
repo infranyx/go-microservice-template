@@ -40,9 +40,9 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	echoServerConfig := &httpEcho.EchoHttpConfig{
-		Port:        config.Conf.Http.Port,
-		Development: config.IsDevEnv(),
-		BasePath:    "/api/v1",
+		Port:     config.Conf.Http.Port,
+		BasePath: "/api/v1",
+		IsDev:    config.IsDevEnv(),
 	}
 	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
 	echoServer.SetupDefaultMiddlewares()

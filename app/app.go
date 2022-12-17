@@ -25,6 +25,7 @@ func (a *App) Run() error {
 	se := sentry.Init(sentry.ClientOptions{
 		Dsn:              config.Conf.Sentry.Dsn,
 		TracesSampleRate: 1.0,
+		EnableTracing:    config.IsDevEnv(),
 	})
 	if se != nil {
 		log.Fatalf("sentry.Init: %s", se)
