@@ -2,6 +2,8 @@ package constant
 
 import "time"
 
+const AppName = "Go-gRPC-Template"
+
 const (
 	AppEnvProd = "prod"
 	AppEnvDev  = "dev"

@@ -88,7 +88,7 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	s.echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			if hub := sentryecho.GetHubFromContext(ctx); hub != nil {
-				hub.Scope().SetTag("application", "go-grpc-template")
+				hub.Scope().SetTag("application", config.Conf.App.AppName)
 				hub.Scope().SetTag("BasePath", s.config.BasePath)
 				hub.Scope().SetTag("AppEnv", config.Conf.App.AppEnv)
 			}

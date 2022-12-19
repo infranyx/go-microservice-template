@@ -18,7 +18,8 @@ type Config struct {
 var Conf *Config
 
 type AppConfig struct {
-	AppEnv string
+	AppEnv  string
+	AppName string
 }
 
 type PostgresConfig struct {
@@ -61,7 +62,8 @@ func init() {
 func newConfig() *Config {
 	return &Config{
 		App: AppConfig{
-			AppEnv: env.New("APP_ENV", constant.AppEnvDev).AsString(),
+			AppEnv:  env.New("APP_ENV", constant.AppEnvDev).AsString(),
+			AppName: env.New("APP_NAME", constant.AppName).AsString(),
 		},
 		Grpc: GrpcConfig{
 			Port: env.New("GRPC_PORT", constant.GrpcPort).AsInt(),
