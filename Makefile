@@ -124,7 +124,7 @@ migrate-create:  ### create new migration
 migrate-up: ### migration up
 	migrate -path db/migrations -database $(PG_URL) up
 
-.PHONY: migrate-up
-force: ### migration up
+.PHONY: force
+force: ### force
 	migrate -path db/migrations -database $(PG_URL) force 20221025181800
 

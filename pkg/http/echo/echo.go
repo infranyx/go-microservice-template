@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
+	sentryecho "github.com/getsentry/sentry-go/echo"
+	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/constant"
 	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
-	"go.uber.org/zap"
-
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go.uber.org/zap"
 )
 
 type echoHttpServer struct {
@@ -32,9 +32,9 @@ type EchoHttpServer interface {
 }
 
 type EchoHttpConfig struct {
-	Port        int
-	Development bool
-	BasePath    string
+	Port     int
+	BasePath string
+	IsDev    bool
 }
 
 func NewEchoHttpServer(config *EchoHttpConfig) *echoHttpServer {
@@ -77,10 +77,24 @@ func (s *echoHttpServer) GracefulShutdown(ctx context.Context) error {
 }
 
 func (s *echoHttpServer) SetupDefaultMiddlewares() {
-	// handling internal echo middlewares logs with our log provider
 	s.echo.HideBanner = false
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
+
+	s.echo.Use(middleware.Recover())
+	s.echo.Use(sentryecho.New(sentryecho.Options{
+		Repanic: true,
+	}))
+	s.echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			if hub := sentryecho.GetHubFromContext(ctx); hub != nil {
+				hub.Scope().SetTag("application", config.Conf.App.AppName)
+				hub.Scope().SetTag("BasePath", s.config.BasePath)
+				hub.Scope().SetTag("AppEnv", config.Conf.App.AppEnv)
+			}
+			return next(ctx)
+		}
+	})
 
 	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogError:     false,
@@ -104,13 +118,13 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 			return nil
 		},
 	}))
-	s.echo.Use(middleware.BodyLimit(constant.BodyLimit))
+
 	s.echo.Use(middleware.RequestID())
 	s.echo.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: constant.GzipLevel,
-		Skipper: func(c echo.Context) bool {
-			return strings.Contains(c.Request().URL.Path, "swagger")
-		},
+		//Skipper: func(c echo.Context) bool {
+		//	return strings.Contains(c.Request().URL.Path, "swagger")
+		//},
 	}))
 }
 
