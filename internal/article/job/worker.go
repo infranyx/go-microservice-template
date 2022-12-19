@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/infranyx/go-grpc-template/utils/wrapper"
+	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 )
 
 type LogArticleReq struct {

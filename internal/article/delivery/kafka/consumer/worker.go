@@ -7,7 +7,7 @@ import (
 
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/utils/wrapper"
+	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 )
 
 func (ac *articleConsumer) createArticleWorker(
