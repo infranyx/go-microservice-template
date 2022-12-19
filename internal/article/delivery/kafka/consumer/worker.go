@@ -4,29 +4,28 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"sync"
 
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/infranyx/go-grpc-template/utils/wrapper"
 )
 
 func (ac *articleConsumer) createArticleWorker(
 	ctx context.Context,
-	wg *sync.WaitGroup,
-	workerID int, // TODO: generate UUID
-) errorUtils.HandlerFunc {
-	return func() error {
-		defer wg.Done()
+	c chan bool,
+) wrapper.HandlerFunc {
+	return func(tx context.Context, args interface{}) (interface{}, error) {
+		defer func() {
+			c <- true
+		}()
 		for {
 			m, err := ac.createReader.Client.FetchMessage(ctx)
 			if err != nil {
-				continue
+				return nil, err
 			}
 
 			logger.Zap.Sugar().Infof(
-				"Kafka Worker %v recieve message at topic/partition/offset %v/%v/%v: %s = %s\n",
-				workerID,
+				"Kafka Worker recieve message at topic/partition/offset %v/%v/%v: %s = %s\n",
 				m.Topic,
 				m.Partition,
 				m.Offset,
@@ -43,7 +42,7 @@ func (ac *articleConsumer) createArticleWorker(
 			fmt.Println(aDto)
 
 			if err := ac.createReader.Client.CommitMessages(ctx, m); err != nil {
-				continue
+				return nil, err
 			}
 		}
 	}

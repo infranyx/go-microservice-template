@@ -2,12 +2,11 @@ package articleKafkaConsumer
 
 import (
 	"context"
-	"sync"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/infranyx/go-grpc-template/utils/wrapper"
 )
 
 type articleConsumer struct {
@@ -32,14 +31,19 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 
 	logger.Zap.Sugar().Infof("Starting consumer group: %v", r.Config().GroupID)
 
-	wg := &sync.WaitGroup{}
+	c := make(chan bool)
+	worker := wrapper.BuildChain(
+		ac.createArticleWorker(ctx, c),
+		wrapper.SentryMiddleware,
+		wrapper.RecoveryMiddleware,
+		wrapper.ErrorHandlerMiddleware,
+	)
 	for i := 0; i <= workersNum; i++ {
-		wg.Add(1)
-		worker := errorUtils.HandlerErrorWrapper(
-			ctx,
-			ac.createArticleWorker(ctx, wg, i),
-		)
-		go worker()
+		go worker(ctx, nil)
 	}
-	wg.Wait()
+
+	for {
+		<-c
+		go worker(ctx, nil)
+	}
 }

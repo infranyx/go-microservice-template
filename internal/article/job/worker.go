@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
+	"github.com/infranyx/go-grpc-template/utils/wrapper"
 )
 
-func (aj *articleJob) logArticleWorker(
-	ctx context.Context,
-) errorUtils.HandlerFunc {
-	return func() error {
+type LogArticleReq struct {
+}
+
+func (aj *articleJob) logArticleWorker() wrapper.HandlerFunc {
+	return func(ctx context.Context, args interface{}) (interface{}, error) {
 		fmt.Println("article log job")
-		return nil
+		return nil, nil
 	}
 }

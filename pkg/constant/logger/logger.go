@@ -1,8 +1,10 @@
 package loggerConst
 
 const (
-	GRPC        = "GRPC"
-	HTTP        = "HTTP"
+	GRPC   = "GRPC"
+	HTTP   = "HTTP"
+	WORKER = "WORKER"
+
 	METHOD      = "METHOD"
 	NAME        = "NAME"
 	METADATA    = "METADATA"
