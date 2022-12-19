@@ -9,12 +9,9 @@ import (
 
 func (aj *articleJob) logArticleWorker(
 	ctx context.Context,
-) {
-	errorUtils.HandlerErrorWrapper(
-		func() error {
-			fmt.Println("article log job")
-			return nil
-		},
-	)
-
+) errorUtils.HandlerFunc {
+	return func() error {
+		fmt.Println("article log job")
+		return nil
+	}
 }

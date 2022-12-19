@@ -4,6 +4,7 @@ import (
 	"context"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
+	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 
 	cronJob "github.com/infranyx/go-grpc-template/pkg/cron"
@@ -24,8 +25,12 @@ func (aj *articleJob) RunJobs(ctx context.Context) {
 }
 
 func (aj *articleJob) logArticleJob(ctx context.Context) {
-	entryId, _ := aj.cj.AddFunc("*/1 * * * *", func() {
-		aj.logArticleWorker(ctx)
-	})
+	worker := errorUtils.HandlerErrorWrapper(
+		ctx,
+		aj.logArticleWorker(ctx),
+	)
+	entryId, _ := aj.cj.AddFunc("*/1 * * * *",
+		worker,
+	)
 	logger.Zap.Sugar().Infof("Starting log article job: %v", entryId)
 }

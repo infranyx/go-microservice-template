@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
+	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
@@ -34,7 +35,11 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 	wg := &sync.WaitGroup{}
 	for i := 0; i <= workersNum; i++ {
 		wg.Add(1)
-		go ac.createArticleWorker(ctx, wg, i)
+		worker := errorUtils.HandlerErrorWrapper(
+			ctx,
+			ac.createArticleWorker(ctx, wg, i),
+		)
+		go worker()
 	}
 	wg.Wait()
 }

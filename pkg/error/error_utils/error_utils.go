@@ -1,6 +1,7 @@
 package errorUtils
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -57,21 +58,24 @@ func ValidationErrHandler(err error) (map[string]string, error) {
 	return nil, customError.NewInternalServerErrorWrap(err, "internal error", 8585, nil)
 }
 
-type ErrorWrapperFunc func() error
+type HandlerFunc func() error
+type WrappedFunc func()
 
-func HandlerErrorWrapper(f ErrorWrapperFunc) { // must return without error
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(error)
-			if !ok {
-				logger.Zap.Sugar().Errorf("%v", r)
-				return
+func HandlerErrorWrapper(ctx context.Context, f HandlerFunc) WrappedFunc { // must return without error
+	return func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(error)
+				if !ok {
+					logger.Zap.Sugar().Errorf("%v", r)
+					return
+				}
+				logger.Zap.Error(err.Error(), zap.Error(err))
 			}
-			logger.Zap.Error(err.Error(), zap.Error(err))
+		}()
+		e := f()
+		if e != nil {
+			fmt.Println(e)
 		}
-	}()
-	e := f()
-	if e != nil {
-		fmt.Println(e)
 	}
 }
