@@ -12,12 +12,14 @@ type Config struct {
 	Postgres             PostgresConfig
 	GoTemplateGrpcClient GrpcConfig
 	Kafka                KafkaConfig
+	Sentry               SentryConfig
 }
 
 var Conf *Config
 
 type AppConfig struct {
-	AppEnv string
+	AppEnv  string
+	AppName string
 }
 
 type PostgresConfig struct {
@@ -49,6 +51,10 @@ type KafkaConfig struct {
 	Topic         string
 }
 
+type SentryConfig struct {
+	Dsn string
+}
+
 func init() {
 	Conf = newConfig()
 }
@@ -56,7 +62,8 @@ func init() {
 func newConfig() *Config {
 	return &Config{
 		App: AppConfig{
-			AppEnv: env.New("APP_ENV", constant.AppEnvDev).AsString(),
+			AppEnv:  env.New("APP_ENV", constant.AppEnvDev).AsString(),
+			AppName: env.New("APP_NAME", constant.AppName).AsString(),
 		},
 		Grpc: GrpcConfig{
 			Port: env.New("GRPC_PORT", constant.GrpcPort).AsInt(),
@@ -87,6 +94,9 @@ func newConfig() *Config {
 			ClientGroupId: env.New("KAFKA_CLIENT_GROUP_ID", nil).AsString(),
 			ClientBrokers: env.New("KAFKA_CLIENT_BROKERS", nil).AsStringSlice(","),
 			Topic:         env.New("KAFKA_TOPIC", nil).AsString(),
+		},
+		Sentry: SentryConfig{
+			Dsn: env.New("SENTRY_DSN", nil).AsString(),
 		},
 	}
 }

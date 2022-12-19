@@ -3,7 +3,7 @@ package infraContainer
 import (
 	"context"
 	"fmt"
-
+	"github.com/getsentry/sentry-go"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
@@ -13,6 +13,8 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
+	"log"
+	"time"
 )
 
 type IContainer struct {
@@ -33,6 +35,18 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		}
 	}
 
+	se := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.Conf.Sentry.Dsn,
+		TracesSampleRate: 1.0,
+		EnableTracing:    config.IsDevEnv(),
+	})
+	if se != nil {
+		log.Fatalf("sentry.Init: %s", se)
+	}
+	downFns = append(downFns, func() {
+		sentry.Flush(2 * time.Second)
+	})
+
 	grpcServerConfig := &grpc.GrpcConfig{
 		Port:        config.Conf.Grpc.Port,
 		Host:        config.Conf.Grpc.Host,
@@ -44,9 +58,9 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	echoServerConfig := &httpEcho.EchoHttpConfig{
-		Port:        config.Conf.Http.Port,
-		Development: config.IsDevEnv(),
-		BasePath:    "/api/v1",
+		Port:     config.Conf.Http.Port,
+		BasePath: "/api/v1",
+		IsDev:    config.IsDevEnv(),
 	}
 	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
 	echoServer.SetupDefaultMiddlewares()
