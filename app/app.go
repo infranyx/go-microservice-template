@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
 	"os"
 	"os/signal"
 	"syscall"
@@ -74,5 +75,11 @@ func configureModule(ctx context.Context, ic *iContainer.IContainer, cc *cContai
 	if e != nil {
 		return e
 	}
+
+	he := healthCheckConfigurator.NewHealthCheckConfigurator(ic).ConfigureHealthCheck(ctx)
+	if he != nil {
+		return he
+	}
+
 	return nil
 }
