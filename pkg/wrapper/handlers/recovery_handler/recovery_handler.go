@@ -9,7 +9,7 @@ import (
 )
 
 var RecoveryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
-	return func(ctx context.Context, args interface{}) (interface{}, error) {
+	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
 		defer func() {
 			if r := recover(); r != nil {
 				err, ok := r.(error)

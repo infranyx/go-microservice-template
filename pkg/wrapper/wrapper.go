@@ -5,7 +5,7 @@ import (
 )
 
 type middleware func(HandlerFunc) HandlerFunc
-type HandlerFunc func(ctx context.Context, args interface{}) (interface{}, error)
+type HandlerFunc func(ctx context.Context, args ...interface{}) (interface{}, error)
 
 func BuildChain(f HandlerFunc, m ...middleware) HandlerFunc {
 	if len(m) == 0 {
@@ -14,7 +14,7 @@ func BuildChain(f HandlerFunc, m ...middleware) HandlerFunc {
 	return m[0](BuildChain(f, m[1:cap(m)]...))
 }
 
-func (hf HandlerFunc) ToCronJobFunc(ctx context.Context, args interface{}) func() {
+func (hf HandlerFunc) ToCronJobFunc(ctx context.Context, args ...interface{}) func() {
 	return func() {
 		hf(ctx, args)
 	}

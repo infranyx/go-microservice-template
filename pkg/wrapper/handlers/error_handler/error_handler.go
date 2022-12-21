@@ -13,7 +13,7 @@ import (
 )
 
 var ErrorHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
-	return func(ctx context.Context, args interface{}) (interface{}, error) {
+	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
 		res, err := f(ctx, args)
 		if err != nil {
 			hub := sentry.GetHubFromContext(ctx)

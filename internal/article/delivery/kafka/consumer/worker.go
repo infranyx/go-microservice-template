@@ -14,7 +14,7 @@ func (ac *articleConsumer) createArticleWorker(
 	ctx context.Context,
 	c chan bool,
 ) wrapper.HandlerFunc {
-	return func(tx context.Context, args interface{}) (interface{}, error) {
+	return func(tx context.Context, args ...interface{}) (interface{}, error) {
 		defer func() {
 			c <- true
 		}()

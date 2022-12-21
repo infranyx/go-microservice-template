@@ -10,7 +10,7 @@ import (
 )
 
 var SentryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
-	return func(ctx context.Context, args interface{}) (interface{}, error) {
+	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
 		opts := &sentryUtils.Options{
 			Repanic: true,
 		}
