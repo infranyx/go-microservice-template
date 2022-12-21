@@ -9,6 +9,7 @@ import (
 	articleKafkaConsumer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/consumer"
 	articleKafkaProducer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/producer"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
+	articleJob "github.com/infranyx/go-grpc-template/internal/article/job"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	clientContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
@@ -43,6 +44,9 @@ func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 
 	// Consumers
 	articleKafkaConsumer.NewArticleConsumer(ac.ic.KafkaReader).RunConsumers(ctx)
+
+	// Jobs
+	articleJob.NewArticleJob().RunJobs(ctx)
 
 	return nil
 }

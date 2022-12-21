@@ -1,9 +1,13 @@
 package errorUtils
 
 import (
+	"context"
 	"fmt"
-	"github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"strings"
+
+	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"go.uber.org/zap"
 
 	validator "github.com/go-ozzo/ozzo-validation"
 	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
@@ -52,4 +56,26 @@ func ValidationErrHandler(err error) (map[string]string, error) {
 	}
 	// TODO : get internal error from constant.
 	return nil, customError.NewInternalServerErrorWrap(err, "internal error", 8585, nil)
+}
+
+type HandlerFunc func() error
+type WrappedFunc func()
+
+func HandlerErrorWrapper(ctx context.Context, f HandlerFunc) WrappedFunc { // must return without error
+	return func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(error)
+				if !ok {
+					logger.Zap.Sugar().Errorf("%v", r)
+					return
+				}
+				logger.Zap.Error(err.Error(), zap.Error(err))
+			}
+		}()
+		e := f()
+		if e != nil {
+			fmt.Println(e)
+		}
+	}
 }
