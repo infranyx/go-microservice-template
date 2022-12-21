@@ -36,7 +36,7 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 
 	c := make(chan bool)
 	worker := wrapper.BuildChain(
-		ac.createArticleWorker(ctx, c),
+		ac.createArticleWorker(c),
 		wrapperSentryhandler.SentryHandler,
 		wrapperRecoveryhandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
