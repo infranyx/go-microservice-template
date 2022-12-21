@@ -1,11 +1,10 @@
 package httpClient
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 const (
@@ -32,6 +31,12 @@ type HttpRequest struct {
 	req     *http.Request
 	client  *http.Client
 	context context.Context
+
+	URL    string
+	Method string
+	Query  url.Values
+	Header http.Header
+	Body   io.Reader
 }
 
 func BuildReq() *HttpRequest {
@@ -39,44 +44,66 @@ func BuildReq() *HttpRequest {
 		client:  NewHttpClient(&HttpClientConfig{}),
 		context: context.Background(),
 		req:     &http.Request{},
+		Header:  http.Header{},
+		Query:   url.Values{},
+		Method:  GetMethod,
+		URL:     "",
+		Body:    http.NoBody,
 	}
 }
 
-func (hr *HttpRequest) Get(url string) (*HttpRequest, error) {
-	return hr.handleReq(GetMethod, url)
+func (hr *HttpRequest) Get(url string) *HttpRequest {
+	hr.Method = GetMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Head(url string) (*HttpRequest, error) {
-	return hr.handleReq(HeadMethod, url)
+func (hr *HttpRequest) Head(url string) *HttpRequest {
+	hr.Method = HeadMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Post(url string) (*HttpRequest, error) {
-	return hr.handleReq(PostMethod, url)
+func (hr *HttpRequest) Post(url string) *HttpRequest {
+	hr.Method = PostMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Put(url string) (*HttpRequest, error) {
-	return hr.handleReq(PutMethod, url)
+func (hr *HttpRequest) Put(url string) *HttpRequest {
+	hr.Method = PutMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Delete(url string) (*HttpRequest, error) {
-	return hr.handleReq(DeleteMethod, url)
+func (hr *HttpRequest) Delete(url string) *HttpRequest {
+	hr.Method = DeleteMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Options(url string) (*HttpRequest, error) {
-	return hr.handleReq(OptionsMethod, url)
+func (hr *HttpRequest) Options(url string) *HttpRequest {
+	hr.Method = OptionsMethod
+	hr.URL = url
+	return hr
 }
 
-func (hr *HttpRequest) Patch(url string) (*HttpRequest, error) {
-	return hr.handleReq(PatchMethod, url)
-}
-
-func (hr *HttpRequest) handleReq(method string, url string) (*HttpRequest, error) {
-	nr, err := http.NewRequestWithContext(hr.context, method, url, hr.req.Body)
-	hr.req = nr
-	return hr, err
+func (hr *HttpRequest) Patch(url string) *HttpRequest {
+	hr.Method = PatchMethod
+	hr.URL = url
+	return hr
 }
 
 func (hr *HttpRequest) Execute() (*HttpResponse, error) {
+	nr, err := http.NewRequestWithContext(hr.context, hr.Method, hr.URL, hr.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	nr.Header = hr.Header
+	nr.URL.RawQuery = hr.Query.Encode()
+	hr.req = nr
+
 	res, err := hr.client.Do(hr.req)
 	if err != nil {
 		return nil, err
@@ -99,7 +126,7 @@ func (hr *HttpRequest) SetContext(context context.Context) *HttpRequest {
 }
 
 func (hr *HttpRequest) SetHeader(header, value string) *HttpRequest {
-	hr.req.Header.Set(header, value)
+	hr.Header.Set(header, value)
 	return hr
 }
 
@@ -111,42 +138,21 @@ func (hr *HttpRequest) SetHeaders(headers map[string]string) *HttpRequest {
 }
 
 func (hr *HttpRequest) SetQueryParam(param, value string) *HttpRequest {
-	query := hr.req.URL.Query()
+	query := hr.Query
 	query.Add(param, value)
-	hr.req.URL.RawQuery = query.Encode()
 	return hr
 }
 
 func (hr *HttpRequest) SetQueryParams(params map[string]string) *HttpRequest {
-	query := hr.req.URL.Query()
+	query := hr.Query
 	for p, v := range params {
 		query.Add(p, v)
 	}
-	hr.req.URL.RawQuery = query.Encode()
 	return hr
 }
 
-func (hr *HttpRequest) SetBody(body interface{}) (*HttpRequest, error) {
-	mbody, err := json.Marshal(body)
-	if err != nil {
-		return hr, err
-	}
-
-	reader := bytes.NewReader(mbody)
-	rc := io.NopCloser(reader)
-
-	hr.req.Body = rc
-	return hr, err
-}
-
-func (hr *HttpRequest) SetCookie(hc *http.Cookie) *HttpRequest {
-	hr.req.AddCookie(hc)
-	return hr
-}
-
-func (hr *HttpRequest) SetCookies(hcs []*http.Cookie) *HttpRequest {
-	for _, hc := range hcs {
-		hr.SetCookie(hc)
-	}
+func (hr *HttpRequest) SetBody(body io.Reader) *HttpRequest {
+	rc := io.NopCloser(body)
+	hr.Body = rc
 	return hr
 }
