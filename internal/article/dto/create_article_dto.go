@@ -4,6 +4,12 @@ import (
 	validator "github.com/go-ozzo/ozzo-validation"
 )
 
+type Article struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"desc"`
+}
+
 type CreateArticle struct {
 	Name        string `json:"name"`
 	Description string `json:"desc"`

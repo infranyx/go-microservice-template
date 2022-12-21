@@ -1,4 +1,4 @@
-version: "3.8"
+dversion: "3.8"
 
 volumes:
   test_pg_data:
