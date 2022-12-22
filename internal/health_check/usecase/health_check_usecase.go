@@ -13,5 +13,14 @@ func NewHealthCheckUseCase() healthCheckDomain.HealthCheckUseCase {
 }
 
 func (hu *healthCheckUseCase) Check(ctx context.Context) (*healthCheckDomain.HealthCheckResult, error) {
-	return nil, nil
+	unit := healthCheckDomain.HealthCheckUnit{
+		Unit: "test",
+		Up:   true,
+	}
+	return &healthCheckDomain.HealthCheckResult{
+			Status: true,
+			Info:   []healthCheckDomain.HealthCheckUnit{unit},
+		},
+		nil
+
 }

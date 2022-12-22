@@ -7,7 +7,7 @@ import (
 )
 
 type HealthCheckUnit struct {
-	Unit string `json:"id"`
+	Unit string `json:"unit"`
 	Up   bool   `json:"up"`
 }
 

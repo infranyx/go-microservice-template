@@ -3,6 +3,7 @@ package healthCheckHttp
 import (
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 type healthCheckHttpController struct {
@@ -16,5 +17,6 @@ func NewHealthCheckHttpController(uc healthCheckDomain.HealthCheckUseCase) healt
 }
 
 func (hc healthCheckHttpController) Check(c echo.Context) error {
-	return nil
+	healthResult, _ := hc.healthCheckUC.Check(c.Request().Context())
+	return c.JSON(http.StatusOK, healthResult)
 }
