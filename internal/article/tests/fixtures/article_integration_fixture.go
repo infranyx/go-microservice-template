@@ -10,7 +10,6 @@ import (
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
 	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
 	articleKafkaProducer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/producer"
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	clientContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
@@ -25,12 +24,11 @@ import (
 const bufSize = 1024 * 1024
 
 type IntegrationTestFixture struct {
-	InfraContainer       *iContainer.IContainer
-	Ctx                  context.Context
-	cancel               context.CancelFunc
-	Cleanup              func()
-	ArticleGrpcClient    articleV1.ArticleServiceClient
-	EchoArticleControler articleDomain.ArticleHttpController
+	InfraContainer    *iContainer.IContainer
+	Ctx               context.Context
+	cancel            context.CancelFunc
+	Cleanup           func()
+	ArticleGrpcClient articleV1.ArticleServiceClient
 }
 
 func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
@@ -88,10 +86,9 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 			conn.Close()
 			clientCleanup()
 		},
-		InfraContainer:       ic,
-		Ctx:                  ctx,
-		cancel:               cancel,
-		ArticleGrpcClient:    articleGrpcClient,
-		EchoArticleControler: echoController,
+		InfraContainer:    ic,
+		Ctx:               ctx,
+		cancel:            cancel,
+		ArticleGrpcClient: articleGrpcClient,
 	}, nil
 }
