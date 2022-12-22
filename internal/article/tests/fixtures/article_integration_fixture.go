@@ -8,7 +8,9 @@ import (
 
 	goTemplateUseCase "github.com/infranyx/go-grpc-template/external/go_template/usecase"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
+	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
 	articleKafkaProducer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/producer"
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	clientContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
@@ -23,11 +25,12 @@ import (
 const bufSize = 1024 * 1024
 
 type IntegrationTestFixture struct {
-	InfraContainer    *iContainer.IContainer
-	Ctx               context.Context
-	cancel            context.CancelFunc
-	Cleanup           func()
-	ArticleGrpcClient articleV1.ArticleServiceClient
+	InfraContainer       *iContainer.IContainer
+	Ctx                  context.Context
+	cancel               context.CancelFunc
+	Cleanup              func()
+	ArticleGrpcClient    articleV1.ArticleServiceClient
+	EchoArticleControler articleDomain.ArticleHttpController
 }
 
 func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
@@ -51,6 +54,12 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 	producer := articleKafkaProducer.NewArticleProducer(ic.KafkaWriter)
 	usecase := articleUseCase.NewArticleUseCase(repo, goTempUseCase, producer)
 
+	// echo
+	ic.EchoServer.SetupDefaultMiddlewares()
+	groupAPI := ic.EchoServer.GetEchoInstance().Group(ic.EchoServer.GetBasePath())
+	echoController := articleHttp.NewArticleHttpController(usecase)
+	articleHttp.NewArticleAPI(echoController).Register(groupAPI)
+
 	// grpc
 	grpcContrller := articleGrpc.NewArticleGrpcController(usecase)
 
@@ -70,7 +79,6 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 		cancel()
 		return nil, err
 	}
-
 	articleGrpcClient := articleV1.NewArticleServiceClient(conn)
 
 	return &IntegrationTestFixture{
@@ -80,9 +88,10 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 			conn.Close()
 			clientCleanup()
 		},
-		InfraContainer:    ic,
-		Ctx:               ctx,
-		cancel:            cancel,
-		ArticleGrpcClient: articleGrpcClient,
+		InfraContainer:       ic,
+		Ctx:                  ctx,
+		cancel:               cancel,
+		ArticleGrpcClient:    articleGrpcClient,
+		EchoArticleControler: echoController,
 	}, nil
 }

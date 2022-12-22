@@ -2,17 +2,16 @@ package artcileIntegrationTest
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	fixture "github.com/infranyx/go-grpc-template/internal/article/tests/fixtures"
-	"github.com/infranyx/go-grpc-template/pkg/config"
 	grpcError "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
-	httpClient "github.com/infranyx/go-grpc-template/pkg/http/client"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 	"github.com/labstack/echo/v4"
 
@@ -89,78 +88,57 @@ func (suite *ArticleSuiteTests) TestDescValidationErrCreateGrpcArticle() {
 }
 
 func (suite *ArticleSuiteTests) TestSuccessCreateHttpArticle() {
-	ctx := context.Background()
 	articleJSON := `{"name":"John Snow","desc":"King of the north"}`
 
-	res, err := httpClient.
-		BuildReq().
-		SetContext(ctx).
-		SetBody(strings.NewReader(articleJSON)).
-		SetHeader(echo.HeaderContentType, echo.MIMEApplicationJSON).
-		Post(fmt.Sprintf("http://localhost:%d%s/article", config.Conf.Http.Port, "/api/v1")).
-		Execute()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
 
-	if err != nil {
-		assert.Error(suite.T(), err)
-	}
-
+	// Assertions
+	assert.Equal(suite.T(), http.StatusOK, rec.Code)
 	articleDto := new(articleDto.Article)
-	err = res.Bind(articleDto)
-	if err != nil {
-		assert.Error(suite.T(), err)
+	if assert.NoError(suite.T(), json.Unmarshal(rec.Body.Bytes(), articleDto)) {
+		assert.NotNil(suite.T(), articleDto.ID)
+		assert.Equal(suite.T(), "John Snow", articleDto.Name)
+		assert.Equal(suite.T(), "King of the north", articleDto.Description)
 	}
 
-	assert.NotNil(suite.T(), articleDto.ID)
-	assert.Equal(suite.T(), "John Snow", articleDto.Name)
-	assert.Equal(suite.T(), "King of the north", articleDto.Description)
 }
 
 func (suite *ArticleSuiteTests) TestNameValidationErrCreateHttpArticle() {
-	ctx := context.Background()
 	articleJSON := `{"name":"Jo","desc":"King of the north"}`
 
-	res, err := httpClient.
-		BuildReq().
-		SetContext(ctx).
-		SetBody(strings.NewReader(articleJSON)).
-		SetHeader(echo.HeaderContentType, echo.MIMEApplicationJSON).
-		Post(fmt.Sprintf("http://localhost:%d%s/article", config.Conf.Http.Port, "/api/v1")).
-		Execute()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
 
-	if err != nil {
-		assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+	httpErr := httpError.ParseExternalHttpErr(rec.Result().Body)
+	if assert.NotNil(suite.T(), httpErr) {
+		assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
+		assert.Contains(suite.T(), httpErr.GetDetails(), "name")
 	}
 
-	httpErr := httpError.ParseExternalHttpErr(res.Body())
-
-	assert.NotNil(suite.T(), httpErr)
-	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
-	assert.Equal(suite.T(), false, res.IsSuccess())
-	assert.Contains(suite.T(), httpErr.GetDetails(), "name")
 }
 
 func (suite *ArticleSuiteTests) TestDescValidationErrCreateHttpArticle() {
-	ctx := context.Background()
 	articleJSON := `{"name":"John Snow","desc":"King"}`
 
-	res, err := httpClient.
-		BuildReq().
-		SetContext(ctx).
-		SetBody(strings.NewReader(articleJSON)).
-		SetHeader(echo.HeaderContentType, echo.MIMEApplicationJSON).
-		Post(fmt.Sprintf("http://localhost:%d%s/article", config.Conf.Http.Port, "/api/v1")).
-		Execute()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
 
-	if err != nil {
-		assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+	httpErr := httpError.ParseExternalHttpErr(rec.Result().Body)
+	if assert.NotNil(suite.T(), httpErr) {
+		assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
+		assert.Contains(suite.T(), httpErr.GetDetails(), "desc")
 	}
-
-	httpErr := httpError.ParseExternalHttpErr(res.Body())
-
-	assert.NotNil(suite.T(), httpErr)
-	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
-	assert.Equal(suite.T(), false, res.IsSuccess())
-	assert.Contains(suite.T(), httpErr.GetDetails(), "desc")
 }
 
 func TestRunSuite(t *testing.T) {
