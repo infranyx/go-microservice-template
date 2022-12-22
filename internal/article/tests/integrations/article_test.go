@@ -6,14 +6,12 @@ import (
 	"net/http"
 	"strings"
 	"testing"
-	"time"
 
-	"github.com/infranyx/go-grpc-template/app"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	fixture "github.com/infranyx/go-grpc-template/internal/article/tests/fixtures"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	grpcError "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
-	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	httpClient "github.com/infranyx/go-grpc-template/pkg/http/client"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 	"github.com/labstack/echo/v4"
@@ -25,26 +23,22 @@ import (
 
 type ArticleSuiteTests struct {
 	suite.Suite
-	articleClient articleV1.ArticleServiceClient
+	fixture *fixture.IntegrationTestFixture
 }
 
 func (suite *ArticleSuiteTests) SetupSuite() {
-	go app.New().Run()
-	time.Sleep(5 * time.Second)
-
-	articleClient, err := grpc.NewGrpcClient(&grpc.GrpcConfig{
-		Port: config.Conf.Grpc.Port,
-		Host: config.Conf.Grpc.Host,
-	})
+	fixture, err := fixture.NewIntegrationTestFixture()
 	if err != nil {
 		assert.Error(suite.T(), err)
 	}
-
-	suite.articleClient = articleV1.NewArticleServiceClient(articleClient.GetGrpcConnection())
+	suite.fixture = fixture
+	if err != nil {
+		assert.Error(suite.T(), err)
+	}
 }
 
 func (suite *ArticleSuiteTests) TearDownSuite() {
-	// suite.cleanup()
+	suite.fixture.Cleanup()
 }
 
 func (suite *ArticleSuiteTests) TestSuccessCreateGrpcArticle() {
@@ -53,7 +47,7 @@ func (suite *ArticleSuiteTests) TestSuccessCreateGrpcArticle() {
 		Name: "John",
 		Desc: "Pro Developer",
 	}
-	res, err := suite.articleClient.CreateArticle(ctx, input)
+	res, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
 	if err != nil {
 		assert.Error(suite.T(), err)
 	}
@@ -69,7 +63,7 @@ func (suite *ArticleSuiteTests) TestNameValidationErrCreateGrpcArticle() {
 		Name: "Jo",
 		Desc: "Pro Developer",
 	}
-	_, err := suite.articleClient.CreateArticle(ctx, input)
+	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
 
 	assert.NotNil(suite.T(), err)
 	grpcErr := grpcError.ParseExternalGrpcErr(err)
@@ -84,7 +78,7 @@ func (suite *ArticleSuiteTests) TestDescValidationErrCreateGrpcArticle() {
 		Name: "John",
 		Desc: "Pro",
 	}
-	_, err := suite.articleClient.CreateArticle(ctx, input)
+	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
 
 	assert.NotNil(suite.T(), err)
 
