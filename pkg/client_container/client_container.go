@@ -19,6 +19,7 @@ func NewCC(ctx context.Context) (*CContainer, func(), error) {
 		}
 	}
 	gtc, _ := grpc.NewGrpcClient(
+		ctx,
 		&grpc.GrpcConfig{Port: config.Conf.GoTemplateGrpcClient.Port, Host: config.Conf.GoTemplateGrpcClient.Host},
 	)
 	downFns = append(downFns, func() {

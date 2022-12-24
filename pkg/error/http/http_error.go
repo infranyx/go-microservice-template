@@ -2,6 +2,7 @@ package httpError
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"time"
 
@@ -142,35 +143,9 @@ func (he *httpErr) json() []byte {
 	return b
 }
 
-// // ToGrpcResponseErr creates a gRPC error response to send grpc engine
-// func (he *httpErr) ToGrpcResponseErr() error {
-// 	st := status.New(he.Status, he.Error())
-// 	mappedErr := &sharedBuf.CustomError{
-// 		Title:     he.Title,
-// 		Code:      int64(he.Code),
-// 		Msg:       he.Msg,
-// 		Details:   he.Details,
-// 		Timestamp: he.Timestamp.Format(time.RFC3339),
-// 	}
-// 	stWithDetails, _ := st.WithDetails(mappedErr)
-// 	return stWithDetails.Err()
-// }
-
-// func ParseExternalHttpErr(err error) HttpErr {
-// 	st := status.Convert(err)
-// 	for _, detail := ranhe st.Details() {
-// 		switch t := detail.(type) {
-// 		case *sharedBuf.CustomError:
-// 			timestamp, _ := time.Parse(time.RFC3339, t.Timestamp)
-// 			return &httpErr{
-// 				Status:    st.Code(),
-// 				Code:      int(t.Code),
-// 				Title:     t.Title,
-// 				Msg:       t.Msg,
-// 				Details:   t.Details,
-// 				Timestamp: timestamp,
-// 			}
-// 		}
-// 	}
-// 	return nil
-// }
+func ParseExternalHttpErr(err io.ReadCloser) HttpErr {
+	defer err.Close()
+	he := new(httpErr)
+	json.NewDecoder(err).Decode(he)
+	return he
+}

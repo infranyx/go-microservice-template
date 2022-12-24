@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -22,8 +24,13 @@ func init() {
 }
 
 func LoadEnv() {
-	// TODO : Log + Err
-	err := godotenv.Load(defaultEnvPath)
+	_, f, _, ok := runtime.Caller(0)
+	if !ok {
+		log.Fatal("Error generating env dir")
+	}
+	dir := filepath.Join(filepath.Dir(f), "../..", defaultEnvPath)
+
+	err := godotenv.Load(dir)
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
