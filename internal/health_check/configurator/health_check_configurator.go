@@ -2,7 +2,9 @@ package healthCheckConfigurator
 
 import (
 	"context"
+	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 
+	healthCheckGrpc "github.com/infranyx/go-grpc-template/internal/health_check/delivery/grpc"
 	healthCheckHttp "github.com/infranyx/go-grpc-template/internal/health_check/delivery/http"
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 	healthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase"
@@ -21,8 +23,8 @@ func (hc *healthCheckConfigurator) ConfigureHealthCheck(ctx context.Context) err
 	uc := healthCheckUseCase.NewHealthCheckUseCase(hc.ic.Pg)
 
 	// grpc
-	//gc := articleGrpc.NewArticleGrpcController(uc)
-	//articleV1.RegisterArticleServiceServer(ac.ic.GrpcServer.GetCurrentGrpcServer(), gc)
+	gc := healthCheckGrpc.NewHealthCheckGrpcController(uc)
+	grpcHealthV1.RegisterHealthServer(hc.ic.GrpcServer.GetCurrentGrpcServer(), gc)
 
 	// http
 	routerGroup := hc.ic.EchoServer.GetEchoInstance().Group(hc.ic.EchoServer.GetBasePath())

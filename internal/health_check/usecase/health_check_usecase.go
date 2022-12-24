@@ -1,7 +1,6 @@
 package healthCheckUseCase
 
 import (
-	"context"
 	kafkaHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/kafka_health_check"
 	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
@@ -20,7 +19,7 @@ func NewHealthCheckUseCase(conn *postgres.Postgres) healthCheckDomain.HealthChec
 	}
 }
 
-func (hu *healthCheckUseCase) Check(ctx context.Context) (*healthCheckDomain.HealthCheckResult, error) {
+func (hu *healthCheckUseCase) Check() *healthCheckDomain.HealthCheckResult {
 	healthCheckResult := healthCheckDomain.HealthCheckResult{
 		Status: true,
 		Units:  nil,
@@ -54,5 +53,5 @@ func (hu *healthCheckUseCase) Check(ctx context.Context) (*healthCheckDomain.Hea
 		}
 	}
 
-	return &healthCheckResult, nil
+	return &healthCheckResult
 }

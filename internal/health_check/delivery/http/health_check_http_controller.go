@@ -17,7 +17,7 @@ func NewHealthCheckHttpController(uc healthCheckDomain.HealthCheckUseCase) healt
 }
 
 func (hc healthCheckHttpController) Check(c echo.Context) error {
-	healthResult, _ := hc.healthCheckUC.Check(c.Request().Context())
+	healthResult := hc.healthCheckUC.Check()
 
 	httpStatus := http.StatusOK
 	if !healthResult.Status {
