@@ -2,7 +2,6 @@ package healthCheckDomain
 
 import (
 	"context"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,7 +12,7 @@ type HealthCheckUnit struct {
 
 type HealthCheckResult struct {
 	Status bool              `json:"status"`
-	Info   []HealthCheckUnit `json:"info"`
+	Units  []HealthCheckUnit `json:"units"`
 }
 
 type HealthCheckConfigurator interface {
@@ -26,4 +25,8 @@ type HealthCheckHttpController interface {
 
 type HealthCheckUseCase interface {
 	Check(ctx context.Context) (*HealthCheckResult, error)
+}
+
+type PgHealthCheckUseCase interface {
+	PingCheck() bool
 }

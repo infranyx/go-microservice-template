@@ -18,7 +18,7 @@ func NewHealthCheckConfigurator(ic *infraContainer.IContainer) healthCheckDomain
 }
 
 func (hc *healthCheckConfigurator) ConfigureHealthCheck(ctx context.Context) error {
-	uc := healthCheckUseCase.NewHealthCheckUseCase()
+	uc := healthCheckUseCase.NewHealthCheckUseCase(hc.ic.Pg)
 
 	// grpc
 	//gc := articleGrpc.NewArticleGrpcController(uc)

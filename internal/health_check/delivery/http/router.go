@@ -16,5 +16,5 @@ func NewHealthCheckAPI(hc healthCheckDomain.HealthCheckHttpController) *Router {
 }
 
 func (r *Router) Register(e *echo.Group) {
-	e.POST("/health", r.healthCheckCtrl.Check)
+	e.GET("/health", r.healthCheckCtrl.Check)
 }
