@@ -31,9 +31,6 @@ func (suite *ArticleSuiteTests) SetupSuite() {
 		assert.Error(suite.T(), err)
 	}
 	suite.fixture = fixture
-	if err != nil {
-		assert.Error(suite.T(), err)
-	}
 }
 
 func (suite *ArticleSuiteTests) TearDownSuite() {
