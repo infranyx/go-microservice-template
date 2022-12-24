@@ -4,16 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"net"
+
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	"github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/error_interceptor"
-	"github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/logger_interceptor"
-	"github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/sentry_interceptor"
+	grpcErrorInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/error_interceptor"
+	grpcLoggerInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/logger_interceptor"
+	grpcSentryInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/sentry_interceptor"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
+	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
 	googleGrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"net"
 )
 
 type GrpcServer interface {
@@ -34,7 +36,7 @@ type grpcServer struct {
 }
 
 func NewGrpcServer(conf *GrpcConfig) GrpcServer {
-	gso := &grpcSentryInterceptor.Options{
+	gso := &sentryUtils.Options{
 		Repanic: true,
 	}
 

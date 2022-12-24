@@ -37,6 +37,10 @@ type ArticleConsumer interface {
 	RunConsumers(ctx context.Context)
 }
 
+type ArticleJob interface {
+	RunJobs(ctx context.Context)
+}
+
 type ArticleUseCase interface {
 	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }
