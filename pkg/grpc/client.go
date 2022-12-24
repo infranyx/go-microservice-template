@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
@@ -16,9 +17,8 @@ type GrpcClient interface {
 	Close() error
 }
 
-func NewGrpcClient(config *GrpcConfig) (GrpcClient, error) {
-	// TODO: dial context
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", config.Host, config.Port),
+func NewGrpcClient(ctx context.Context, config *GrpcConfig) (GrpcClient, error) {
+	conn, err := grpc.DialContext(ctx, fmt.Sprintf("%s:%d", config.Host, config.Port),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
