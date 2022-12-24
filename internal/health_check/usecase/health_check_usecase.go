@@ -27,7 +27,7 @@ func (hu *healthCheckUseCase) Check() *healthCheckDomain.HealthCheckResult {
 
 	pgHealthCheck := pgHealthCheckUseCase.NewPgHealthCheck(hu.conn)
 	pgUnit := healthCheckDomain.HealthCheckUnit{
-		Unit: "database",
+		Unit: "postgres",
 		Up:   pgHealthCheck.PingCheck(),
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, pgUnit)

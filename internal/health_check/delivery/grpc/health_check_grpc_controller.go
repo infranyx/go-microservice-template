@@ -2,20 +2,25 @@ package healthCheckGrpc
 
 import (
 	"context"
-	"fmt"
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	"google.golang.org/grpc/codes"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/status"
 )
 
 type healthCheckGrpcController struct {
-	healthCheckUseCase healthCheckDomain.HealthCheckUseCase
-	kafkaHealthCheckUc healthCheckDomain.KafkaHealthCheckUseCase
+	healthCheckUseCase   healthCheckDomain.HealthCheckUseCase
+	pgHealthCheckUc      healthCheckDomain.PgHealthCheckUseCase
+	kafkaHealthCheckUc   healthCheckDomain.KafkaHealthCheckUseCase
+	tempDirHealthCheckUc healthCheckDomain.TmpDirHealthCheckUseCase
 }
 
-func NewHealthCheckGrpcController(uc healthCheckDomain.HealthCheckUseCase, kuc healthCheckDomain.KafkaHealthCheckUseCase) healthCheckDomain.HealthCheckGrpcController {
+func NewHealthCheckGrpcController(uc healthCheckDomain.HealthCheckUseCase, pguc healthCheckDomain.PgHealthCheckUseCase, kuc healthCheckDomain.KafkaHealthCheckUseCase, tmpDirUc healthCheckDomain.TmpDirHealthCheckUseCase) healthCheckDomain.HealthCheckGrpcController {
 	return &healthCheckGrpcController{
-		healthCheckUseCase: uc,
-		kafkaHealthCheckUc: kuc,
+		healthCheckUseCase:   uc,
+		pgHealthCheckUc:      pguc,
+		kafkaHealthCheckUc:   kuc,
+		tempDirHealthCheckUc: tmpDirUc,
 	}
 }
 
@@ -23,12 +28,18 @@ func (hc *healthCheckGrpcController) Check(ctx context.Context, request *grpcHea
 	var healthStatus bool
 
 	switch request.Service {
+	case "":
+		healthStatus = hc.healthCheckUseCase.Check().Status
 	case "kafka":
 		healthStatus = hc.kafkaHealthCheckUc.PingCheck()
-		fmt.Println("kafka")
+	case "postgres":
+		healthStatus = hc.pgHealthCheckUc.PingCheck()
+	case "writable-tmp-dir":
+		healthStatus = hc.tempDirHealthCheckUc.PingCheck()
 	default:
-		healthStatus = hc.healthCheckUseCase.Check().Status
-		fmt.Println("default")
+		return &grpcHealthV1.HealthCheckResponse{
+			Status: grpcHealthV1.HealthCheckResponse_UNKNOWN,
+		}, nil
 	}
 
 	grpcStatus := grpcHealthV1.HealthCheckResponse_SERVING
@@ -43,5 +54,5 @@ func (hc *healthCheckGrpcController) Check(ctx context.Context, request *grpcHea
 }
 
 func (hc *healthCheckGrpcController) Watch(request *grpcHealthV1.HealthCheckRequest, server grpcHealthV1.Health_WatchServer) error {
-	return nil
+	return status.Error(codes.Unimplemented, "unimplemented")
 }
