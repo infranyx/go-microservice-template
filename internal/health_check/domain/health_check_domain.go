@@ -30,3 +30,7 @@ type HealthCheckUseCase interface {
 type PgHealthCheckUseCase interface {
 	PingCheck() bool
 }
+
+type TmpDirHealthCheckUseCase interface {
+	PingCheck() bool
+}

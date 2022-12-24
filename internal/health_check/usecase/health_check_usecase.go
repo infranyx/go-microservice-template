@@ -2,6 +2,7 @@ package healthCheckUseCase
 
 import (
 	"context"
+	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
@@ -26,10 +27,17 @@ func (hu *healthCheckUseCase) Check(ctx context.Context) (*healthCheckDomain.Hea
 
 	pgHealthCheck := pgHealthCheckUseCase.NewPgHealthCheck(hu.conn)
 	pgUnit := healthCheckDomain.HealthCheckUnit{
-		Unit: "postgres",
+		Unit: "database",
 		Up:   pgHealthCheck.PingCheck(),
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, pgUnit)
+
+	tmpDirHealthCheck := tmpDirHealthCheckUseCase.NewPgHealthCheck()
+	tmpDirUnit := healthCheckDomain.HealthCheckUnit{
+		Unit: "writable-tmp-dir",
+		Up:   tmpDirHealthCheck.PingCheck(),
+	}
+	healthCheckResult.Units = append(healthCheckResult.Units, tmpDirUnit)
 
 	for _, v := range healthCheckResult.Units {
 		if !v.Up {
