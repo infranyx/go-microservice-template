@@ -2,6 +2,7 @@ package healthCheckUseCase
 
 import (
 	"context"
+	kafkaHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/kafka_health_check"
 	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 
@@ -32,12 +33,19 @@ func (hu *healthCheckUseCase) Check(ctx context.Context) (*healthCheckDomain.Hea
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, pgUnit)
 
-	tmpDirHealthCheck := tmpDirHealthCheckUseCase.NewPgHealthCheck()
+	tmpDirHealthCheck := tmpDirHealthCheckUseCase.NewTmpDirHealthCheck()
 	tmpDirUnit := healthCheckDomain.HealthCheckUnit{
 		Unit: "writable-tmp-dir",
 		Up:   tmpDirHealthCheck.PingCheck(),
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, tmpDirUnit)
+
+	kafkaHealthCheck := kafkaHealthCheckUseCase.NewKafkaHealthCheck()
+	kafkaUnit := healthCheckDomain.HealthCheckUnit{
+		Unit: "kafka",
+		Up:   kafkaHealthCheck.PingCheck(),
+	}
+	healthCheckResult.Units = append(healthCheckResult.Units, kafkaUnit)
 
 	for _, v := range healthCheckResult.Units {
 		if !v.Up {

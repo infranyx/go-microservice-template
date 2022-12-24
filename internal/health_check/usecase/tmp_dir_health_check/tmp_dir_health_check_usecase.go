@@ -10,11 +10,11 @@ import (
 type tmpDirHealthCheck struct {
 }
 
-func NewPgHealthCheck() healthCheckDomain.TmpDirHealthCheckUseCase {
+func NewTmpDirHealthCheck() healthCheckDomain.TmpDirHealthCheckUseCase {
 	return &tmpDirHealthCheck{}
 }
 
-func (ph *tmpDirHealthCheck) PingCheck() bool {
+func (th *tmpDirHealthCheck) PingCheck() bool {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return false
@@ -24,6 +24,6 @@ func (ph *tmpDirHealthCheck) PingCheck() bool {
 	if unix.Access(tmpDirPath, unix.W_OK) != nil {
 		return false
 	}
-	
+
 	return true
 }

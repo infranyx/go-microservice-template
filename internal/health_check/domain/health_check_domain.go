@@ -34,3 +34,7 @@ type PgHealthCheckUseCase interface {
 type TmpDirHealthCheckUseCase interface {
 	PingCheck() bool
 }
+
+type KafkaHealthCheckUseCase interface {
+	PingCheck() bool
+}
