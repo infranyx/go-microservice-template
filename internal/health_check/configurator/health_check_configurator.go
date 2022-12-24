@@ -2,6 +2,7 @@ package healthCheckConfigurator
 
 import (
 	"context"
+	kafkaHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/kafka_health_check"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 
 	healthCheckGrpc "github.com/infranyx/go-grpc-template/internal/health_check/delivery/grpc"
@@ -21,9 +22,9 @@ func NewHealthCheckConfigurator(ic *infraContainer.IContainer) healthCheckDomain
 
 func (hc *healthCheckConfigurator) ConfigureHealthCheck(ctx context.Context) error {
 	uc := healthCheckUseCase.NewHealthCheckUseCase(hc.ic.Pg)
-
+	kuc := kafkaHealthCheckUseCase.NewKafkaHealthCheck()
 	// grpc
-	gc := healthCheckGrpc.NewHealthCheckGrpcController(uc)
+	gc := healthCheckGrpc.NewHealthCheckGrpcController(uc, kuc)
 	grpcHealthV1.RegisterHealthServer(hc.ic.GrpcServer.GetCurrentGrpcServer(), gc)
 
 	// http
