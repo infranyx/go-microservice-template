@@ -3,11 +3,10 @@ package grpcSentryInterceptor
 import (
 	"context"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
-
 	"github.com/getsentry/sentry-go"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/infranyx/go-grpc-template/pkg/config"
+	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
 	"google.golang.org/grpc"
 )
 
@@ -23,8 +22,8 @@ func UnaryServerInterceptor(opts *sentryUtils.Options) grpc.UnaryServerIntercept
 		}
 		hub.Scope().SetExtra("request", req)
 		hub.Scope().SetTransaction(info.FullMethod)
-		hub.Scope().SetTag("application", config.Conf.App.AppName)
-		hub.Scope().SetTag("AppEnv", config.Conf.App.AppEnv)
+		hub.Scope().SetTag("application", config.BaseConfig.App.AppName)
+		hub.Scope().SetTag("AppEnv", config.BaseConfig.App.AppEnv)
 
 		defer sentryUtils.RecoverWithSentry(hub, ctx, opts)
 
@@ -50,8 +49,8 @@ func StreamServerInterceptor(opts *sentryUtils.Options) grpc.StreamServerInterce
 			ctx = sentry.SetHubOnContext(ctx, hub)
 		}
 		hub.Scope().SetTransaction(info.FullMethod)
-		hub.Scope().SetTag("application", config.Conf.App.AppName)
-		hub.Scope().SetTag("AppEnv", config.Conf.App.AppEnv)
+		hub.Scope().SetTag("application", config.BaseConfig.App.AppName)
+		hub.Scope().SetTag("AppEnv", config.BaseConfig.App.AppEnv)
 
 		defer sentryUtils.RecoverWithSentry(hub, ctx, opts)
 

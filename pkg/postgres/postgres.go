@@ -44,9 +44,9 @@ func NewPgConn(ctx context.Context, conf *PgConf) (*Postgres, error) {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(config.Conf.Postgres.MaxConn)                           // the defaultLogger is 0 (unlimited)
-	db.SetMaxIdleConns(config.Conf.Postgres.MaxIdleConn)                       // defaultMaxIdleConn = 2
-	db.SetConnMaxLifetime(time.Duration(config.Conf.Postgres.MaxLifeTimeConn)) // 0, connections are reused forever
+	db.SetMaxOpenConns(config.BaseConfig.Postgres.MaxConn)                           // the defaultLogger is 0 (unlimited)
+	db.SetMaxIdleConns(config.BaseConfig.Postgres.MaxIdleConn)                       // defaultMaxIdleConn = 2
+	db.SetConnMaxLifetime(time.Duration(config.BaseConfig.Postgres.MaxLifeTimeConn)) // 0, connections are reused forever
 
 	if err := db.Ping(); err != nil {
 		// TODO : Log + Err

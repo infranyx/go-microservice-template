@@ -3,6 +3,9 @@ package infraContainer
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/getsentry/sentry-go"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
@@ -13,8 +16,6 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
-	"log"
-	"time"
 )
 
 type IContainer struct {
@@ -36,7 +37,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	}
 
 	se := sentry.Init(sentry.ClientOptions{
-		Dsn:              config.Conf.Sentry.Dsn,
+		Dsn:              config.BaseConfig.Sentry.Dsn,
 		TracesSampleRate: 1.0,
 		EnableTracing:    config.IsDevEnv(),
 	})
@@ -48,8 +49,8 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	grpcServerConfig := &grpc.GrpcConfig{
-		Port:        config.Conf.Grpc.Port,
-		Host:        config.Conf.Grpc.Host,
+		Port:        config.BaseConfig.Grpc.Port,
+		Host:        config.BaseConfig.Grpc.Host,
 		Development: config.IsDevEnv(),
 	}
 	grpcServer := grpc.NewGrpcServer(grpcServerConfig)
@@ -58,7 +59,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	echoServerConfig := &httpEcho.EchoHttpConfig{
-		Port:     config.Conf.Http.Port,
+		Port:     config.BaseConfig.Http.Port,
 		BasePath: "/api/v1",
 		IsDev:    config.IsDevEnv(),
 	}
@@ -69,12 +70,12 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	pg, err := postgres.NewPgConn(ctx, &postgres.PgConf{
-		Host:    config.Conf.Postgres.Host,
-		Port:    config.Conf.Postgres.Port,
-		User:    config.Conf.Postgres.User,
-		Pass:    config.Conf.Postgres.Pass,
-		DBName:  config.Conf.Postgres.DBName,
-		SslMode: config.Conf.Postgres.SslMode,
+		Host:    config.BaseConfig.Postgres.Host,
+		Port:    config.BaseConfig.Postgres.Port,
+		User:    config.BaseConfig.Postgres.User,
+		Pass:    config.BaseConfig.Postgres.Pass,
+		DBName:  config.BaseConfig.Postgres.DBName,
+		SslMode: config.BaseConfig.Postgres.SslMode,
 	})
 	if err != nil {
 		return nil, down, fmt.Errorf("could not initialize database connection using sqlx %s", err)
@@ -84,8 +85,8 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	kwc := &kafkaProducer.WriterConf{
-		Brokers:      config.Conf.Kafka.ClientBrokers,
-		Topic:        config.Conf.Kafka.Topic,
+		Brokers:      config.BaseConfig.Kafka.ClientBrokers,
+		Topic:        config.BaseConfig.Kafka.Topic,
 		RequiredAcks: kafka.RequireAll,
 	}
 	kw := kafkaProducer.NewKafkaWriter(kwc)
@@ -94,16 +95,16 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	})
 
 	krc := &kafkaConsumer.ReaderConf{
-		Brokers: config.Conf.Kafka.ClientBrokers,
-		Topic:   config.Conf.Kafka.Topic,
-		GroupID: config.Conf.Kafka.ClientGroupId,
+		Brokers: config.BaseConfig.Kafka.ClientBrokers,
+		Topic:   config.BaseConfig.Kafka.Topic,
+		GroupID: config.BaseConfig.Kafka.ClientGroupId,
 	}
 	kr := kafkaConsumer.NewKafkaReader(krc)
 	downFns = append(downFns, func() {
 		kr.Client.Close()
 	})
 
-	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
+	ic := &IContainer{Cfg: config.BaseConfig, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
 
 	return ic, down, nil
 }

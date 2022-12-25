@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
 	"os"
 	"os/signal"
 	"syscall"
 
 	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
-	cContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
+	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
+	extBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 )
 
@@ -28,7 +28,7 @@ func (a *App) Run() error {
 	}
 	defer infraDown()
 
-	cc, clientsDown, err := cContainer.NewCC(ctx)
+	cc, clientsDown, err := extBridge.NewExternalBridge(ctx)
 	if err != nil {
 		return err
 	}
@@ -70,10 +70,10 @@ func (a *App) Run() error {
 	return serverError
 }
 
-func configureModule(ctx context.Context, ic *iContainer.IContainer, cc *cContainer.CContainer) error {
-	e := articleConfigurator.NewArticleConfigurator(ic, cc).ConfigureArticle(ctx)
-	if e != nil {
-		return e
+func configureModule(ctx context.Context, ic *iContainer.IContainer, eb *extBridge.ExternalBridge) error {
+	err := articleConfigurator.NewArticleConfigurator(ic, eb).ConfigureArticle(ctx)
+	if err != nil {
+		return err
 	}
 
 	he := healthCheckConfigurator.NewHealthCheckConfigurator(ic).ConfigureHealthCheck(ctx)

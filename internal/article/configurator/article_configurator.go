@@ -3,7 +3,7 @@ package articleConfigurator
 import (
 	"context"
 
-	goTemplateUseCase "github.com/infranyx/go-grpc-template/external/go_template/usecase"
+	sampleExtServiceUseCase "github.com/infranyx/go-grpc-template/external/sample_ext_service/usecase"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
 	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
 	articleKafkaConsumer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/consumer"
@@ -12,7 +12,7 @@ import (
 	articleJob "github.com/infranyx/go-grpc-template/internal/article/job"
 	articleRepo "github.com/infranyx/go-grpc-template/internal/article/repository"
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
-	clientContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
+	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
 	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
@@ -20,30 +20,30 @@ import (
 
 type articleConfigurator struct {
 	ic *infraContainer.IContainer
-	cc *clientContainer.CContainer
+	eb *externalBridge.ExternalBridge
 }
 
-func NewArticleConfigurator(ic *infraContainer.IContainer, cc *clientContainer.CContainer) articleDomain.ArticleConfigurator {
-	return &articleConfigurator{ic: ic, cc: cc}
+func NewArticleConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.ArticleConfigurator {
+	return &articleConfigurator{ic: ic, eb: eb}
 }
 
-func (ac *articleConfigurator) ConfigureArticle(ctx context.Context) error {
-	gtuc := goTemplateUseCase.NewGoTemplateUseCase(ac.cc.GoTemplateGrpc)
-	rp := articleRepo.NewArticleRepository(ac.ic.Pg)
-	ap := articleKafkaProducer.NewArticleProducer(ac.ic.KafkaWriter)
-	uc := articleUseCase.NewArticleUseCase(rp, gtuc, ap)
+func (c *articleConfigurator) ConfigureArticle(ctx context.Context) error {
+	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.eb.SampleExtGrpcService)
+	kp := articleKafkaProducer.NewArticleProducer(c.ic.KafkaWriter)
+	repo := articleRepo.NewArticleRepository(c.ic.Pg)
+	uc := articleUseCase.NewArticleUseCase(repo, seServiceUseCase, kp)
 
 	// grpc
-	gc := articleGrpc.NewArticleGrpcController(uc)
-	articleV1.RegisterArticleServiceServer(ac.ic.GrpcServer.GetCurrentGrpcServer(), gc)
+	grpcController := articleGrpc.NewArticleGrpcController(uc)
+	articleV1.RegisterArticleServiceServer(c.ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	// http
-	g := ac.ic.EchoServer.GetEchoInstance().Group(ac.ic.EchoServer.GetBasePath())
-	hc := articleHttp.NewArticleHttpController(uc)
-	articleHttp.NewArticleAPI(hc).Register(g)
+	httpRouterGp := c.ic.EchoServer.GetEchoInstance().Group(c.ic.EchoServer.GetBasePath())
+	httpController := articleHttp.NewArticleHttpController(uc)
+	articleHttp.NewArticleAPI(httpController).Register(httpRouterGp)
 
 	// Consumers
-	articleKafkaConsumer.NewArticleConsumer(ac.ic.KafkaReader).RunConsumers(ctx)
+	articleKafkaConsumer.NewArticleConsumer(c.ic.KafkaReader).RunConsumers(ctx)
 
 	// Jobs
 	articleJob.NewArticleJob().RunJobs(ctx)

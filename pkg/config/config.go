@@ -15,7 +15,7 @@ type Config struct {
 	Sentry               SentryConfig
 }
 
-var Conf *Config
+var BaseConfig *Config
 
 type AppConfig struct {
 	AppEnv  string
@@ -56,7 +56,7 @@ type SentryConfig struct {
 }
 
 func init() {
-	Conf = newConfig()
+	BaseConfig = newConfig()
 }
 
 func newConfig() *Config {
@@ -102,13 +102,13 @@ func newConfig() *Config {
 }
 
 func IsDevEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvDev
+	return BaseConfig.App.AppEnv == constant.AppEnvDev
 }
 
 func IsProdEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvProd
+	return BaseConfig.App.AppEnv == constant.AppEnvProd
 }
 
 func IsTestEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvTest
+	return BaseConfig.App.AppEnv == constant.AppEnvTest
 }

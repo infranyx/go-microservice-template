@@ -20,8 +20,8 @@ var SentryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
 			ctx = sentry.SetHubOnContext(ctx, hub)
 		}
 		hub.Scope().SetExtra("args", args)
-		hub.Scope().SetTag("application", config.Conf.App.AppName)
-		hub.Scope().SetTag("AppEnv", config.Conf.App.AppEnv)
+		hub.Scope().SetTag("application", config.BaseConfig.App.AppName)
+		hub.Scope().SetTag("AppEnv", config.BaseConfig.App.AppEnv)
 		defer sentryUtils.RecoverWithSentry(hub, ctx, opts)
 
 		return f(ctx, args)

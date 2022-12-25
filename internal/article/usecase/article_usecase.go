@@ -4,27 +4,27 @@ import (
 	"context"
 	"encoding/json"
 
-	goTemplateDomain "github.com/infranyx/go-grpc-template/external/go_template/domain"
+	sampleExtServiceDomain "github.com/infranyx/go-grpc-template/external/sample_ext_service/domain"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/segmentio/kafka-go"
 )
 
 type articleUseCase struct {
-	articleRepo       articleDomain.ArticleRepository
-	goTemplateUseCase goTemplateDomain.GoTemplateUseCase
-	articleProducer   articleDomain.ArticleProducer
+	articleRepo             articleDomain.ArticleRepository
+	sampleExtServiceUseCase sampleExtServiceDomain.SampleExtServiceUseCase
+	articleProducer         articleDomain.ArticleProducer
 }
 
 func NewArticleUseCase(
 	articleRepo articleDomain.ArticleRepository,
-	gtu goTemplateDomain.GoTemplateUseCase,
+	esu sampleExtServiceDomain.SampleExtServiceUseCase,
 	ap articleDomain.ArticleProducer,
 ) articleDomain.ArticleUseCase {
 	return &articleUseCase{
-		articleRepo:       articleRepo,
-		goTemplateUseCase: gtu,
-		articleProducer:   ap,
+		articleRepo:             articleRepo,
+		sampleExtServiceUseCase: esu,
+		articleProducer:         ap,
 	}
 }
 

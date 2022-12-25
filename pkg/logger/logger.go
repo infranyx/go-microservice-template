@@ -34,8 +34,8 @@ func newLogger() *zap.Logger {
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
 
-		if _, err := os.Stat("/path/to/your-file"); os.IsNotExist(err) {
-			os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
+		if _, err := os.Stat(filepath.Join(".", "tmp/logs")); os.IsNotExist(err) {
+			_ = os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
 		}
 
 		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
@@ -61,24 +61,3 @@ func newLogger() *zap.Logger {
 	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(zapcore.DebugLevel))
 	return zap.New(core, zap.AddCaller())
 }
-
-// func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
-// 	l.logger.Info(
-// 		constants.GRPC,
-// 		zap.String(constants.METHOD, method),
-// 		zap.Any(constants.REQUEST, req),
-// 		zap.Any(constants.REPLY, reply),
-// 		zap.Duration(constants.TIME, time),
-// 		zap.Any(constants.METADATA, metaData),
-// 		zap.Error(err),
-// 	)
-// }
-
-// func mapToFields(fields map[string]interface{}) []zap.Field {
-// 	var zapFields []zap.Field
-// 	for k, v := range fields {
-// 		zapFields = append(zapFields, zap.Any(k, v))
-// 	}
-
-// 	return zapFields
-// }
