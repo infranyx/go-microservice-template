@@ -1,6 +1,7 @@
 package echoErrorHandler
 
 import (
+	"fmt"
 	"github.com/getsentry/sentry-go"
 	"net/http"
 
@@ -18,10 +19,13 @@ import (
 func ErrorHandler(err error, c echo.Context) {
 	// default echo errors
 	ehe, ok := err.(*echo.HTTPError)
+	fmt.Println("--->", err)
 	if ok {
 		switch ehe.Code {
 		case http.StatusNotFound:
 			err = customErrors.NewNotFoundError(errorConst.ErrInfo.NotFoundErr.Msg, errorConst.ErrInfo.NotFoundErr.Code, nil)
+		case http.StatusMethodNotAllowed:
+			err = customErrors.NewMethodNotAllowedError(errorConst.ErrInfo.MethodNotAllowedErr.Msg, errorConst.ErrInfo.MethodNotAllowedErr.Code, nil)
 		default:
 			err = customErrors.NewInternalServerError(errorConst.ErrInfo.InternalServerErr.Msg, errorConst.ErrInfo.InternalServerErr.Code, nil)
 		}
@@ -34,7 +38,7 @@ func ErrorHandler(err error, c echo.Context) {
 		if hub != nil {
 			hub.ConfigureScope(func(scope *sentry.Scope) {
 				scope.SetLevel(sentry.LevelError)
-				scope.SetContext("grpcErr", map[string]interface{}{
+				scope.SetContext("HttpErr", map[string]interface{}{
 					loggerConst.TYPE:        loggerConst.HTTP,
 					loggerConst.TITILE:      he.GetTitle(),
 					loggerConst.CODE:        he.GetCode(),

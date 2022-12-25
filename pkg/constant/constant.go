@@ -24,9 +24,9 @@ const (
 )
 
 const (
-	MaxHeaderBytes       = 1 << 20
-	BodyLimit            = "2M"
-	ReadTimeout          = 15 * time.Second
-	WriteTimeout         = 15 * time.Second
-	GzipLevel            = 5
+	MaxHeaderBytes = 1 << 20
+	BodyLimit      = "2M"
+	ReadTimeout    = 15 * time.Second
+	WriteTimeout   = 15 * time.Second
+	GzipLevel      = 5
 )

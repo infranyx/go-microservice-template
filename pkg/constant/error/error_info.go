@@ -3,9 +3,10 @@ package errConst
 var ErrInfo *errInfo
 
 type errInfo struct {
-	ValidationErr     eInfo
-	InternalServerErr eInfo
-	NotFoundErr       eInfo
+	ValidationErr       eInfo
+	InternalServerErr   eInfo
+	NotFoundErr         eInfo
+	MethodNotAllowedErr eInfo
 }
 
 type eInfo struct {
@@ -36,6 +37,11 @@ func init() {
 		NotFoundErr: eInfo{
 			Msg:  "not found",
 			Code: 1002,
+		},
+
+		MethodNotAllowedErr: eInfo{
+			Msg:  "method not allowed",
+			Code: 1003,
 		},
 	}
 }
