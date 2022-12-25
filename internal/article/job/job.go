@@ -1,4 +1,4 @@
-package job
+package articleJob
 
 import (
 	"context"
@@ -25,18 +25,18 @@ func NewArticleJob() articleDomain.ArticleJob {
 	return &articleJob{cron: c}
 }
 
-func (aj *articleJob) RunJobs(ctx context.Context) {
-	aj.logArticleJob(ctx)
-	go aj.cron.Start()
+func (j *articleJob) StartJobs(ctx context.Context) {
+	j.logArticleJob(ctx)
+	go j.cron.Start()
 }
 
-func (aj *articleJob) logArticleJob(ctx context.Context) {
-	worker := wrapper.BuildChain(aj.logArticleWorker(),
+func (j *articleJob) logArticleJob(ctx context.Context) {
+	worker := wrapper.BuildChain(j.logArticleWorker(),
 		wrapperSentryhandler.SentryHandler,
 		wrapperRecoveryhandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
 	)
-	entryId, _ := aj.cron.AddFunc("*/1 * * * *",
+	entryId, _ := j.cron.AddFunc("*/1 * * * *",
 		worker.ToCronJobFunc(ctx, nil),
 	)
 	logger.Zap.Sugar().Infof("Starting log article job: %v", entryId)

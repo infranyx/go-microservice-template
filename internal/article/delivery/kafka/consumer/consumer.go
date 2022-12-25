@@ -12,20 +12,20 @@ import (
 	wrapperSentryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
 )
 
-type articleConsumer struct {
-	createReader *kafkaConsumer.Reader
+type consumer struct {
+	createEventReader *kafkaConsumer.Reader
 }
 
-func NewArticleConsumer(r *kafkaConsumer.Reader) articleDomain.ArticleConsumer {
-	return &articleConsumer{createReader: r}
+func NewConsumer(r *kafkaConsumer.Reader) articleDomain.ArticleConsumer {
+	return &consumer{createEventReader: r}
 }
 
-func (ac *articleConsumer) RunConsumers(ctx context.Context) {
-	go ac.consumerCreateArticle(ctx, 2)
+func (c *consumer) RunConsumers(ctx context.Context) {
+	go c.createEvent(ctx, 2)
 }
 
-func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum int) {
-	r := ac.createReader.Client
+func (c *consumer) createEvent(ctx context.Context, workersNum int) {
+	r := c.createEventReader.Client
 	defer func() {
 		if err := r.Close(); err != nil {
 			logger.Zap.Sugar().Errorf("error closing create article consumer")
@@ -34,9 +34,9 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 
 	logger.Zap.Sugar().Infof("Starting consumer group: %v", r.Config().GroupID)
 
-	c := make(chan bool)
+	workerChan := make(chan bool)
 	worker := wrapper.BuildChain(
-		ac.createArticleWorker(c),
+		c.createEventWorker(workerChan),
 		wrapperSentryhandler.SentryHandler,
 		wrapperRecoveryhandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
@@ -46,7 +46,7 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 	}
 
 	for {
-		<-c
+		<-workerChan
 		go worker(ctx, nil)
 	}
 }

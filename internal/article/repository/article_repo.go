@@ -1,4 +1,4 @@
-package articleRepo
+package articleRepository
 
 import (
 	"context"
@@ -9,18 +9,18 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 )
 
-type articleRepository struct {
+type repository struct {
 	conn *postgres.Postgres
 }
 
-func NewArticleRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
-	return &articleRepository{Conn}
+func NewRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
+	return &repository{Conn}
 }
 
-func (ar *articleRepository) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
+func (r *repository) Create(ctx context.Context, entity *articleDto.CreateArticle) (*articleDomain.Article, error) {
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
-	res, err := ar.conn.SqlxDB.QueryContext(ctx, query, article.Name, article.Description)
+	res, err := r.conn.SqlxDB.QueryContext(ctx, query, entity.Name, entity.Description)
 	if err != nil {
 		return nil, fmt.Errorf("error inserting article record")
 	}

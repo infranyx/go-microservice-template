@@ -20,6 +20,14 @@ type ArticleConfigurator interface {
 	ConfigureArticle(ctx context.Context) error
 }
 
+type ArticleUseCase interface {
+	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
+}
+
+type ArticleRepository interface {
+	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
+}
+
 type ArticleGrpcController interface {
 	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
 	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
@@ -29,22 +37,14 @@ type ArticleHttpController interface {
 	Create(c echo.Context) error
 }
 
+type ArticleJob interface {
+	StartJobs(ctx context.Context)
+}
+
 type ArticleProducer interface {
-	PublishCreate(ctx context.Context, msgs ...kafka.Message) error
+	PublishCreateEvent(ctx context.Context, msgs ...kafka.Message) error
 }
 
 type ArticleConsumer interface {
 	RunConsumers(ctx context.Context)
-}
-
-type ArticleJob interface {
-	RunJobs(ctx context.Context)
-}
-
-type ArticleUseCase interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
-}
-
-type ArticleRepository interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }

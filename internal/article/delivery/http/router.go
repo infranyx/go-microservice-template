@@ -1,4 +1,4 @@
-package articleHttp
+package articleHttpController
 
 import (
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
@@ -6,15 +6,15 @@ import (
 )
 
 type Router struct {
-	articleCtrl articleDomain.ArticleHttpController
+	controller articleDomain.ArticleHttpController
 }
 
-func NewArticleAPI(ahc articleDomain.ArticleHttpController) *Router {
+func NewRouter(controller articleDomain.ArticleHttpController) *Router {
 	return &Router{
-		articleCtrl: ahc,
+		controller: controller,
 	}
 }
 
 func (r *Router) Register(e *echo.Group) {
-	e.POST("/article", r.articleCtrl.Create)
+	e.POST("/article", r.controller.Create)
 }

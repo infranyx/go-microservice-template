@@ -3,44 +3,40 @@ package articleKafkaConsumer
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-
+	
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 )
 
-func (ac *articleConsumer) createArticleWorker(
-	c chan bool,
+func (c *consumer) createEventWorker(
+	workerChan chan bool,
 ) wrapper.HandlerFunc {
 	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
 		defer func() {
-			c <- true
+			workerChan <- true
 		}()
 		for {
-			m, err := ac.createReader.Client.FetchMessage(ctx)
+			msg, err := c.createEventReader.Client.FetchMessage(ctx)
 			if err != nil {
 				return nil, err
 			}
 
 			logger.Zap.Sugar().Infof(
 				"Kafka Worker recieve message at topic/partition/offset %v/%v/%v: %s = %s\n",
-				m.Topic,
-				m.Partition,
-				m.Offset,
-				string(m.Key),
-				string(m.Value),
+				msg.Topic,
+				msg.Partition,
+				msg.Offset,
+				string(msg.Key),
+				string(msg.Value),
 			)
 
 			aDto := new(articleDto.CreateArticle)
-			if err := json.Unmarshal(m.Value, &aDto); err != nil {
+			if err := json.Unmarshal(msg.Value, &aDto); err != nil {
 				continue
 			}
 
-			// run some usecase
-			fmt.Println(aDto)
-
-			if err := ac.createReader.Client.CommitMessages(ctx, m); err != nil {
+			if err := c.createEventReader.Client.CommitMessages(ctx, msg); err != nil {
 				return nil, err
 			}
 		}

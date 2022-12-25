@@ -10,34 +10,33 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type articleUseCase struct {
-	articleRepo             articleDomain.ArticleRepository
+type useCase struct {
+	repository              articleDomain.ArticleRepository
+	kafkaProducer           articleDomain.ArticleProducer
 	sampleExtServiceUseCase sampleExtServiceDomain.SampleExtServiceUseCase
-	articleProducer         articleDomain.ArticleProducer
 }
 
-func NewArticleUseCase(
-	articleRepo articleDomain.ArticleRepository,
+func NewUseCase(
+	repository articleDomain.ArticleRepository,
 	esu sampleExtServiceDomain.SampleExtServiceUseCase,
-	ap articleDomain.ArticleProducer,
+	kp articleDomain.ArticleProducer,
 ) articleDomain.ArticleUseCase {
-	return &articleUseCase{
-		articleRepo:             articleRepo,
+	return &useCase{
+		repository:              repository,
+		kafkaProducer:           kp,
 		sampleExtServiceUseCase: esu,
-		articleProducer:         ap,
 	}
 }
 
-func (au *articleUseCase) Create(ctx context.Context, article *articleDto.CreateArticle) (*articleDomain.Article, error) {
-	c := context.Background()
-	result, err := au.articleRepo.Create(ctx, article)
+func (u *useCase) Create(ctx context.Context, req *articleDto.CreateArticle) (*articleDomain.Article, error) {
+	result, err := u.repository.Create(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	b, _ := json.Marshal(result)
 
 	//it has go keyword so if we pass the request context to it, it will terminate after request lifecycle.
-	go au.articleProducer.PublishCreate(c, kafka.Message{
+	go u.kafkaProducer.PublishCreateEvent(context.Background(), kafka.Message{
 		Key:   []byte("Article"),
 		Value: b,
 	})
