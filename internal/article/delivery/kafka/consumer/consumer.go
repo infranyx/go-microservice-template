@@ -46,7 +46,11 @@ func (c *consumer) createEvent(ctx context.Context, workersNum int) {
 	}
 
 	for {
-		<-workerChan
-		go worker(ctx, nil)
+		select {
+		case <-ctx.Done():
+			return
+		case <-workerChan:
+			go worker(ctx, nil)
+		}
 	}
 }

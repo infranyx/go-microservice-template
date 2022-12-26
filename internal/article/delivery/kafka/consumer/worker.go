@@ -13,6 +13,7 @@ func (c *consumer) createEventWorker(
 	workerChan chan bool,
 ) wrapper.HandlerFunc {
 	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
+		// TODO : Graceful shutdown workers
 		defer func() {
 			workerChan <- true
 		}()
