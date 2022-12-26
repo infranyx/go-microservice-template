@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	fixture "github.com/infranyx/go-grpc-template/internal/article/tests/fixtures"
+	articleFixture "github.com/infranyx/go-grpc-template/internal/article/tests/fixtures"
 	grpcError "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
@@ -20,24 +20,25 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-type ArticleSuiteTests struct {
+type testSuite struct {
 	suite.Suite
-	fixture *fixture.IntegrationTestFixture
+	fixture *articleFixture.IntegrationTestFixture
 }
 
-func (suite *ArticleSuiteTests) SetupSuite() {
-	fixture, err := fixture.NewIntegrationTestFixture()
+func (suite *testSuite) SetupSuite() {
+	fixture, err := articleFixture.NewIntegrationTestFixture()
 	if err != nil {
 		assert.Error(suite.T(), err)
 	}
+
 	suite.fixture = fixture
 }
 
-func (suite *ArticleSuiteTests) TearDownSuite() {
-	suite.fixture.Cleanup()
+func (suite *testSuite) TearDownSuite() {
+	suite.fixture.TearnDown()
 }
 
-func (suite *ArticleSuiteTests) TestSuccessCreateGrpcArticle() {
+func (suite *testSuite) TestSuccessCreateGrpcArticle() {
 	ctx := context.Background()
 	input := &articleV1.CreateArticleRequest{
 		Name: "John",
@@ -53,7 +54,7 @@ func (suite *ArticleSuiteTests) TestSuccessCreateGrpcArticle() {
 	assert.Equal(suite.T(), "Pro Developer", res.Desc)
 }
 
-func (suite *ArticleSuiteTests) TestNameValidationErrCreateGrpcArticle() {
+func (suite *testSuite) TestNameValidationErrCreateGrpcArticle() {
 	ctx := context.Background()
 	input := &articleV1.CreateArticleRequest{
 		Name: "Jo",
@@ -68,7 +69,7 @@ func (suite *ArticleSuiteTests) TestNameValidationErrCreateGrpcArticle() {
 	assert.Contains(suite.T(), grpcErr.GetDetails(), "name")
 }
 
-func (suite *ArticleSuiteTests) TestDescValidationErrCreateGrpcArticle() {
+func (suite *testSuite) TestDescValidationErrCreateGrpcArticle() {
 	ctx := context.Background()
 	input := &articleV1.CreateArticleRequest{
 		Name: "John",
@@ -84,7 +85,7 @@ func (suite *ArticleSuiteTests) TestDescValidationErrCreateGrpcArticle() {
 	assert.Contains(suite.T(), grpcErr.GetDetails(), "desc")
 }
 
-func (suite *ArticleSuiteTests) TestSuccessCreateHttpArticle() {
+func (suite *testSuite) TestSuccessCreateHttpArticle() {
 	articleJSON := `{"name":"John Snow","desc":"King of the north"}`
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
@@ -94,16 +95,15 @@ func (suite *ArticleSuiteTests) TestSuccessCreateHttpArticle() {
 
 	// Assertions
 	assert.Equal(suite.T(), http.StatusOK, rec.Code)
-	articleDto := new(articleDto.Article)
+	articleDto := new(articleDto.CreateArticleRequestDto)
 	if assert.NoError(suite.T(), json.Unmarshal(rec.Body.Bytes(), articleDto)) {
-		assert.NotNil(suite.T(), articleDto.ID)
 		assert.Equal(suite.T(), "John Snow", articleDto.Name)
 		assert.Equal(suite.T(), "King of the north", articleDto.Description)
 	}
 
 }
 
-func (suite *ArticleSuiteTests) TestNameValidationErrCreateHttpArticle() {
+func (suite *testSuite) TestNameValidationErrCreateHttpArticle() {
 	articleJSON := `{"name":"Jo","desc":"King of the north"}`
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
@@ -121,7 +121,7 @@ func (suite *ArticleSuiteTests) TestNameValidationErrCreateHttpArticle() {
 
 }
 
-func (suite *ArticleSuiteTests) TestDescValidationErrCreateHttpArticle() {
+func (suite *testSuite) TestDescValidationErrCreateHttpArticle() {
 	articleJSON := `{"name":"John Snow","desc":"King"}`
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
@@ -138,7 +138,7 @@ func (suite *ArticleSuiteTests) TestDescValidationErrCreateHttpArticle() {
 	}
 }
 
-func TestRunSuite(t *testing.T) {
-	suiteTester := new(ArticleSuiteTests)
-	suite.Run(t, suiteTester)
+func RunTestSuite(t *testing.T) {
+	tsuite := new(testSuite)
+	suite.Run(t, tsuite)
 }

@@ -28,7 +28,7 @@ func NewUseCase(
 	}
 }
 
-func (uc *useCase) Create(ctx context.Context, req *articleDto.CreateArticleDto) (*articleDomain.Article, error) {
+func (uc *useCase) Create(ctx context.Context, req *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error) {
 	article, err := uc.repository.Create(ctx, req)
 	if err != nil {
 		return nil, err

@@ -20,7 +20,7 @@ func NewController(uc articleDomain.ArticleUseCase) articleDomain.ArticleHttpCon
 }
 
 func (c controller) Create(ctx echo.Context) error {
-	aDto := new(articleDto.CreateArticleDto)
+	aDto := new(articleDto.CreateArticleRequestDto)
 	if err := ctx.Bind(aDto); err != nil {
 		return articleException.ArticleBindingExc()
 	}

@@ -32,7 +32,7 @@ func (c *consumer) createEventWorker(
 				string(msg.Value),
 			)
 
-			aDto := new(articleDto.CreateArticleDto)
+			aDto := new(articleDto.CreateArticleRequestDto)
 			if err := json.Unmarshal(msg.Value, &aDto); err != nil {
 				continue
 			}

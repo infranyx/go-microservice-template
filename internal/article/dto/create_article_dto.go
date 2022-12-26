@@ -2,14 +2,15 @@ package articleDto
 
 import (
 	validator "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
 )
 
-type CreateArticleDto struct {
+type CreateArticleRequestDto struct {
 	Name        string `json:"name"`
 	Description string `json:"desc"`
 }
 
-func (caDto *CreateArticleDto) ValidateCreateArticleDto() error {
+func (caDto *CreateArticleRequestDto) ValidateCreateArticleDto() error {
 	return validator.ValidateStruct(caDto,
 		validator.Field(
 			&caDto.Name,
@@ -22,4 +23,10 @@ func (caDto *CreateArticleDto) ValidateCreateArticleDto() error {
 			validator.Length(5, 100),
 		),
 	)
+}
+
+type CreateArticleResponseDto struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"desc"`
 }

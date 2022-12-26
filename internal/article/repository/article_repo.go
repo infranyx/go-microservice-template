@@ -3,7 +3,6 @@ package articleRepository
 import (
 	"context"
 	"fmt"
-
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
@@ -17,7 +16,7 @@ func NewRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
 	return &repository{Conn}
 }
 
-func (rp *repository) Create(ctx context.Context, entity *articleDto.CreateArticleDto) (*articleDomain.Article, error) {
+func (rp *repository) Create(ctx context.Context, entity *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error) {
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
 	res, err := rp.conn.SqlxDB.QueryContext(ctx, query, entity.Name, entity.Description)
@@ -25,13 +24,13 @@ func (rp *repository) Create(ctx context.Context, entity *articleDto.CreateArtic
 		return nil, fmt.Errorf("error inserting article record")
 	}
 
-	result := new(articleDomain.Article)
+	article := new(articleDto.CreateArticleResponseDto)
 	for res.Next() {
-		err = res.Scan(&result.ID, &result.Name, &result.Description)
+		err = res.Scan(&article.ID, &article.Name, &article.Description)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return result, nil
+	return article, nil
 }
