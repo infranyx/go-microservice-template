@@ -22,7 +22,7 @@ func NewController(uc articleDomain.ArticleUseCase) articleDomain.ArticleGrpcCon
 }
 
 func (c *controller) CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error) {
-	aDto := &articleDto.CreateArticle{
+	aDto := &articleDto.CreateArticleDto{
 		Name:        req.Name,
 		Description: req.Desc,
 	}

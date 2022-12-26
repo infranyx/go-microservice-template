@@ -3,7 +3,7 @@ package articleKafkaConsumer
 import (
 	"context"
 	"encoding/json"
-	
+
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
@@ -31,7 +31,7 @@ func (c *consumer) createEventWorker(
 				string(msg.Value),
 			)
 
-			aDto := new(articleDto.CreateArticle)
+			aDto := new(articleDto.CreateArticleDto)
 			if err := json.Unmarshal(msg.Value, &aDto); err != nil {
 				continue
 			}

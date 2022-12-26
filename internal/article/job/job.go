@@ -14,23 +14,23 @@ import (
 	cronJob "github.com/infranyx/go-grpc-template/pkg/cron"
 )
 
-type articleJob struct {
+type job struct {
 	cron *cron.Cron
 }
 
-func NewArticleJob() articleDomain.ArticleJob {
+func NewJob() articleDomain.ArticleJob {
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cronJob.NewCronLogger()),
 	))
-	return &articleJob{cron: c}
+	return &job{cron: c}
 }
 
-func (j *articleJob) StartJobs(ctx context.Context) {
+func (j *job) StartJobs(ctx context.Context) {
 	j.logArticleJob(ctx)
 	go j.cron.Start()
 }
 
-func (j *articleJob) logArticleJob(ctx context.Context) {
+func (j *job) logArticleJob(ctx context.Context) {
 	worker := wrapper.BuildChain(j.logArticleWorker(),
 		wrapperSentryhandler.SentryHandler,
 		wrapperRecoveryhandler.RecoveryHandler,

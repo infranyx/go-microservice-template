@@ -4,20 +4,20 @@ import (
 	validator "github.com/go-ozzo/ozzo-validation"
 )
 
-type CreateArticle struct {
+type CreateArticleDto struct {
 	Name        string `json:"name"`
 	Description string `json:"desc"`
 }
 
-func (ca *CreateArticle) ValidateCreateArticleDto() error {
-	return validator.ValidateStruct(ca,
+func (caDto *CreateArticleDto) ValidateCreateArticleDto() error {
+	return validator.ValidateStruct(caDto,
 		validator.Field(
-			&ca.Name,
+			&caDto.Name,
 			validator.Required,
 			validator.Length(3, 50),
 		),
 		validator.Field(
-			&ca.Description,
+			&caDto.Description,
 			validator.Required,
 			validator.Length(5, 100),
 		),

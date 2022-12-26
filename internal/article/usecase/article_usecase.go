@@ -28,17 +28,19 @@ func NewUseCase(
 	}
 }
 
-func (u *useCase) Create(ctx context.Context, req *articleDto.CreateArticle) (*articleDomain.Article, error) {
-	result, err := u.repository.Create(ctx, req)
+func (uc *useCase) Create(ctx context.Context, req *articleDto.CreateArticleDto) (*articleDomain.Article, error) {
+	article, err := uc.repository.Create(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	b, _ := json.Marshal(result)
+
+	// TODO : if err => return Marshal_Err_Exception
+	jsonArticle, _ := json.Marshal(article)
 
 	//it has go keyword so if we pass the request context to it, it will terminate after request lifecycle.
-	go u.kafkaProducer.PublishCreateEvent(context.Background(), kafka.Message{
+	go uc.kafkaProducer.PublishCreateEvent(context.Background(), kafka.Message{
 		Key:   []byte("Article"),
-		Value: b,
+		Value: jsonArticle,
 	})
-	return result, err
+	return article, err
 }

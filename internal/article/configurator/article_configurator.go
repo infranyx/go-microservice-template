@@ -17,20 +17,20 @@ import (
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
-type articleConfigurator struct {
+type configurator struct {
 	ic *infraContainer.IContainer
 	eb *externalBridge.ExternalBridge
 }
 
-func NewArticleConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.ArticleConfigurator {
-	return &articleConfigurator{ic: ic, eb: eb}
+func NewConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.ArticleConfigurator {
+	return &configurator{ic: ic, eb: eb}
 }
 
-func (c *articleConfigurator) ConfigureArticle(ctx context.Context) error {
+func (c *configurator) ConfigureArticle(ctx context.Context) error {
 	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.eb.SampleExtGrpcService)
 	kp := articleKafkaProducer.NewProducer(c.ic.KafkaWriter)
-	repo := articleRepository.NewRepository(c.ic.Pg)
-	uc := articleUseCase.NewUseCase(repo, seServiceUseCase, kp)
+	rp := articleRepository.NewRepository(c.ic.Pg)
+	uc := articleUseCase.NewUseCase(rp, seServiceUseCase, kp)
 
 	// grpc
 	grpcController := articleGrpcController.NewController(uc)
@@ -45,7 +45,7 @@ func (c *articleConfigurator) ConfigureArticle(ctx context.Context) error {
 	articleKafkaConsumer.NewConsumer(c.ic.KafkaReader).RunConsumers(ctx)
 
 	// Jobs
-	articleJob.NewArticleJob().StartJobs(ctx)
+	articleJob.NewJob().StartJobs(ctx)
 
 	return nil
 }

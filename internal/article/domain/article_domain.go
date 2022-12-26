@@ -21,11 +21,11 @@ type ArticleConfigurator interface {
 }
 
 type ArticleUseCase interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
+	Create(ctx context.Context, article *articleDto.CreateArticleDto) (*Article, error)
 }
 
 type ArticleRepository interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
+	Create(ctx context.Context, article *articleDto.CreateArticleDto) (*Article, error)
 }
 
 type ArticleGrpcController interface {
@@ -42,7 +42,7 @@ type ArticleJob interface {
 }
 
 type ArticleProducer interface {
-	PublishCreateEvent(ctx context.Context, msgs ...kafka.Message) error
+	PublishCreateEvent(ctx context.Context, messages ...kafka.Message) error
 }
 
 type ArticleConsumer interface {

@@ -71,7 +71,7 @@ func (a *App) Run() error {
 }
 
 func configureModule(ctx context.Context, ic *iContainer.IContainer, eb *extBridge.ExternalBridge) error {
-	err := articleConfigurator.NewArticleConfigurator(ic, eb).ConfigureArticle(ctx)
+	err := articleConfigurator.NewConfigurator(ic, eb).ConfigureArticle(ctx)
 	if err != nil {
 		return err
 	}
