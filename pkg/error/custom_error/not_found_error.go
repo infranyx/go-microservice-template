@@ -8,7 +8,7 @@ type notFoundError struct {
 	CustomError
 }
 
-func (ne *notFoundError) IsNotFoundError() bool {
+func (e *notFoundError) IsNotFoundError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type NotFoundError interface {
 	IsNotFoundError() bool
 }
 
-func IsNotFoundError(err error) bool {
+func IsNotFoundError(e error) bool {
 	var notFoundError NotFoundError
 
-	if errors.As(err, &notFoundError) {
+	if errors.As(e, &notFoundError) {
 		return notFoundError.IsNotFoundError()
 	}
 
@@ -28,18 +28,18 @@ func IsNotFoundError(err error) bool {
 }
 
 func NewNotFoundError(message string, code int, details map[string]string) error {
-	ne := &notFoundError{
+	e := &notFoundError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ne
+	return e
 }
 
 func NewNotFoundErrorWrap(err error, message string, code int, details map[string]string) error {
-	ne := &notFoundError{
+	e := &notFoundError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ne)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

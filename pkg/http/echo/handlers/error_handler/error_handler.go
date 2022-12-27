@@ -5,9 +5,9 @@ import (
 	"github.com/getsentry/sentry-go"
 	"net/http"
 
-	sentryecho "github.com/getsentry/sentry-go/echo"
-	errorConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
+	sentryEcho "github.com/getsentry/sentry-go/echo"
+	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
+	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
@@ -23,29 +23,29 @@ func ErrorHandler(err error, c echo.Context) {
 	if ok {
 		switch ehe.Code {
 		case http.StatusNotFound:
-			err = customErrors.NewNotFoundError(errorConst.ErrInfo.NotFoundErr.Msg, errorConst.ErrInfo.NotFoundErr.Code, nil)
+			err = customErrors.NewNotFoundError(errorConstant.ErrInfo.NotFoundErr.Msg, errorConstant.ErrInfo.NotFoundErr.Code, nil)
 		case http.StatusMethodNotAllowed:
-			err = customErrors.NewMethodNotAllowedError(errorConst.ErrInfo.MethodNotAllowedErr.Msg, errorConst.ErrInfo.MethodNotAllowedErr.Code, nil)
+			err = customErrors.NewMethodNotAllowedError(errorConstant.ErrInfo.MethodNotAllowedErr.Msg, errorConstant.ErrInfo.MethodNotAllowedErr.Code, nil)
 		default:
-			err = customErrors.NewInternalServerError(errorConst.ErrInfo.InternalServerErr.Msg, errorConst.ErrInfo.InternalServerErr.Code, nil)
+			err = customErrors.NewInternalServerError(errorConstant.ErrInfo.InternalServerErr.Msg, errorConstant.ErrInfo.InternalServerErr.Code, nil)
 		}
 	}
 	// system errors
 	he := httpError.ParseError(err)
 
 	if customErrors.IsInternalServerError(err) {
-		hub := sentryecho.GetHubFromContext(c)
+		hub := sentryEcho.GetHubFromContext(c)
 		if hub != nil {
 			hub.ConfigureScope(func(scope *sentry.Scope) {
 				scope.SetLevel(sentry.LevelError)
 				scope.SetContext("HttpErr", map[string]interface{}{
-					loggerConst.TYPE:        loggerConst.HTTP,
-					loggerConst.TITILE:      he.GetTitle(),
-					loggerConst.CODE:        he.GetCode(),
-					loggerConst.STATUS:      http.StatusText(he.GetStatus()),
-					loggerConst.TIME:        he.GetTimestamp(),
-					loggerConst.DETAILS:     he.GetDetails(),
-					loggerConst.STACK_TRACE: errorUtils.RootStackTrace(err),
+					loggerConstant.TYPE:        loggerConstant.HTTP,
+					loggerConstant.TITILE:      he.GetTitle(),
+					loggerConstant.CODE:        he.GetCode(),
+					loggerConstant.STATUS:      http.StatusText(he.GetStatus()),
+					loggerConstant.TIME:        he.GetTimestamp(),
+					loggerConstant.DETAILS:     he.GetDetails(),
+					loggerConstant.STACK_TRACE: errorUtils.RootStackTrace(err),
 				})
 			})
 			hub.CaptureException(err)
@@ -58,13 +58,13 @@ func ErrorHandler(err error, c echo.Context) {
 		}
 		logger.Zap.Error(
 			err.Error(),
-			zap.String(loggerConst.TYPE, loggerConst.HTTP),
-			zap.String(loggerConst.TITILE, he.GetTitle()),
-			zap.Int(loggerConst.CODE, he.GetCode()),
-			zap.String(loggerConst.STATUS, http.StatusText(he.GetStatus())),
-			zap.Time(loggerConst.TIME, he.GetTimestamp()),
-			zap.Any(loggerConst.DETAILS, he.GetDetails()),
-			zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
+			zap.String(loggerConstant.TYPE, loggerConstant.HTTP),
+			zap.String(loggerConstant.TITILE, he.GetTitle()),
+			zap.Int(loggerConstant.CODE, he.GetCode()),
+			zap.String(loggerConstant.STATUS, http.StatusText(he.GetStatus())),
+			zap.Time(loggerConstant.TIME, he.GetTimestamp()),
+			zap.Any(loggerConstant.DETAILS, he.GetDetails()),
+			zap.String(loggerConstant.STACK_TRACE, errorUtils.RootStackTrace(err)),
 		)
 	}
 }

@@ -8,7 +8,7 @@ type methodNotAllowedError struct {
 	CustomError
 }
 
-func (na *methodNotAllowedError) IsMethodNotAllowedError() bool {
+func (e *methodNotAllowedError) IsMethodNotAllowedError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type MethodNotAllowedError interface {
 	IsMethodNotAllowedError() bool
 }
 
-func IsMethodNotAllowedError(err error) bool {
+func IsMethodNotAllowedError(e error) bool {
 	var methodNotAllowedError MethodNotAllowedError
 
-	if errors.As(err, &methodNotAllowedError) {
+	if errors.As(e, &methodNotAllowedError) {
 		return methodNotAllowedError.IsMethodNotAllowedError()
 	}
 
@@ -28,18 +28,18 @@ func IsMethodNotAllowedError(err error) bool {
 }
 
 func NewMethodNotAllowedError(message string, code int, details map[string]string) error {
-	ne := &methodNotAllowedError{
+	e := &methodNotAllowedError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ne
+	return e
 }
 
 func NewMethodNotAllowedWrap(err error, message string, code int, details map[string]string) error {
-	ne := &methodNotAllowedError{
+	e := &methodNotAllowedError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ne)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

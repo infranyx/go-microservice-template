@@ -34,7 +34,7 @@ func (c *configurator) Configure(ctx context.Context) error {
 	grpcHealthV1.RegisterHealthServer(c.ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	// http
-	httpRouterGp := c.ic.EchoServer.GetEchoInstance().Group(c.ic.EchoServer.GetBasePath())
+	httpRouterGp := c.ic.EchoHttpServer.GetEchoInstance().Group(c.ic.EchoHttpServer.GetBasePath())
 	healthCheckController := healthCheckHttp.NewController(healthCheckUc)
 	healthCheckHttp.NewRouter(healthCheckController).Register(httpRouterGp)
 

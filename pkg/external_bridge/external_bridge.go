@@ -8,7 +8,7 @@ import (
 )
 
 type ExternalBridge struct {
-	SampleExtGrpcService grpc.GrpcClient /* Like ETH Service */
+	SampleExtGrpcService grpc.Client /* Like ETH Service */
 }
 
 func NewExternalBridge(ctx context.Context) (*ExternalBridge, func(), error) {
@@ -20,7 +20,7 @@ func NewExternalBridge(ctx context.Context) (*ExternalBridge, func(), error) {
 	}
 	sampleExtGrpcClient, _ := grpc.NewGrpcClient(
 		ctx,
-		&grpc.GrpcConfig{Port: config.BaseConfig.GoTemplateGrpcClient.Port, Host: config.BaseConfig.GoTemplateGrpcClient.Host},
+		&grpc.Config{Port: config.BaseConfig.SampleExtService.Port, Host: config.BaseConfig.SampleExtService.Host},
 	)
 	downFns = append(downFns, func() {
 		_ = sampleExtGrpcClient.Close()

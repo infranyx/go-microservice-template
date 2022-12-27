@@ -1,4 +1,4 @@
-package httpEcho
+package echoHttp
 
 import (
 	"context"
@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	sentryecho "github.com/getsentry/sentry-go/echo"
+	sentryEcho "github.com/getsentry/sentry-go/echo"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/constant"
-	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
+	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/labstack/echo/v4"
@@ -17,13 +17,19 @@ import (
 	"go.uber.org/zap"
 )
 
-type echoHttpServer struct {
-	echo   *echo.Echo
-	config *EchoHttpConfig
+type ServerConfig struct {
+	Port     int
+	BasePath string
+	IsDev    bool
 }
 
-type EchoHttpServer interface {
-	RunHttpServer(ctx context.Context, configEcho func(echoServer *echo.Echo)) error
+type Server struct {
+	echo   *echo.Echo
+	config *ServerConfig
+}
+
+type ServerInterface interface {
+	RunServer(ctx context.Context, configEcho func(echoServer *echo.Echo)) error
 	GracefulShutdown(ctx context.Context) error
 	GetEchoInstance() *echo.Echo
 	SetupDefaultMiddlewares()
@@ -31,21 +37,11 @@ type EchoHttpServer interface {
 	GetBasePath() string
 }
 
-type EchoHttpConfig struct {
-	Port     int
-	BasePath string
-	IsDev    bool
+func NewServer(config *ServerConfig) *Server {
+	return &Server{echo: echo.New(), config: config}
 }
 
-func NewEchoHttpServer(config *EchoHttpConfig) *echoHttpServer {
-	return &echoHttpServer{echo: echo.New(), config: config}
-}
-
-func (s *echoHttpServer) RunHttpServer(ctx context.Context, configEcho func(echo *echo.Echo)) error {
-	s.echo.Server.ReadTimeout = constant.ReadTimeout
-	s.echo.Server.WriteTimeout = constant.WriteTimeout
-	s.echo.Server.MaxHeaderBytes = constant.MaxHeaderBytes
-
+func (s *Server) RunServer(ctx context.Context, configEcho func(echo *echo.Echo)) error {
 	if configEcho != nil {
 		configEcho(s.echo)
 	}
@@ -62,33 +58,34 @@ func (s *echoHttpServer) RunHttpServer(ctx context.Context, configEcho func(echo
 	return s.echo.Start(fmt.Sprintf(":%d", s.config.Port))
 }
 
-func (s *echoHttpServer) AddMiddlewares(middlewares ...echo.MiddlewareFunc) {
+func (s *Server) AddMiddlewares(middlewares ...echo.MiddlewareFunc) {
 	if len(middlewares) > 0 {
 		s.echo.Use(middlewares...)
 	}
 }
 
-func (s *echoHttpServer) GracefulShutdown(ctx context.Context) error {
+func (s *Server) GracefulShutdown(ctx context.Context) error {
 	err := s.echo.Shutdown(ctx)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func (s *echoHttpServer) SetupDefaultMiddlewares() {
+func (s *Server) SetupDefaultMiddlewares() {
 	s.echo.HideBanner = false
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.HTTPErrorHandler = echoErrorHandler.ErrorHandler
 
 	s.echo.Use(middleware.Recover())
-	s.echo.Use(sentryecho.New(sentryecho.Options{
+	s.echo.Use(sentryEcho.New(sentryEcho.Options{
 		Repanic: true,
 	}))
 	s.echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			if hub := sentryecho.GetHubFromContext(ctx); hub != nil {
-				hub.Scope().SetTag("application", config.BaseConfig.App.AppName)
+			if hub := sentryEcho.GetHubFromContext(ctx); hub != nil {
+				hub.Scope().SetTag("Application", config.BaseConfig.App.AppName)
 				hub.Scope().SetTag("BasePath", s.config.BasePath)
 				hub.Scope().SetTag("AppEnv", config.BaseConfig.App.AppEnv)
 			}
@@ -107,13 +104,13 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 			t := time.Now()
 			logger.Zap.Info(
 				"Incoming Request",
-				zap.String(loggerConst.TYPE, loggerConst.HTTP),
-				zap.String(loggerConst.METHOD, v.Method),
-				zap.String(loggerConst.REQUEST_ID, v.RequestID),
-				zap.String(loggerConst.URI, v.URI),
-				zap.String(loggerConst.STATUS, http.StatusText(v.Status)),
-				zap.Duration(loggerConst.LATENCY, v.Latency),
-				zap.Time(loggerConst.TIME, t),
+				zap.String(loggerConstant.TYPE, loggerConstant.HTTP),
+				zap.String(loggerConstant.METHOD, v.Method),
+				zap.String(loggerConstant.REQUEST_ID, v.RequestID),
+				zap.String(loggerConstant.URI, v.URI),
+				zap.String(loggerConstant.STATUS, http.StatusText(v.Status)),
+				zap.Duration(loggerConstant.LATENCY, v.Latency),
+				zap.Time(loggerConstant.TIME, t),
 			)
 			return nil
 		},
@@ -128,10 +125,10 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	}))
 }
 
-func (s *echoHttpServer) GetEchoInstance() *echo.Echo {
+func (s *Server) GetEchoInstance() *echo.Echo {
 	return s.echo
 }
 
-func (s *echoHttpServer) GetBasePath() string {
+func (s *Server) GetBasePath() string {
 	return s.config.BasePath
 }

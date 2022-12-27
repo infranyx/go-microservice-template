@@ -11,9 +11,6 @@ import (
 
 var SentryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
 	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
-		opts := &sentryUtils.Options{
-			Repanic: true,
-		}
 		hub := sentry.GetHubFromContext(ctx)
 		if hub == nil {
 			hub = sentry.CurrentHub().Clone()
@@ -22,6 +19,10 @@ var SentryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
 		hub.Scope().SetExtra("args", args)
 		hub.Scope().SetTag("application", config.BaseConfig.App.AppName)
 		hub.Scope().SetTag("AppEnv", config.BaseConfig.App.AppEnv)
+
+		opts := &sentryUtils.Options{
+			Repanic: true,
+		}
 		defer sentryUtils.RecoverWithSentry(hub, ctx, opts)
 
 		return f(ctx, args)

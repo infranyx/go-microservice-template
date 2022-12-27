@@ -20,6 +20,7 @@ var RecoveryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
 				logger.Zap.Error(err.Error(), zap.Error(err))
 			}
 		}()
+
 		return f(ctx, args)
 	}
 }

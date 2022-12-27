@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"fmt"
-
 	"net"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -18,13 +17,13 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-type GrpcServer interface {
+type Server interface {
 	RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error
 	GracefulShutdown()
 	GetCurrentGrpcServer() *googleGrpc.Server
 }
 
-type GrpcConfig struct {
+type Config struct {
 	Port        int
 	Host        string
 	Development bool
@@ -32,10 +31,10 @@ type GrpcConfig struct {
 
 type grpcServer struct {
 	server *googleGrpc.Server
-	config *GrpcConfig
+	config *Config
 }
 
-func NewGrpcServer(conf *GrpcConfig) GrpcServer {
+func NewGrpcServer(conf *Config) Server {
 	gso := &sentryUtils.Options{
 		Repanic: true,
 	}
@@ -57,39 +56,41 @@ func NewGrpcServer(conf *GrpcConfig) GrpcServer {
 	return &grpcServer{server: s, config: conf}
 }
 
-func (s *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error {
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.Port))
+func (gs *grpcServer) RunGrpcServer(ctx context.Context, configGrpc func(grpcServer *googleGrpc.Server)) error {
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", gs.config.Port))
 	if err != nil {
 		return err
 	}
+
 	if configGrpc != nil {
-		configGrpc(s.server)
+		configGrpc(gs.server)
 	}
 
-	if s.config.Development {
-		reflection.Register(s.server)
+	if gs.config.Development {
+		reflection.Register(gs.server)
 	}
 
 	go func() {
 		<-ctx.Done()
-		logger.Zap.Sugar().Infof("App is shutting down Grpc PORT: {%d}", s.config.Port)
-		s.GracefulShutdown()
+		logger.Zap.Sugar().Infof("App is shutting down Grpc PORT: {%d}", gs.config.Port)
+		gs.GracefulShutdown()
 	}()
 
-	logger.Zap.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", s.config.Host, s.config.Port)
+	logger.Zap.Sugar().Infof("[grpcServer.RunGrpcServer] Writer gRPC server is listening on: %s:%d", gs.config.Host, gs.config.Port)
 
-	err = s.server.Serve(l)
+	err = gs.server.Serve(l)
 	if err != nil {
 		logger.Zap.Sugar().Error(fmt.Sprintf("[grpcServer_RunGrpcServer.Serve] grpc server serve error: %+v", err))
 	}
+
 	return err
 }
 
-func (s *grpcServer) GetCurrentGrpcServer() *googleGrpc.Server {
-	return s.server
+func (gs *grpcServer) GetCurrentGrpcServer() *googleGrpc.Server {
+	return gs.server
 }
 
-func (s *grpcServer) GracefulShutdown() {
-	s.server.Stop()
-	s.server.GracefulStop()
+func (gs *grpcServer) GracefulShutdown() {
+	gs.server.Stop()
+	gs.server.GracefulStop()
 }

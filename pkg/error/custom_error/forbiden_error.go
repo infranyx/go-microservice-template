@@ -8,7 +8,7 @@ type forbiddenError struct {
 	CustomError
 }
 
-func (fe *forbiddenError) IsForbiddenError() bool {
+func (e *forbiddenError) IsForbiddenError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type ForbiddenError interface {
 	IsForbiddenError() bool
 }
 
-func IsForbiddenError(err error) bool {
+func IsForbiddenError(e error) bool {
 	var forbiddenError ForbiddenError
 
-	if errors.As(err, &forbiddenError) {
+	if errors.As(e, &forbiddenError) {
 		return forbiddenError.IsForbiddenError()
 	}
 
@@ -28,18 +28,18 @@ func IsForbiddenError(err error) bool {
 }
 
 func NewForbiddenError(message string, code int, details map[string]string) error {
-	ne := &forbiddenError{
+	e := &forbiddenError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ne
+	return e
 }
 
 func NewForbiddenErrorWrap(err error, message string, code int, details map[string]string) error {
-	ne := &forbiddenError{
+	e := &forbiddenError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ne)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

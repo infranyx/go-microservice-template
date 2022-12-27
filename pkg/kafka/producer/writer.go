@@ -10,14 +10,14 @@ type Writer struct {
 	Client *kafka.Writer
 }
 
-type WriterConf struct {
+type WriterConfig struct {
 	Brokers      []string
 	Topic        string
 	RequiredAcks kafka.RequiredAcks
 }
 
-func NewKafkaWriter(cfg *WriterConf) *Writer {
-	w := &kafka.Writer{
+func NewKafkaWriter(cfg *WriterConfig) *Writer {
+	kafkaWriterConfig := &kafka.Writer{
 		Addr:         kafka.TCP(cfg.Brokers...),
 		Topic:        cfg.Topic,
 		RequiredAcks: cfg.RequiredAcks,
@@ -27,6 +27,6 @@ func NewKafkaWriter(cfg *WriterConf) *Writer {
 		ErrorLogger:  kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
 	}
 	return &Writer{
-		Client: w,
+		Client: kafkaWriterConfig,
 	}
 }

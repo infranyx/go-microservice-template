@@ -6,13 +6,13 @@ import (
 )
 
 type Config struct {
-	App                  AppConfig
-	Grpc                 GrpcConfig
-	Http                 HttpConfig
-	Postgres             PostgresConfig
-	GoTemplateGrpcClient GrpcConfig
-	Kafka                KafkaConfig
-	Sentry               SentryConfig
+	App              AppConfig
+	Grpc             GrpcConfig
+	Http             HttpConfig
+	Postgres         PostgresConfig
+	SampleExtService GrpcConfig
+	Kafka            KafkaConfig
+	Sentry           SentryConfig
 }
 
 var BaseConfig *Config
@@ -40,6 +40,7 @@ type GrpcConfig struct {
 
 type HttpConfig struct {
 	Port int
+	Host string
 }
 
 type KafkaConfig struct {
@@ -71,6 +72,7 @@ func newConfig() *Config {
 		},
 		Http: HttpConfig{
 			Port: env.New("HTTP_PORT", constant.HttpPort).AsInt(),
+			Host: env.New("HTTP_HOST", constant.HttpHost).AsString(),
 		},
 		Postgres: PostgresConfig{
 			Host:            env.New("PG_HOST", nil).AsString(),
@@ -83,9 +85,9 @@ func newConfig() *Config {
 			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
 			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
 		},
-		GoTemplateGrpcClient: GrpcConfig{
-			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
-			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+		SampleExtService: GrpcConfig{
+			Port: env.New("SAMPLE_EXT_SERVICE_GRPC_PORT", constant.GrpcPort).AsInt(),
+			Host: env.New("SAMPLE_EXT_SERVICE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Kafka: KafkaConfig{
 			Enabled:       env.New("KAFKA_ENABLED", nil).AsBool(),

@@ -10,10 +10,10 @@ import (
 )
 
 type sampleExtServiceUseCase struct {
-	grpcClient grpc.GrpcClient
+	grpcClient grpc.Client
 }
 
-func NewSampleExtServiceUseCase(grpcClient grpc.GrpcClient) sampleExtServiceDomain.SampleExtServiceUseCase {
+func NewSampleExtServiceUseCase(grpcClient grpc.Client) sampleExtServiceDomain.SampleExtServiceUseCase {
 	return &sampleExtServiceUseCase{
 		grpcClient: grpcClient,
 	}

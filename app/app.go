@@ -49,7 +49,7 @@ func (a *App) Run() error {
 	}()
 
 	go func() {
-		if err := ic.EchoServer.RunHttpServer(ctx, nil); err != nil {
+		if err := ic.EchoHttpServer.RunServer(ctx, nil); err != nil {
 			ic.Logger.Sugar().Errorf("(s.RunEchoServer) err: {%v}", err)
 			serverError = err
 			cancel()

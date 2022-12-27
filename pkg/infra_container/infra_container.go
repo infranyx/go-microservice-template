@@ -9,7 +9,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
-	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
+	echoHttp "github.com/infranyx/go-grpc-template/pkg/http/echo"
 	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
 	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
@@ -19,13 +19,13 @@ import (
 )
 
 type IContainer struct {
-	GrpcServer  grpc.GrpcServer
-	EchoServer  httpEcho.EchoHttpServer
-	Logger      *zap.Logger
-	Cfg         *config.Config
-	Pg          *postgres.Postgres
-	KafkaWriter *kafkaProducer.Writer
-	KafkaReader *kafkaConsumer.Reader
+	GrpcServer     grpc.Server
+	EchoHttpServer echoHttp.ServerInterface
+	Logger         *zap.Logger
+	Cfg            *config.Config
+	Pg             *postgres.Postgres
+	KafkaWriter    *kafkaProducer.Writer
+	KafkaReader    *kafkaConsumer.Reader
 }
 
 func NewIC(ctx context.Context) (*IContainer, func(), error) {
@@ -48,7 +48,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		sentry.Flush(2 * time.Second)
 	})
 
-	grpcServerConfig := &grpc.GrpcConfig{
+	grpcServerConfig := &grpc.Config{
 		Port:        config.BaseConfig.Grpc.Port,
 		Host:        config.BaseConfig.Grpc.Host,
 		Development: config.IsDevEnv(),
@@ -58,12 +58,12 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		grpcServer.GracefulShutdown()
 	})
 
-	echoServerConfig := &httpEcho.EchoHttpConfig{
+	echoServerConfig := &echoHttp.ServerConfig{
 		Port:     config.BaseConfig.Http.Port,
 		BasePath: "/api/v1",
 		IsDev:    config.IsDevEnv(),
 	}
-	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
+	echoServer := echoHttp.NewServer(echoServerConfig)
 	echoServer.SetupDefaultMiddlewares()
 	downFns = append(downFns, func() {
 		echoServer.GracefulShutdown(ctx)
@@ -84,7 +84,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		pg.Close()
 	})
 
-	kwc := &kafkaProducer.WriterConf{
+	kwc := &kafkaProducer.WriterConfig{
 		Brokers:      config.BaseConfig.Kafka.ClientBrokers,
 		Topic:        config.BaseConfig.Kafka.Topic,
 		RequiredAcks: kafka.RequireAll,
@@ -94,7 +94,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		kw.Client.Close()
 	})
 
-	krc := &kafkaConsumer.ReaderConf{
+	krc := &kafkaConsumer.ReaderConfig{
 		Brokers: config.BaseConfig.Kafka.ClientBrokers,
 		Topic:   config.BaseConfig.Kafka.Topic,
 		GroupID: config.BaseConfig.Kafka.ClientGroupId,
@@ -104,7 +104,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		kr.Client.Close()
 	})
 
-	ic := &IContainer{Cfg: config.BaseConfig, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
+	ic := &IContainer{Cfg: config.BaseConfig, Logger: logger.Zap, GrpcServer: grpcServer, EchoHttpServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
 
 	return ic, down, nil
 }

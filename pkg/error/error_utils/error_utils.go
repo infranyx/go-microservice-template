@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"go.uber.org/zap"
-
 	validator "github.com/go-ozzo/ozzo-validation"
 	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
+	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 // CheckErrMessages check for specific messages contains in the error

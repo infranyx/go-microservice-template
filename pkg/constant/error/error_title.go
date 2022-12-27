@@ -1,4 +1,4 @@
-package errConst
+package errorConstant
 
 const (
 	ErrBadRequestTitle          = "Bad Request"

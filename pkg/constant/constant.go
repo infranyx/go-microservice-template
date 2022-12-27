@@ -1,7 +1,5 @@
 package constant
 
-import "time"
-
 const AppName = "Go-gRPC-Template"
 
 const (
@@ -11,9 +9,11 @@ const (
 )
 
 const (
+	HttpHost = "localhost"
 	HttpPort = 4000
-	GrpcPort = 3000
+
 	GrpcHost = "localhost"
+	GrpcPort = 3000
 )
 
 const (
@@ -24,9 +24,5 @@ const (
 )
 
 const (
-	MaxHeaderBytes = 1 << 20
-	BodyLimit      = "2M"
-	ReadTimeout    = 15 * time.Second
-	WriteTimeout   = 15 * time.Second
-	GzipLevel      = 5
+	GzipLevel = 5
 )

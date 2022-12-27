@@ -37,7 +37,7 @@ func (c *configurator) Configure(ctx context.Context) error {
 	articleV1.RegisterArticleServiceServer(c.ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	// http
-	httpRouterGp := c.ic.EchoServer.GetEchoInstance().Group(c.ic.EchoServer.GetBasePath())
+	httpRouterGp := c.ic.EchoHttpServer.GetEchoInstance().Group(c.ic.EchoHttpServer.GetBasePath())
 	httpController := articleHttpController.NewController(useCase)
 	articleHttpController.NewRouter(httpController).Register(httpRouterGp)
 

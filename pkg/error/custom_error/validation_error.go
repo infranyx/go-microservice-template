@@ -8,7 +8,7 @@ type validationError struct {
 	BadRequestError
 }
 
-func (ve *validationError) IsValidationError() bool {
+func (e *validationError) IsValidationError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type ValidationError interface {
 	IsValidationError() bool
 }
 
-func IsValidationError(err error) bool {
+func IsValidationError(e error) bool {
 	var validationError ValidationError
 
-	if errors.As(err, &validationError) {
+	if errors.As(e, &validationError) {
 		return validationError.IsValidationError()
 	}
 
@@ -28,8 +28,8 @@ func IsValidationError(err error) bool {
 }
 
 func NewValidationError(message string, code int, details map[string]string) error {
-	be := NewBadRequestError(message, code, details)
-	customErr := AsCustomError(be)
+	e := NewBadRequestError(message, code, details)
+	customErr := AsCustomError(e)
 	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
@@ -38,11 +38,12 @@ func NewValidationError(message string, code int, details map[string]string) err
 }
 
 func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
-	be := NewBadRequestErrorWrap(err, message, code, details)
-	customErr := AsCustomError(be)
+	e := NewBadRequestErrorWrap(err, message, code, details)
+	customErr := AsCustomError(e)
 	ve := &validationError{
 		BadRequestError: customErr.(BadRequestError),
 	}
+
 	stackErr := errors.WithStack(ve)
 
 	return stackErr

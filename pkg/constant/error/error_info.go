@@ -1,4 +1,4 @@
-package errConst
+package errorConstant
 
 var ErrInfo *errInfo
 
@@ -16,7 +16,7 @@ type eInfo struct {
 
 func init() {
 	ErrInfo = &errInfo{
-		// 1000 - 1999 : Boiler-Plate Err
+		// 1000 - 1999 : BoilerPlate Err
 		// 2000 - 2999 : Custom Err Per Service
 		// .
 		// .
