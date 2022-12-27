@@ -27,6 +27,8 @@ type IntegrationTestFixture struct {
 	HealthCheckGrpcClient grpcHealthV1.HealthClient
 }
 
+const BUFSIZE = 1024 * 1024
+
 func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 	deadline := time.Now().Add(time.Duration(1 * time.Minute))
 	ctx, cancel := context.WithDeadline(context.Background(), deadline)
@@ -53,7 +55,7 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 	grpcController := healthCheckGrpc.NewController(healthCheckUc, postgresHealthCheckUc, kafkaHealthCheckUc, tmpDirHealthCheckUc)
 	grpcHealthV1.RegisterHealthServer(ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
-	lis := bufconn.Listen(1024 * 1024)
+	lis := bufconn.Listen(BUFSIZE)
 	go func() {
 		if err := ic.GrpcServer.GetCurrentGrpcServer().Serve(lis); err != nil {
 			logger.Zap.Sugar().Fatalf("Server exited with error: %v", err)

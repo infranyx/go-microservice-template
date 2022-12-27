@@ -67,11 +67,25 @@ func (suite *testSuite) Test_health_check_should_send_ok_for_all_units_http() {
 func (suite *testSuite) Test_health_check_should_send_ok_for_all_services_grpc() {
 	ctx := context.Background()
 
-	healthCheckRequest := &grpcHealthV1.HealthCheckRequest{}
+	healthCheckRequest := &grpcHealthV1.HealthCheckRequest{
+		Service: "all",
+	}
 	response, _ := suite.fixture.HealthCheckGrpcClient.Check(ctx, healthCheckRequest)
 
 	assert.NotNil(suite.T(), response)
 	assert.Equal(suite.T(), grpcHealthV1.HealthCheckResponse_SERVING, response.GetStatus())
+}
+
+func (suite *testSuite) Test_health_check_should_send_unknown_for_unknown_service_grpc() {
+	ctx := context.Background()
+
+	healthCheckRequest := &grpcHealthV1.HealthCheckRequest{
+		Service: "un-known-service",
+	}
+	response, _ := suite.fixture.HealthCheckGrpcClient.Check(ctx, healthCheckRequest)
+
+	assert.NotNil(suite.T(), response)
+	assert.Equal(suite.T(), grpcHealthV1.HealthCheckResponse_UNKNOWN, response.GetStatus())
 }
 
 func TestRunSuite(t *testing.T) {
