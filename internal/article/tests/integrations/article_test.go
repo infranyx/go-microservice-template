@@ -150,6 +150,6 @@ func (suite *testSuite) TestDescValidationErrCreateHttpArticle() {
 }
 
 func TestRunSuite(t *testing.T) {
-	tsuite := new(testSuite)
-	suite.Run(t, tsuite)
+	tSuite := new(testSuite)
+	suite.Run(t, tSuite)
 }
