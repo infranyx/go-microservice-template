@@ -20,10 +20,10 @@ type job struct {
 }
 
 func NewJob(logger *zap.Logger) articleDomain.ArticleJob {
-	cron := cron.New(cron.WithChain(
+	newCron := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cronJob.NewCronLogger()),
 	))
-	return &job{cron: cron, logger: logger}
+	return &job{cron: newCron, logger: logger}
 }
 
 func (j *job) StartJobs(ctx context.Context) {
@@ -37,8 +37,10 @@ func (j *job) logArticleJob(ctx context.Context) {
 		wrapperRecoveryhandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
 	)
+
 	entryId, _ := j.cron.AddFunc("*/1 * * * *",
 		worker.ToCronJobFunc(ctx, nil),
 	)
-	j.logger.Sugar().Infof("Starting log article job: %v", entryId)
+
+	j.logger.Sugar().Infof("Article Job Started: %v", entryId)
 }
