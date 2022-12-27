@@ -18,16 +18,16 @@ import (
 )
 
 type configurator struct {
-	ic *infraContainer.IContainer
-	eb *externalBridge.ExternalBridge
+	ic        *infraContainer.IContainer
+	extBridge *externalBridge.ExternalBridge
 }
 
-func NewConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.Configurator {
-	return &configurator{ic: ic, eb: eb}
+func NewConfigurator(ic *infraContainer.IContainer, extBridge *externalBridge.ExternalBridge) articleDomain.Configurator {
+	return &configurator{ic: ic, extBridge: extBridge}
 }
 
 func (c *configurator) Configure(ctx context.Context) error {
-	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.eb.SampleExtGrpcService)
+	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.extBridge.SampleExtGrpcService)
 	kafkaProducer := articleKafkaProducer.NewProducer(c.ic.KafkaWriter)
 	repository := articleRepository.NewRepository(c.ic.Postgres)
 	useCase := articleUseCase.NewUseCase(repository, seServiceUseCase, kafkaProducer)

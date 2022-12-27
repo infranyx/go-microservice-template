@@ -35,31 +35,31 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 	deadline := time.Now().Add(time.Duration(math.MaxInt64))
 	ctx, cancel := context.WithDeadline(context.Background(), deadline)
 
-	ic, iCCleanup, err := iContainer.NewIC(ctx)
+	ic, infraDown, err := iContainer.NewIC(ctx)
 	if err != nil {
 		cancel()
 		return nil, err
 	}
 
-	extBridge, extBridgeCleanUp, err := externalBridge.NewExternalBridge(ctx)
+	extBridge, extBridgeDown, err := externalBridge.NewExternalBridge(ctx)
 	if err != nil {
 		cancel()
 		return nil, err
 	}
 
 	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(extBridge.SampleExtGrpcService)
-	kp := articleKafkaProducer.NewProducer(ic.KafkaWriter)
-	rp := articleRepo.NewRepository(ic.Pg)
-	uc := articleUseCase.NewUseCase(rp, seServiceUseCase, kp)
+	kafkaProducer := articleKafkaProducer.NewProducer(ic.KafkaWriter)
+	repository := articleRepo.NewRepository(ic.Postgres)
+	useCase := articleUseCase.NewUseCase(repository, seServiceUseCase, kafkaProducer)
 
 	// http
-	ic.EchoServer.SetupDefaultMiddlewares()
-	httpRouterGp := ic.EchoServer.GetEchoInstance().Group(ic.EchoServer.GetBasePath())
-	httpController := articleHttp.NewController(uc)
+	ic.EchoHttpServer.SetupDefaultMiddlewares()
+	httpRouterGp := ic.EchoHttpServer.GetEchoInstance().Group(ic.EchoHttpServer.GetBasePath())
+	httpController := articleHttp.NewController(useCase)
 	articleHttp.NewRouter(httpController).Register(httpRouterGp)
 
 	// grpc
-	grpcController := articleGrpc.NewController(uc)
+	grpcController := articleGrpc.NewController(useCase)
 	articleV1.RegisterArticleServiceServer(ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	lis := bufconn.Listen(BUFSIZE)
@@ -69,22 +69,27 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 		}
 	}()
 
-	// init article grpc client environment
-	grpcClientConn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
-		return lis.Dial()
-	}), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	grpcClientConn, err := grpc.DialContext(
+		ctx,
+		"bufnet",
+		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+			return lis.Dial()
+		}),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
 		cancel()
 		return nil, err
 	}
+
 	articleGrpcClient := articleV1.NewArticleServiceClient(grpcClientConn)
 
 	return &IntegrationTestFixture{
 		TearDown: func() {
 			cancel()
-			iCCleanup()
+			infraDown()
 			grpcClientConn.Close()
-			extBridgeCleanUp()
+			extBridgeDown()
 		},
 		InfraContainer:    ic,
 		Ctx:               ctx,

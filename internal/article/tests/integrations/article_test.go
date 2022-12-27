@@ -97,7 +97,7 @@ func (suite *testSuite) TestSuccessCreateHttpArticle() {
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	response := httptest.NewRecorder()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+	suite.fixture.InfraContainer.EchoHttpServer.GetEchoInstance().ServeHTTP(response, request)
 
 	assert.Equal(suite.T(), http.StatusOK, response.Code)
 
@@ -116,8 +116,8 @@ func (suite *testSuite) TestNameValidationErrCreateHttpArticle() {
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	response := httptest.NewRecorder()
-	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+	suite.fixture.InfraContainer.EchoHttpServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoHttpServer.GetEchoInstance().ServeHTTP(response, request)
 
 	assert.Equal(suite.T(), http.StatusBadRequest, response.Code)
 
@@ -137,8 +137,8 @@ func (suite *testSuite) TestDescValidationErrCreateHttpArticle() {
 
 	response := httptest.NewRecorder()
 
-	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+	suite.fixture.InfraContainer.EchoHttpServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoHttpServer.GetEchoInstance().ServeHTTP(response, request)
 
 	assert.Equal(suite.T(), http.StatusBadRequest, response.Code)
 

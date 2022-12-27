@@ -8,7 +8,7 @@ import (
 
 	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
 	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
-	extBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
+	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 )
 
@@ -28,13 +28,13 @@ func (a *App) Run() error {
 	}
 	defer infraDown()
 
-	cc, clientsDown, err := extBridge.NewExternalBridge(ctx)
+	extBridge, extBridgeDown, err := externalBridge.NewExternalBridge(ctx)
 	if err != nil {
 		return err
 	}
-	defer clientsDown()
+	defer extBridgeDown()
 
-	me := configureModule(ctx, ic, cc)
+	me := configureModule(ctx, ic, extBridge)
 	if me != nil {
 		return me
 	}
@@ -70,8 +70,8 @@ func (a *App) Run() error {
 	return serverError
 }
 
-func configureModule(ctx context.Context, ic *iContainer.IContainer, eb *extBridge.ExternalBridge) error {
-	err := articleConfigurator.NewConfigurator(ic, eb).Configure(ctx)
+func configureModule(ctx context.Context, ic *iContainer.IContainer, extBridge *externalBridge.ExternalBridge) error {
+	err := articleConfigurator.NewConfigurator(ic, extBridge).Configure(ctx)
 	if err != nil {
 		return err
 	}
