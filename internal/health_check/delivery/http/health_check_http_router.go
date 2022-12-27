@@ -6,10 +6,10 @@ import (
 )
 
 type Router struct {
-	controller healthCheckDomain.HealthCheckHttpController
+	controller healthCheckDomain.HttpController
 }
 
-func NewRouter(controller healthCheckDomain.HealthCheckHttpController) *Router {
+func NewRouter(controller healthCheckDomain.HttpController) *Router {
 	return &Router{
 		controller: controller,
 	}

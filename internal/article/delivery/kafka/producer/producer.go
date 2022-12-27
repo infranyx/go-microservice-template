@@ -12,7 +12,7 @@ type producer struct {
 	createWriter *kafkaProducer.Writer
 }
 
-func NewProducer(w *kafkaProducer.Writer) articleDomain.ArticleProducer {
+func NewProducer(w *kafkaProducer.Writer) articleDomain.KafkaProducer {
 	return &producer{createWriter: w}
 }
 

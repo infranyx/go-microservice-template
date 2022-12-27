@@ -18,11 +18,11 @@ type configurator struct {
 	ic *infraContainer.IContainer
 }
 
-func NewConfigurator(ic *infraContainer.IContainer) healthCheckDomain.HealthCheckConfigurator {
+func NewConfigurator(ic *infraContainer.IContainer) healthCheckDomain.Configurator {
 	return &configurator{ic: ic}
 }
 
-func (c *configurator) ConfigureHealthCheck(ctx context.Context) error {
+func (c *configurator) Configure(ctx context.Context) error {
 	postgresHealthCheckUc := pgHealthCheckUseCase.NewUseCase(c.ic.Pg)
 	kafkaHealthCheckUc := kafkaHealthCheckUseCase.NewUseCase()
 	tmpDirHealthCheckUc := tmpDirHealthCheckUseCase.NewUseCase()

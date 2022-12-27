@@ -6,10 +6,10 @@ import (
 )
 
 type Router struct {
-	controller articleDomain.ArticleHttpController
+	controller articleDomain.HttpController
 }
 
-func NewRouter(controller articleDomain.ArticleHttpController) *Router {
+func NewRouter(controller articleDomain.HttpController) *Router {
 	return &Router{
 		controller: controller,
 	}

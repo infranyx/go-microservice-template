@@ -16,7 +16,7 @@ type consumer struct {
 	createEventReader *kafkaConsumer.Reader
 }
 
-func NewConsumer(r *kafkaConsumer.Reader) articleDomain.ArticleConsumer {
+func NewConsumer(r *kafkaConsumer.Reader) articleDomain.KafkaConsumer {
 	return &consumer{createEventReader: r}
 }
 

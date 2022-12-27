@@ -71,12 +71,12 @@ func (a *App) Run() error {
 }
 
 func configureModule(ctx context.Context, ic *iContainer.IContainer, eb *extBridge.ExternalBridge) error {
-	err := articleConfigurator.NewConfigurator(ic, eb).ConfigureArticle(ctx)
+	err := articleConfigurator.NewConfigurator(ic, eb).Configure(ctx)
 	if err != nil {
 		return err
 	}
 
-	err = healthCheckConfigurator.NewConfigurator(ic).ConfigureHealthCheck(ctx)
+	err = healthCheckConfigurator.NewConfigurator(ic).Configure(ctx)
 	if err != nil {
 		return err
 	}

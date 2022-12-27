@@ -10,10 +10,10 @@ import (
 )
 
 type controller struct {
-	useCase articleDomain.ArticleUseCase
+	useCase articleDomain.UseCase
 }
 
-func NewController(uc articleDomain.ArticleUseCase) articleDomain.ArticleHttpController {
+func NewController(uc articleDomain.UseCase) articleDomain.HttpController {
 	return &controller{
 		useCase: uc,
 	}

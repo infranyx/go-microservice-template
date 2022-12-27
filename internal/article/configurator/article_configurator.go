@@ -22,23 +22,23 @@ type configurator struct {
 	eb *externalBridge.ExternalBridge
 }
 
-func NewConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.ArticleConfigurator {
+func NewConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalBridge) articleDomain.Configurator {
 	return &configurator{ic: ic, eb: eb}
 }
 
-func (c *configurator) ConfigureArticle(ctx context.Context) error {
+func (c *configurator) Configure(ctx context.Context) error {
 	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.eb.SampleExtGrpcService)
-	kp := articleKafkaProducer.NewProducer(c.ic.KafkaWriter)
-	rp := articleRepository.NewRepository(c.ic.Pg)
-	uc := articleUseCase.NewUseCase(rp, seServiceUseCase, kp)
+	kafkaProducer := articleKafkaProducer.NewProducer(c.ic.KafkaWriter)
+	repository := articleRepository.NewRepository(c.ic.Pg)
+	useCase := articleUseCase.NewUseCase(repository, seServiceUseCase, kafkaProducer)
 
 	// grpc
-	grpcController := articleGrpcController.NewController(uc)
+	grpcController := articleGrpcController.NewController(useCase)
 	articleV1.RegisterArticleServiceServer(c.ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	// http
 	httpRouterGp := c.ic.EchoServer.GetEchoInstance().Group(c.ic.EchoServer.GetBasePath())
-	httpController := articleHttpController.NewController(uc)
+	httpController := articleHttpController.NewController(useCase)
 	articleHttpController.NewRouter(httpController).Register(httpRouterGp)
 
 	// Consumers

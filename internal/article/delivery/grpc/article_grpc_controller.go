@@ -12,10 +12,10 @@ import (
 )
 
 type controller struct {
-	useCase articleDomain.ArticleUseCase
+	useCase articleDomain.UseCase
 }
 
-func NewController(uc articleDomain.ArticleUseCase) articleDomain.ArticleGrpcController {
+func NewController(uc articleDomain.UseCase) articleDomain.GrpcController {
 	return &controller{
 		useCase: uc,
 	}

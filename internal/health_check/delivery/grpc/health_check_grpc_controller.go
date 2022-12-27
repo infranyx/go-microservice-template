@@ -19,7 +19,7 @@ func NewController(
 	healthCheckUc healthCheckDomain.HealthCheckUseCase,
 	postgresHealthCheckUc healthCheckDomain.PgHealthCheckUseCase,
 	kafkaHealthCheckUc healthCheckDomain.KafkaHealthCheckUseCase,
-	tmpDirHealthCheckUc healthCheckDomain.TmpDirHealthCheckUseCase) healthCheckDomain.HealthCheckGrpcController {
+	tmpDirHealthCheckUc healthCheckDomain.TmpDirHealthCheckUseCase) healthCheckDomain.GrpcController {
 	return &controller{
 		healthCheckUseCase:    healthCheckUc,
 		postgresHealthCheckUc: postgresHealthCheckUc,

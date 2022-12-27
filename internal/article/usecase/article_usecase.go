@@ -11,20 +11,20 @@ import (
 )
 
 type useCase struct {
-	repository              articleDomain.ArticleRepository
-	kafkaProducer           articleDomain.ArticleProducer
+	repository              articleDomain.Repository
+	kafkaProducer           articleDomain.KafkaProducer
 	sampleExtServiceUseCase sampleExtServiceDomain.SampleExtServiceUseCase
 }
 
 func NewUseCase(
-	repository articleDomain.ArticleRepository,
-	esu sampleExtServiceDomain.SampleExtServiceUseCase,
-	kp articleDomain.ArticleProducer,
-) articleDomain.ArticleUseCase {
+	repository articleDomain.Repository,
+	sampleExtServiceUseCase sampleExtServiceDomain.SampleExtServiceUseCase,
+	kafkaProducer articleDomain.KafkaProducer,
+) articleDomain.UseCase {
 	return &useCase{
 		repository:              repository,
-		kafkaProducer:           kp,
-		sampleExtServiceUseCase: esu,
+		kafkaProducer:           kafkaProducer,
+		sampleExtServiceUseCase: sampleExtServiceUseCase,
 	}
 }
 

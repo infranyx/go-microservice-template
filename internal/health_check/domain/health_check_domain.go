@@ -16,16 +16,16 @@ type HealthCheckResult struct {
 	Units  []HealthCheckUnit `json:"units"`
 }
 
-type HealthCheckConfigurator interface {
-	ConfigureHealthCheck(ctx context.Context) error
+type Configurator interface {
+	Configure(ctx context.Context) error
 }
 
-type HealthCheckGrpcController interface {
+type GrpcController interface {
 	Check(ctx context.Context, request *grpcHealthV1.HealthCheckRequest) (*grpcHealthV1.HealthCheckResponse, error)
 	Watch(request *grpcHealthV1.HealthCheckRequest, server grpcHealthV1.Health_WatchServer) error
 }
 
-type HealthCheckHttpController interface {
+type HttpController interface {
 	Check(c echo.Context) error
 }
 

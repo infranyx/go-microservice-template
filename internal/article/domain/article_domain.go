@@ -16,35 +16,35 @@ type Article struct {
 	Description string    `db:"description" json:"desc"`
 }
 
-type ArticleConfigurator interface {
-	ConfigureArticle(ctx context.Context) error
+type Configurator interface {
+	Configure(ctx context.Context) error
 }
 
-type ArticleUseCase interface {
+type UseCase interface {
 	Create(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
 }
 
-type ArticleRepository interface {
+type Repository interface {
 	Create(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
 }
 
-type ArticleGrpcController interface {
+type GrpcController interface {
 	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
 	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
 }
 
-type ArticleHttpController interface {
+type HttpController interface {
 	Create(c echo.Context) error
 }
 
-type ArticleJob interface {
+type Job interface {
 	StartJobs(ctx context.Context)
 }
 
-type ArticleProducer interface {
+type KafkaProducer interface {
 	PublishCreateEvent(ctx context.Context, messages ...kafka.Message) error
 }
 
-type ArticleConsumer interface {
+type KafkaConsumer interface {
 	RunConsumers(ctx context.Context)
 }

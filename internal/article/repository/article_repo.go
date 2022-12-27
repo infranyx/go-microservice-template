@@ -12,7 +12,7 @@ type repository struct {
 	postgres *postgres.Postgres
 }
 
-func NewRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
+func NewRepository(Conn *postgres.Postgres) articleDomain.Repository {
 	return &repository{Conn}
 }
 
