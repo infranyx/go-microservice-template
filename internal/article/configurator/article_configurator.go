@@ -45,7 +45,7 @@ func (c *configurator) ConfigureArticle(ctx context.Context) error {
 	articleKafkaConsumer.NewConsumer(c.ic.KafkaReader).RunConsumers(ctx)
 
 	// Jobs
-	articleJob.NewJob().StartJobs(ctx)
+	articleJob.NewJob(c.ic.Logger).StartJobs(ctx)
 
 	return nil
 }
