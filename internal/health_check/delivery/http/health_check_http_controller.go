@@ -10,9 +10,9 @@ type controller struct {
 	useCase healthCheckDomain.HealthCheckUseCase
 }
 
-func NewController(uc healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HttpController {
+func NewController(useCase healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HttpController {
 	return &controller{
-		useCase: uc,
+		useCase: useCase,
 	}
 }
 

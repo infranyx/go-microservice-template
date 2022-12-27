@@ -2,6 +2,7 @@ package healthCheckGrpc
 
 import (
 	"context"
+
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 	"google.golang.org/grpc/codes"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
@@ -32,7 +33,7 @@ func (c *controller) Check(ctx context.Context, request *grpcHealthV1.HealthChec
 	var healthStatus bool
 
 	switch request.Service {
-	case "":
+	case "", "all":
 		healthStatus = c.healthCheckUseCase.Check().Status
 	case "kafka":
 		healthStatus = c.kafkaHealthCheckUc.Check()
