@@ -3,7 +3,7 @@ package healthCheckConfigurator
 import (
 	"context"
 	kafkaHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/kafka_health_check"
-	pgHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/pg_health_check"
+	postgresHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/postgres_health_check"
 	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 
@@ -23,7 +23,7 @@ func NewConfigurator(ic *infraContainer.IContainer) healthCheckDomain.Configurat
 }
 
 func (c *configurator) Configure(ctx context.Context) error {
-	postgresHealthCheckUc := pgHealthCheckUseCase.NewUseCase(c.ic.Postgres)
+	postgresHealthCheckUc := postgresHealthCheckUseCase.NewUseCase(c.ic.Postgres)
 	kafkaHealthCheckUc := kafkaHealthCheckUseCase.NewUseCase()
 	tmpDirHealthCheckUc := tmpDirHealthCheckUseCase.NewUseCase()
 
@@ -35,8 +35,8 @@ func (c *configurator) Configure(ctx context.Context) error {
 
 	// http
 	httpRouterGp := c.ic.EchoHttpServer.GetEchoInstance().Group(c.ic.EchoHttpServer.GetBasePath())
-	healthCheckController := healthCheckHttp.NewController(healthCheckUc)
-	healthCheckHttp.NewRouter(healthCheckController).Register(httpRouterGp)
+	httpController := healthCheckHttp.NewController(healthCheckUc)
+	healthCheckHttp.NewRouter(httpController).Register(httpRouterGp)
 
 	return nil
 }

@@ -1,4 +1,4 @@
-package pgHealthCheckUseCase
+package postgresHealthCheckUseCase
 
 import (
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
@@ -9,7 +9,7 @@ type useCase struct {
 	postgres *postgres.Postgres
 }
 
-func NewUseCase(postgres *postgres.Postgres) healthCheckDomain.PgHealthCheckUseCase {
+func NewUseCase(postgres *postgres.Postgres) healthCheckDomain.PostgresHealthCheckUseCase {
 	return &useCase{
 		postgres: postgres,
 	}

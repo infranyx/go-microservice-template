@@ -2,16 +2,17 @@ package healthCheckUseCase
 
 import (
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
 )
 
 type useCase struct {
-	postgresHealthCheckUc healthCheckDomain.PgHealthCheckUseCase
+	postgresHealthCheckUc healthCheckDomain.PostgresHealthCheckUseCase
 	kafkaHealthCheckUc    healthCheckDomain.KafkaHealthCheckUseCase
 	tmpDirHealthCheckUc   healthCheckDomain.TmpDirHealthCheckUseCase
 }
 
 func NewUseCase(
-	postgresHealthCheckUc healthCheckDomain.PgHealthCheckUseCase,
+	postgresHealthCheckUc healthCheckDomain.PostgresHealthCheckUseCase,
 	kafkaHealthCheckUc healthCheckDomain.KafkaHealthCheckUseCase,
 	tmpDirHealthCheckUc healthCheckDomain.TmpDirHealthCheckUseCase,
 ) healthCheckDomain.HealthCheckUseCase {
@@ -22,25 +23,25 @@ func NewUseCase(
 	}
 }
 
-func (uc *useCase) Check() *healthCheckDomain.HealthCheckResult {
-	healthCheckResult := healthCheckDomain.HealthCheckResult{
+func (uc *useCase) Check() *healthCheckDto.HealthCheckResponseDto {
+	healthCheckResult := healthCheckDto.HealthCheckResponseDto{
 		Status: true,
 		Units:  nil,
 	}
 
-	pgUnit := healthCheckDomain.HealthCheckUnit{
+	pgUnit := healthCheckDto.HealthCheckUnit{
 		Unit: "postgres",
 		Up:   uc.postgresHealthCheckUc.Check(),
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, pgUnit)
 
-	kafkaUnit := healthCheckDomain.HealthCheckUnit{
+	kafkaUnit := healthCheckDto.HealthCheckUnit{
 		Unit: "kafka",
 		Up:   uc.kafkaHealthCheckUc.Check(),
 	}
 	healthCheckResult.Units = append(healthCheckResult.Units, kafkaUnit)
 
-	tmpDirUnit := healthCheckDomain.HealthCheckUnit{
+	tmpDirUnit := healthCheckDto.HealthCheckUnit{
 		Unit: "writable-tmp-dir",
 		Up:   uc.tmpDirHealthCheckUc.Check(),
 	}

@@ -11,14 +11,14 @@ import (
 
 type controller struct {
 	healthCheckUseCase    healthCheckDomain.HealthCheckUseCase
-	postgresHealthCheckUc healthCheckDomain.PgHealthCheckUseCase
+	postgresHealthCheckUc healthCheckDomain.PostgresHealthCheckUseCase
 	kafkaHealthCheckUc    healthCheckDomain.KafkaHealthCheckUseCase
 	tmpDirHealthCheckUc   healthCheckDomain.TmpDirHealthCheckUseCase
 }
 
 func NewController(
 	healthCheckUc healthCheckDomain.HealthCheckUseCase,
-	postgresHealthCheckUc healthCheckDomain.PgHealthCheckUseCase,
+	postgresHealthCheckUc healthCheckDomain.PostgresHealthCheckUseCase,
 	kafkaHealthCheckUc healthCheckDomain.KafkaHealthCheckUseCase,
 	tmpDirHealthCheckUc healthCheckDomain.TmpDirHealthCheckUseCase) healthCheckDomain.GrpcController {
 	return &controller{

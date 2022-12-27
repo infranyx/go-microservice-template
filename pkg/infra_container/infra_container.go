@@ -69,7 +69,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		echoServer.GracefulShutdown(ctx)
 	})
 
-	pg, err := postgres.NewConnection(ctx, &postgres.PgConfig{
+	pg, err := postgres.NewConnection(ctx, &postgres.Config{
 		Host:    config.BaseConfig.Postgres.Host,
 		Port:    config.BaseConfig.Postgres.Port,
 		User:    config.BaseConfig.Postgres.User,

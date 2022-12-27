@@ -2,19 +2,10 @@ package healthCheckDomain
 
 import (
 	"context"
+	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
 	"github.com/labstack/echo/v4"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 )
-
-type HealthCheckUnit struct {
-	Unit string `json:"unit"`
-	Up   bool   `json:"up"`
-}
-
-type HealthCheckResult struct {
-	Status bool              `json:"status"`
-	Units  []HealthCheckUnit `json:"units"`
-}
 
 type Configurator interface {
 	Configure(ctx context.Context) error
@@ -30,10 +21,10 @@ type HttpController interface {
 }
 
 type HealthCheckUseCase interface {
-	Check() *HealthCheckResult
+	Check() *healthCheckDto.HealthCheckResponseDto
 }
 
-type PgHealthCheckUseCase interface {
+type PostgresHealthCheckUseCase interface {
 	Check() bool
 }
 

@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type PgConfig struct {
+type Config struct {
 	Host    string
 	Port    string
 	User    string
@@ -28,7 +28,7 @@ func (db *Postgres) Close() {
 	_ = db.SqlxDB.Close()
 }
 
-func NewConnection(ctx context.Context, conf *PgConfig) (*Postgres, error) {
+func NewConnection(ctx context.Context, conf *Config) (*Postgres, error) {
 	connString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		conf.Host,
 		conf.Port,
