@@ -16,5 +16,5 @@ func NewRouter(controller articleDomain.HttpController) *Router {
 }
 
 func (r *Router) Register(e *echo.Group) {
-	e.POST("/article", r.controller.Create)
+	e.POST("/article", r.controller.CreateArticle)
 }

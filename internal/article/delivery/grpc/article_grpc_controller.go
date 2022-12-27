@@ -31,7 +31,7 @@ func (c *controller) CreateArticle(ctx context.Context, req *articleV1.CreateArt
 		return nil, articleException.CreateArticleValidationExc(err)
 	}
 
-	article, err := c.useCase.Create(ctx, aDto)
+	article, err := c.useCase.CreateArticle(ctx, aDto)
 	if err != nil {
 		return nil, err
 	}

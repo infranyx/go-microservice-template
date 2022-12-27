@@ -21,11 +21,11 @@ type Configurator interface {
 }
 
 type UseCase interface {
-	Create(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
+	CreateArticle(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
 }
 
 type Repository interface {
-	Create(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
+	CreateArticle(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
 }
 
 type GrpcController interface {
@@ -34,7 +34,7 @@ type GrpcController interface {
 }
 
 type HttpController interface {
-	Create(c echo.Context) error
+	CreateArticle(c echo.Context) error
 }
 
 type Job interface {

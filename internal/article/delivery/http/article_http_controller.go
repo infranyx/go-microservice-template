@@ -19,7 +19,7 @@ func NewController(uc articleDomain.UseCase) articleDomain.HttpController {
 	}
 }
 
-func (c controller) Create(ctx echo.Context) error {
+func (c controller) CreateArticle(ctx echo.Context) error {
 	aDto := new(articleDto.CreateArticleRequestDto)
 	if err := ctx.Bind(aDto); err != nil {
 		return articleException.ArticleBindingExc()
@@ -29,7 +29,7 @@ func (c controller) Create(ctx echo.Context) error {
 		return articleException.CreateArticleValidationExc(err)
 	}
 
-	article, err := c.useCase.Create(ctx.Request().Context(), aDto)
+	article, err := c.useCase.CreateArticle(ctx.Request().Context(), aDto)
 	if err != nil {
 		return err
 	}
