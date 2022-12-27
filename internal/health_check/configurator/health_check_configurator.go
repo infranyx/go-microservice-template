@@ -14,28 +14,29 @@ import (
 	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 )
 
-type healthCheckConfigurator struct {
+type configurator struct {
 	ic *infraContainer.IContainer
 }
 
-func NewHealthCheckConfigurator(ic *infraContainer.IContainer) healthCheckDomain.HealthCheckConfigurator {
-	return &healthCheckConfigurator{ic: ic}
+func NewConfigurator(ic *infraContainer.IContainer) healthCheckDomain.HealthCheckConfigurator {
+	return &configurator{ic: ic}
 }
 
-func (hc *healthCheckConfigurator) ConfigureHealthCheck(ctx context.Context) error {
-	uc := healthCheckUseCase.NewHealthCheckUseCase(hc.ic.Pg)
-	kuc := kafkaHealthCheckUseCase.NewKafkaHealthCheck()
-	pguc := pgHealthCheckUseCase.NewPgHealthCheck(hc.ic.Pg)
-	tmpDirUc := tmpDirHealthCheckUseCase.NewTmpDirHealthCheck()
+func (c *configurator) ConfigureHealthCheck(ctx context.Context) error {
+	postgresHealthCheckUc := pgHealthCheckUseCase.NewUseCase(c.ic.Pg)
+	kafkaHealthCheckUc := kafkaHealthCheckUseCase.NewUseCase()
+	tmpDirHealthCheckUc := tmpDirHealthCheckUseCase.NewUseCase()
+
+	healthCheckUc := healthCheckUseCase.NewUseCase(postgresHealthCheckUc, kafkaHealthCheckUc, tmpDirHealthCheckUc)
 
 	// grpc
-	gc := healthCheckGrpc.NewHealthCheckGrpcController(uc, pguc, kuc, tmpDirUc)
-	grpcHealthV1.RegisterHealthServer(hc.ic.GrpcServer.GetCurrentGrpcServer(), gc)
+	grpcController := healthCheckGrpc.NewController(healthCheckUc, postgresHealthCheckUc, kafkaHealthCheckUc, tmpDirHealthCheckUc)
+	grpcHealthV1.RegisterHealthServer(c.ic.GrpcServer.GetCurrentGrpcServer(), grpcController)
 
 	// http
-	routerGroup := hc.ic.EchoServer.GetEchoInstance().Group(hc.ic.EchoServer.GetBasePath())
-	healthCheckController := healthCheckHttp.NewHealthCheckHttpController(uc)
-	healthCheckHttp.NewHealthCheckAPI(healthCheckController).Register(routerGroup)
+	httpRouterGp := c.ic.EchoServer.GetEchoInstance().Group(c.ic.EchoServer.GetBasePath())
+	healthCheckController := healthCheckHttp.NewController(healthCheckUc)
+	healthCheckHttp.NewRouter(healthCheckController).Register(httpRouterGp)
 
 	return nil
 }

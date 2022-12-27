@@ -6,23 +6,23 @@ import (
 	"net/http"
 )
 
-type healthCheckHttpController struct {
-	healthCheckUC healthCheckDomain.HealthCheckUseCase
+type controller struct {
+	useCase healthCheckDomain.HealthCheckUseCase
 }
 
-func NewHealthCheckHttpController(uc healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HealthCheckHttpController {
-	return &healthCheckHttpController{
-		healthCheckUC: uc,
+func NewController(uc healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HealthCheckHttpController {
+	return &controller{
+		useCase: uc,
 	}
 }
 
-func (hc healthCheckHttpController) Check(c echo.Context) error {
-	healthResult := hc.healthCheckUC.Check()
+func (c controller) Check(eCtx echo.Context) error {
+	healthResult := c.useCase.Check()
 
 	httpStatus := http.StatusOK
 	if !healthResult.Status {
 		httpStatus = http.StatusInternalServerError
 	}
 
-	return c.JSON(httpStatus, healthResult)
+	return eCtx.JSON(httpStatus, healthResult)
 }

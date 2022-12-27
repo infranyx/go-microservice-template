@@ -5,18 +5,18 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
 )
 
-type pgHealthCheck struct {
-	conn *postgres.Postgres
+type useCase struct {
+	postgres *postgres.Postgres
 }
 
-func NewPgHealthCheck(Conn *postgres.Postgres) healthCheckDomain.PgHealthCheckUseCase {
-	return &pgHealthCheck{
-		conn: Conn,
+func NewUseCase(postgres *postgres.Postgres) healthCheckDomain.PgHealthCheckUseCase {
+	return &useCase{
+		postgres: postgres,
 	}
 }
 
-func (ph *pgHealthCheck) PingCheck() bool {
-	if err := ph.conn.SqlxDB.DB.Ping(); err != nil {
+func (uc *useCase) Check() bool {
+	if err := uc.postgres.SqlxDB.DB.Ping(); err != nil {
 		return false
 	}
 	return true

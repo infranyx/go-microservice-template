@@ -7,14 +7,13 @@ import (
 	"path/filepath"
 )
 
-type tmpDirHealthCheck struct {
+type useCase struct{}
+
+func NewUseCase() healthCheckDomain.TmpDirHealthCheckUseCase {
+	return &useCase{}
 }
 
-func NewTmpDirHealthCheck() healthCheckDomain.TmpDirHealthCheckUseCase {
-	return &tmpDirHealthCheck{}
-}
-
-func (th *tmpDirHealthCheck) PingCheck() bool {
+func (uc *useCase) Check() bool {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return false

@@ -76,9 +76,9 @@ func configureModule(ctx context.Context, ic *iContainer.IContainer, eb *extBrid
 		return err
 	}
 
-	he := healthCheckConfigurator.NewHealthCheckConfigurator(ic).ConfigureHealthCheck(ctx)
-	if he != nil {
-		return he
+	err = healthCheckConfigurator.NewConfigurator(ic).ConfigureHealthCheck(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil

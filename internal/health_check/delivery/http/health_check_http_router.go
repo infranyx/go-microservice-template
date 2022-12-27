@@ -6,15 +6,15 @@ import (
 )
 
 type Router struct {
-	healthCheckCtrl healthCheckDomain.HealthCheckHttpController
+	controller healthCheckDomain.HealthCheckHttpController
 }
 
-func NewHealthCheckAPI(hc healthCheckDomain.HealthCheckHttpController) *Router {
+func NewRouter(controller healthCheckDomain.HealthCheckHttpController) *Router {
 	return &Router{
-		healthCheckCtrl: hc,
+		controller: controller,
 	}
 }
 
 func (r *Router) Register(e *echo.Group) {
-	e.GET("/health", r.healthCheckCtrl.Check)
+	e.GET("/health", r.controller.Check)
 }

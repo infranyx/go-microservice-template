@@ -34,13 +34,13 @@ type HealthCheckUseCase interface {
 }
 
 type PgHealthCheckUseCase interface {
-	PingCheck() bool
+	Check() bool
 }
 
 type TmpDirHealthCheckUseCase interface {
-	PingCheck() bool
+	Check() bool
 }
 
 type KafkaHealthCheckUseCase interface {
-	PingCheck() bool
+	Check() bool
 }

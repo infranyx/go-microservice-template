@@ -6,13 +6,13 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type kafkaHealthCheck struct{}
+type useCase struct{}
 
-func NewKafkaHealthCheck() healthCheckDomain.KafkaHealthCheckUseCase {
-	return &kafkaHealthCheck{}
+func NewUseCase() healthCheckDomain.KafkaHealthCheckUseCase {
+	return &useCase{}
 }
 
-func (kh *kafkaHealthCheck) PingCheck() bool {
+func (uc *useCase) Check() bool {
 	brokers := kafka.TCP(config.BaseConfig.Kafka.ClientBrokers...)
 
 	conn, err := kafka.Dial(brokers.Network(), brokers.String())
