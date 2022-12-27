@@ -9,7 +9,7 @@ import (
 )
 
 type repository struct {
-	conn *postgres.Postgres
+	postgres *postgres.Postgres
 }
 
 func NewRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
@@ -19,14 +19,14 @@ func NewRepository(Conn *postgres.Postgres) articleDomain.ArticleRepository {
 func (rp *repository) Create(ctx context.Context, entity *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error) {
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
-	res, err := rp.conn.SqlxDB.QueryContext(ctx, query, entity.Name, entity.Description)
+	result, err := rp.postgres.SqlxDB.QueryContext(ctx, query, entity.Name, entity.Description)
 	if err != nil {
 		return nil, fmt.Errorf("error inserting article record")
 	}
 
 	article := new(articleDto.CreateArticleResponseDto)
-	for res.Next() {
-		err = res.Scan(&article.ID, &article.Name, &article.Description)
+	for result.Next() {
+		err = result.Scan(&article.ID, &article.Name, &article.Description)
 		if err != nil {
 			return nil, err
 		}
