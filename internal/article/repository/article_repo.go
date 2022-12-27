@@ -16,7 +16,10 @@ func NewRepository(Conn *postgres.Postgres) articleDomain.Repository {
 	return &repository{Conn}
 }
 
-func (rp *repository) CreateArticle(ctx context.Context, entity *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error) {
+func (rp *repository) CreateArticle(
+	ctx context.Context,
+	entity *articleDto.CreateArticleRequestDto,
+) (*articleDto.CreateArticleResponseDto, error) {
 	query := `INSERT INTO articles (name, description) VALUES ($1, $2) RETURNING id, name, description`
 
 	result, err := rp.postgres.SqlxDB.QueryContext(ctx, query, entity.Name, entity.Description)

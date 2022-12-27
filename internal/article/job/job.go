@@ -21,7 +21,7 @@ type job struct {
 
 func NewJob(logger *zap.Logger) articleDomain.Job {
 	newCron := cron.New(cron.WithChain(
-		cron.SkipIfStillRunning(cronJob.NewCronLogger()),
+		cron.SkipIfStillRunning(cronJob.NewLogger()),
 	))
 	return &job{cron: newCron, logger: logger}
 }
