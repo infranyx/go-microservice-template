@@ -29,7 +29,7 @@ func NewConfigurator(ic *infraContainer.IContainer, eb *externalBridge.ExternalB
 func (c *configurator) Configure(ctx context.Context) error {
 	seServiceUseCase := sampleExtServiceUseCase.NewSampleExtServiceUseCase(c.eb.SampleExtGrpcService)
 	kafkaProducer := articleKafkaProducer.NewProducer(c.ic.KafkaWriter)
-	repository := articleRepository.NewRepository(c.ic.Pg)
+	repository := articleRepository.NewRepository(c.ic.Postgres)
 	useCase := articleUseCase.NewUseCase(repository, seServiceUseCase, kafkaProducer)
 
 	// grpc

@@ -46,7 +46,6 @@ func (eVar EVar) GetEnv() interface{} {
 	}
 
 	if eVar.defaultVal == nil {
-		// TODO : Log + Err
 		log.Fatalf("Env variable is required %v", eVar.key)
 	}
 
@@ -60,7 +59,6 @@ func (eVar EVar) AsString() string {
 func (eVar EVar) AsInt() int {
 	val, err := strconv.Atoi(eVar.AsString())
 	if err != nil {
-		// TODO : Log + Err
 		log.Fatalf("could not convert eVar to Int %v", eVar.key)
 	}
 
@@ -70,7 +68,6 @@ func (eVar EVar) AsInt() int {
 func (eVar EVar) AsBool() bool {
 	val, err := strconv.ParseBool(eVar.AsString())
 	if err != nil {
-		// TODO : Log + Err
 		log.Fatalf("could not convert eVar to bool %v", eVar.key)
 	}
 

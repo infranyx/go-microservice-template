@@ -23,7 +23,7 @@ func NewConfigurator(ic *infraContainer.IContainer) healthCheckDomain.Configurat
 }
 
 func (c *configurator) Configure(ctx context.Context) error {
-	postgresHealthCheckUc := pgHealthCheckUseCase.NewUseCase(c.ic.Pg)
+	postgresHealthCheckUc := pgHealthCheckUseCase.NewUseCase(c.ic.Postgres)
 	kafkaHealthCheckUc := kafkaHealthCheckUseCase.NewUseCase()
 	tmpDirHealthCheckUc := tmpDirHealthCheckUseCase.NewUseCase()
 

@@ -19,11 +19,11 @@ import (
 )
 
 type IContainer struct {
+	Config         *config.Config
+	Logger         *zap.Logger
+	Postgres       *postgres.Postgres
 	GrpcServer     grpc.Server
 	EchoHttpServer echoHttp.ServerInterface
-	Logger         *zap.Logger
-	Cfg            *config.Config
-	Pg             *postgres.Postgres
 	KafkaWriter    *kafkaProducer.Writer
 	KafkaReader    *kafkaConsumer.Reader
 }
@@ -42,7 +42,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		EnableTracing:    config.IsDevEnv(),
 	})
 	if se != nil {
-		log.Fatalf("sentry.Init: %s", se)
+		log.Fatalf("can not initialize sentry with error:  %s", se)
 	}
 	downFns = append(downFns, func() {
 		sentry.Flush(2 * time.Second)
@@ -69,7 +69,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		echoServer.GracefulShutdown(ctx)
 	})
 
-	pg, err := postgres.NewPgConn(ctx, &postgres.PgConf{
+	pg, err := postgres.NewConnection(ctx, &postgres.PgConfig{
 		Host:    config.BaseConfig.Postgres.Host,
 		Port:    config.BaseConfig.Postgres.Port,
 		User:    config.BaseConfig.Postgres.User,
@@ -78,7 +78,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		SslMode: config.BaseConfig.Postgres.SslMode,
 	})
 	if err != nil {
-		return nil, down, fmt.Errorf("could not initialize database connection using sqlx %s", err)
+		return nil, down, fmt.Errorf("can not connect to database using sqlx with error: %s", err)
 	}
 	downFns = append(downFns, func() {
 		pg.Close()
@@ -104,7 +104,13 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		kr.Client.Close()
 	})
 
-	ic := &IContainer{Cfg: config.BaseConfig, Logger: logger.Zap, GrpcServer: grpcServer, EchoHttpServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
+	ic := &IContainer{
+		Config:         config.BaseConfig,
+		Logger:         logger.Zap,
+		Postgres:       pg,
+		GrpcServer:     grpcServer,
+		EchoHttpServer: echoServer,
+		KafkaWriter:    kw, KafkaReader: kr}
 
 	return ic, down, nil
 }
