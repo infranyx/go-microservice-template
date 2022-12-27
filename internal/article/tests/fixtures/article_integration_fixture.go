@@ -24,10 +24,10 @@ import (
 const BUFSIZE = 1024 * 1024
 
 type IntegrationTestFixture struct {
-	InfraContainer    *iContainer.IContainer
+	TearDown          func()
 	Ctx               context.Context
 	Cancel            context.CancelFunc
-	TearnDown         func()
+	InfraContainer    *iContainer.IContainer
 	ArticleGrpcClient articleV1.ArticleServiceClient
 }
 
@@ -80,7 +80,7 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 	articleGrpcClient := articleV1.NewArticleServiceClient(grpcClientConn)
 
 	return &IntegrationTestFixture{
-		TearnDown: func() {
+		TearDown: func() {
 			cancel()
 			iCCleanup()
 			grpcClientConn.Close()

@@ -35,34 +35,38 @@ func (suite *testSuite) SetupSuite() {
 }
 
 func (suite *testSuite) TearDownSuite() {
-	suite.fixture.TearnDown()
+	suite.fixture.TearDown()
 }
 
-func (suite *testSuite) TestSuccessCreateGrpcArticle() {
+func (suite *testSuite) TestSuccessfulCreateGrpcArticle() {
 	ctx := context.Background()
-	input := &articleV1.CreateArticleRequest{
+
+	createArticleRequest := &articleV1.CreateArticleRequest{
 		Name: "John",
 		Desc: "Pro Developer",
 	}
-	res, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
+
+	response, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, createArticleRequest)
 	if err != nil {
 		assert.Error(suite.T(), err)
 	}
 
-	assert.NotNil(suite.T(), res.Id)
-	assert.Equal(suite.T(), "John", res.Name)
-	assert.Equal(suite.T(), "Pro Developer", res.Desc)
+	assert.NotNil(suite.T(), response.Id)
+	assert.Equal(suite.T(), "John", response.Name)
+	assert.Equal(suite.T(), "Pro Developer", response.Desc)
 }
 
 func (suite *testSuite) TestNameValidationErrCreateGrpcArticle() {
 	ctx := context.Background()
-	input := &articleV1.CreateArticleRequest{
+
+	createArticleRequest := &articleV1.CreateArticleRequest{
 		Name: "Jo",
 		Desc: "Pro Developer",
 	}
-	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
+	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, createArticleRequest)
 
 	assert.NotNil(suite.T(), err)
+
 	grpcErr := grpcError.ParseExternalGrpcErr(err)
 	assert.NotNil(suite.T(), grpcErr)
 	assert.Equal(suite.T(), codes.InvalidArgument, grpcErr.GetStatus())
@@ -71,11 +75,12 @@ func (suite *testSuite) TestNameValidationErrCreateGrpcArticle() {
 
 func (suite *testSuite) TestDescValidationErrCreateGrpcArticle() {
 	ctx := context.Background()
-	input := &articleV1.CreateArticleRequest{
+
+	createArticleRequest := &articleV1.CreateArticleRequest{
 		Name: "John",
 		Desc: "Pro",
 	}
-	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, input)
+	_, err := suite.fixture.ArticleGrpcClient.CreateArticle(ctx, createArticleRequest)
 
 	assert.NotNil(suite.T(), err)
 
@@ -88,17 +93,18 @@ func (suite *testSuite) TestDescValidationErrCreateGrpcArticle() {
 func (suite *testSuite) TestSuccessCreateHttpArticle() {
 	articleJSON := `{"name":"John Snow","desc":"King of the north"}`
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	// Assertions
-	assert.Equal(suite.T(), http.StatusOK, rec.Code)
-	articleDto := new(articleDto.CreateArticleRequestDto)
-	if assert.NoError(suite.T(), json.Unmarshal(rec.Body.Bytes(), articleDto)) {
-		assert.Equal(suite.T(), "John Snow", articleDto.Name)
-		assert.Equal(suite.T(), "King of the north", articleDto.Description)
+	response := httptest.NewRecorder()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+
+	assert.Equal(suite.T(), http.StatusOK, response.Code)
+
+	caDto := new(articleDto.CreateArticleRequestDto)
+	if assert.NoError(suite.T(), json.Unmarshal(response.Body.Bytes(), caDto)) {
+		assert.Equal(suite.T(), "John Snow", caDto.Name)
+		assert.Equal(suite.T(), "King of the north", caDto.Description)
 	}
 
 }
@@ -106,14 +112,16 @@ func (suite *testSuite) TestSuccessCreateHttpArticle() {
 func (suite *testSuite) TestNameValidationErrCreateHttpArticle() {
 	articleJSON := `{"name":"Jo","desc":"King of the north"}`
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
-	httpErr := httpError.ParseExternalHttpErr(rec.Result().Body)
+	response := httptest.NewRecorder()
+	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, response.Code)
+
+	httpErr := httpError.ParseExternalHttpErr(response.Result().Body)
 	if assert.NotNil(suite.T(), httpErr) {
 		assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
 		assert.Contains(suite.T(), httpErr.GetDetails(), "name")
@@ -124,21 +132,24 @@ func (suite *testSuite) TestNameValidationErrCreateHttpArticle() {
 func (suite *testSuite) TestDescValidationErrCreateHttpArticle() {
 	articleJSON := `{"name":"John Snow","desc":"King"}`
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
-	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(rec, req)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/article", strings.NewReader(articleJSON))
+	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
-	httpErr := httpError.ParseExternalHttpErr(rec.Result().Body)
+	response := httptest.NewRecorder()
+
+	suite.fixture.InfraContainer.EchoServer.SetupDefaultMiddlewares()
+	suite.fixture.InfraContainer.EchoServer.GetEchoInstance().ServeHTTP(response, request)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, response.Code)
+
+	httpErr := httpError.ParseExternalHttpErr(response.Result().Body)
 	if assert.NotNil(suite.T(), httpErr) {
 		assert.Equal(suite.T(), http.StatusBadRequest, httpErr.GetStatus())
 		assert.Contains(suite.T(), httpErr.GetDetails(), "desc")
 	}
 }
 
-func RunTestSuite(t *testing.T) {
+func TestRunSuite(t *testing.T) {
 	tsuite := new(testSuite)
 	suite.Run(t, tsuite)
 }
