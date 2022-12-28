@@ -81,7 +81,7 @@ func NewIntegrationTestFixture() (*IntegrationTestFixture, error) {
 		TearDown: func() {
 			cancel()
 			infraDown()
-			grpcClientConn.Close()
+			_ = grpcClientConn.Close()
 		},
 		InfraContainer:        ic,
 		Ctx:                   ctx,

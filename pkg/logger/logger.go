@@ -46,7 +46,7 @@ func newLogger() *zap.Logger {
 			_ = os.MkdirAll(tmpLogDir, os.ModePerm)
 		}
 
-		logFile, err := os.OpenFile(filepath.Join(tmpLogDir, "main.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		logFile, err := os.OpenFile(filepath.Clean(filepath.Join(tmpLogDir, "main.log")), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			log.Fatal("Error Open File main.log")
 		}
