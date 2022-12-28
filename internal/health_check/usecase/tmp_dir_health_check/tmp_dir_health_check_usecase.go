@@ -2,9 +2,10 @@ package tmpDirHealthCheckUseCase
 
 import (
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	"github.com/infranyx/go-grpc-template/pkg/config"
 	"golang.org/x/sys/unix"
-	"os"
 	"path/filepath"
+	"runtime"
 )
 
 type useCase struct{}
@@ -14,13 +15,18 @@ func NewUseCase() healthCheckDomain.TmpDirHealthCheckUseCase {
 }
 
 func (uc *useCase) Check() bool {
-	cwd, err := os.Getwd()
-	if err != nil {
+	if !config.IsProdEnv() {
+		return true
+	}
+
+	_, callerDir, _, ok := runtime.Caller(0)
+	if !ok {
 		return false
 	}
 
-	tmpDirPath := filepath.Join(cwd, "/tmp")
-	if unix.Access(tmpDirPath, unix.W_OK) != nil {
+	tmpDir := filepath.Join(filepath.Dir(callerDir), "../../../..", "tmp")
+
+	if unix.Access(tmpDir, unix.W_OK) != nil {
 		return false
 	}
 

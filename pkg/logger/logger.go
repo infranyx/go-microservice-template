@@ -4,8 +4,10 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 var Zap *zap.Logger
@@ -34,11 +36,17 @@ func newLogger() *zap.Logger {
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
 
-		if _, err := os.Stat(filepath.Join(".", "tmp/logs")); os.IsNotExist(err) {
-			_ = os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
+		_, callerDir, _, ok := runtime.Caller(0)
+		if !ok {
+			log.Fatal("Error generating env dir")
+		}
+		tmpLogDir := filepath.Join(filepath.Dir(callerDir), "../..", "tmp/logs")
+
+		if _, err := os.Stat(tmpLogDir); os.IsNotExist(err) {
+			_ = os.MkdirAll(tmpLogDir, os.ModePerm)
 		}
 
-		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		logFile, _ := os.OpenFile(filepath.Join(tmpLogDir, "main.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
