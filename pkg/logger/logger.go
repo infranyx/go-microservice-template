@@ -46,7 +46,11 @@ func newLogger() *zap.Logger {
 			_ = os.MkdirAll(tmpLogDir, os.ModePerm)
 		}
 
-		logFile, _ := os.OpenFile(filepath.Join(tmpLogDir, "main.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		logFile, err := os.OpenFile(filepath.Join(tmpLogDir, "main.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			log.Fatal("Error Open File main.log")
+		}
+
 		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
