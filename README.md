@@ -17,7 +17,7 @@ This is the code repository for [Go Microservice Template](https://www.github.co
     - [See also](#see-also)
   - [Getting started](#getting-started)
     - [Layout](#layout)
-    - [Database Migrations](#database-migrations)
+    - [Database](#database)
     - [Protocol Buffer](#protocol-buffer)
     - [API docs](#api-docs)
     - [Docker Compose](#docker-compose)
@@ -154,34 +154,9 @@ A brief description of the layout:
 - `Makefile`: The Makefile is used to define tasks that can be run from the command line to automate common tasks in a project such as building or testing code.
 - `docker-compose*.yaml`: These files contain docker compose configurations for different environments.
 
-### Database Migrations
+### Database
 
-This code repository use [Migrate](https://github.com/golang-migrate/migrate) as a database migration tool. It helps you manage and keep track of database schema changes in your Go applications.
-
-**Migrate Installation**
-
-To install migrate cli please go to [installation guide](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md).
-
-**Migratee Usage**
-
-```makefile
-
-migrate-up:   # Target for running 'up' command
- migrate -path db/migrations -database  $(PG_URL) up
-
-migrate-down: # Target for running 'down' command
-	migrate -path db/migrations -database $(PG_URL) down
-
-migrate-create: # Target for running 'create'
-	migrate create -ext sql -dir db/migrations $(NAME)
-
-migrate-drop: # Target for running 'drop' command
-	migrate drop -database $(PG_URL)
-
-migrate-force: # Target for running 'force' command
- migrate -path db/migrations -database $(PG_URL) force $(VERSION)
-
-```
+For information about the project's database, see the [DB.md](docs/DB.md) file.
 
 ### Protocol Buffer
 
