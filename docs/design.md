@@ -5,6 +5,8 @@
   - [Key Components and Features](#key-components-and-features)
   - [Design Decisions](#design-decisions)
     - [See also](#see-also)
+  - [Protocol Buffer](#protocol-buffer)
+  - [API docs](#api-docs)
   - [Layout](#layout)
   - [Error Handling](#error-handling)
   - [Diagrams and Mockups](#diagrams-and-mockups)
@@ -51,6 +53,15 @@ The following design decisions were made:
 - [Cron](https://godoc.org/github.com/robfig/cron) for scheduling tasks
 - [errors](https://github.com/pkg/errors) for error handling and adding stack trace to golang
 - [OZZO](github.com/go-ozzo/ozzo-validation) for data validation
+
+## Protocol Buffer
+
+To use protocol buffer for gRPC communication please refer to [Protohub](https://github.com/infranyx/protobuf-template). Protohub is a hub for managing your protobuf files and with auto generation feature you can simply `go get` the generated code of your proto.
+
+## API docs
+
+The template doesn't have API docs. For auto-generated API docs that you include, you can also give instructions on the
+build process.
 
 ## Layout
 

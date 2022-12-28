@@ -1,17 +1,16 @@
+# Database
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Database](#database)
-  - [Migrations](#migrations)
-    - [Installation](#installation)
-    - [Usage](#usage)
-  - [PostgreSQL](#postgresql)
-    - [Installation](#installation-1)
-    - [Connecting to the Database](#connecting-to-the-database)
+- [Migrations](#migrations)
+  - [Installation](#installation)
+  - [Usage](#usage)
+- [PostgreSQL](#postgresql)
+  - [Installation](#installation-1)
+  - [Connecting to the Database](#connecting-to-the-database)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Database
 
 This project uses PostgreSQL as its primary data store, and Migrate for managing database migrations.
 

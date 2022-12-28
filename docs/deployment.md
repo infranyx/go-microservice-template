@@ -1,15 +1,14 @@
+# Deployment
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Deployment](#deployment)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Verification](#verification)
-  - [Maintenance](#maintenance)
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Verification](#verification)
+- [Maintenance](#maintenance)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Deployment
 
 This guide will walk you through the steps to deploy the Golang microservice application using Docker Compose.
 

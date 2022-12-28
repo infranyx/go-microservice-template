@@ -1,11 +1,9 @@
+# Environment Variables
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Environment Variables](#environment-variables)
-
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Environment Variables
 
 This file lists the environment variables that are used by the project.
 

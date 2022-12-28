@@ -9,91 +9,123 @@ This is the code repository for [Go Microservice Template](https://www.github.co
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Golang Template Project](#golang-template-project)
-  - [About the project](#about-the-project)
+- [About the project](#about-the-project)
+- [Status](#status)
+- [Reference](#reference)
+- [Getting started](#getting-started)
   - [Prerequisites](#prerequisites)
-    - [Design](#design)
-    - [Status](#status)
-    - [See also](#see-also)
-  - [Getting started](#getting-started)
-    - [Database](#database)
-    - [Protocol Buffer](#protocol-buffer)
-    - [API docs](#api-docs)
-    - [Docker Compose](#docker-compose)
-    - [Linting](#linting)
-  - [Notes](#notes)
+  - [Setup](#setup)
+- [Testing](#testing)
+  - [Linting](#linting)
+  - [Building](#building)
+  - [Cleaning](#cleaning)
+  - [Continuous Integration](#continuous-integration)
+- [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Golang Template Project
 
 ## About the project
 
 The template is used to create golang project. All golang projects must follow the conventions in the
 template. Calling for exceptions must be brought up in the engineering team.
 
-## Prerequisites
-
-- Go 1.13+
-
-### Design
-
-- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-
-### Status
+## Status
 
 The template project is in alpha status.
 
-### See also
+## Reference
 
-- [gRPC](https://grpc.io/) for communication between services
-- [SQLx](https://github.com/jmoiron/sqlx) for database access and migrations
-- [Redis](github.com/go-redis/redis) for caching and message queues
-- [Kafka](https://github.com/segmentio/kafka-go) for streaming data processing
-- [Echo](https://echo.labstack.com/) for web server routing
-- [Zap Logger](https://github.com/uber-go/zap) for logging
-- [Sentry](https://sentry.io/) for error tracking and reporting
-- [Cron](https://godoc.org/github.com/robfig/cron) for scheduling tasks
-- [errors](https://github.com/pkg/errors) for error handling and adding stack trace to golang
-- [OZZO](github.com/go-ozzo/ozzo-validation) for data validation
+- [Database Schema and Migrations](docs/db.md)
+- [Deployment Instructions](docs/deployment.md)
+- [Design Decisions and Technical Considerations](docs/design.md)
+- [Development and Operations Processes](docs/devops.md)
+- [Environment Variables](docs/env.md)
 
 ## Getting started
 
-Below we describe the conventions or tools specific to golang project.
+### Prerequisites
 
-### Database
+- [Go 1.13+](https://golang.org/doc/install)
 
-For information about the project's database, see the [DB.md](docs/DB.md) file.
+### Setup
 
-### Protocol Buffer
-
-To use protocol buffer for gRPC communication please refer to [Protohub](https://github.com/infranyx/protobuf-template). Protohub is a hub for managing your protobuf files and with auto generation feature you can simply `go get` the generated code of your proto.
-
-### API docs
-
-The template doesn't have API docs. For auto-generated API docs that you include, you can also give instructions on the
-build process.
-
-### Docker Compose
-
-Using Compose is an easy way to manage multi-container applications on any system that supports Docker.
+1. Clone the repository and navigate to the root directory of the project:
 
 ```bash
-docker-compose up -d # it runs all necessary docker images that is needed
+git clone https://github.com/infranyx/go-grpc-template.git
+cd go-grpc-template
+```
 
-docker-compose -f docker-compose.e2e-local.yaml up -d # it runs all necessary docker images for Testing environment
+2. Install the dependencies:
+
+```bash
+make dep
+```
+
+3. Run the development server:
+
+```bash
+make run_dev
+```
+
+This will start the http server on port 4000 and grpc server on port 3000. You can customize the ports by setting the `HTTP_PORT` and `GRPC_PORT` environment variable.
+
+## Testing
+
+To run the tests, use the following command:
+
+```bash
+make test
+```
+
+To generate a test coverage report, use the following command:
+
+```bash
+make test_coverage
 ```
 
 ### Linting
 
-Linting is an important part of any Go project. It helps to ensure that code is written in a consistent and maintainable way, and can help to catch potential errors before they become problems. It is important to note that linting should be done regularly throughout the development process, not just at the end. This will help ensure that any potential issues are caught early on and can be fixed quickly and easily.
+To lint the code, use the following command:
 
-To lint your Go project, you can simply use makefile
-
-```makefile
-lint-dockerfile: # Lint your Dockerfile
-
-lint-go: # Use golintci-lint on your project
+```bash
+make lint
 ```
+
+This will run all available linters, including Go lint, Dockerfile lint, and YAML lint.
+
+### Building
+
+To build the binary, use the following command:
+
+```bash
+make build
+```
+
+This will create a binary in the `out/bin` directory. You can run the binary with the following command:
+
+```bash
+make run
+```
+
+### Cleaning
+
+To clean the build artifacts and generated files, use the following command:
+
+```bash
+make clean
+```
+
+This will remove the `bin` and `out` directories, as well as any build-related files.
+
+### Continuous Integration
+
+To run the continuous integration tasks, use the following command:
+
+```bash
+make ci
+```
+
+This will run the tests, linting, and code coverage tasks, and generate the corresponding reports. The reports will be saved to the `out` directory.
 
 ## Notes
