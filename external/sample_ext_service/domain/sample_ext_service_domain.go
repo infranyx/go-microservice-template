@@ -2,6 +2,7 @@ package sampleExtServiceDomain
 
 import (
 	"context"
+
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 

@@ -2,6 +2,9 @@ package healthCheckFixture
 
 import (
 	"context"
+	"net"
+	"time"
+
 	healthCheckGrpc "github.com/infranyx/go-grpc-template/internal/health_check/delivery/grpc"
 	healthCheckHttp "github.com/infranyx/go-grpc-template/internal/health_check/delivery/http"
 	healthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase"
@@ -13,8 +16,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/test/bufconn"
-	"net"
-	"time"
 
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 )

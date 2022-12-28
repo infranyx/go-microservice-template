@@ -2,8 +2,9 @@ package echoErrorHandler
 
 import (
 	"fmt"
-	"github.com/getsentry/sentry-go"
 	"net/http"
+
+	"github.com/getsentry/sentry-go"
 
 	sentryEcho "github.com/getsentry/sentry-go/echo"
 	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"

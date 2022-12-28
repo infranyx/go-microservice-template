@@ -1,11 +1,13 @@
 package tmpDirHealthCheckUseCase
 
 import (
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	"golang.org/x/sys/unix"
 	"path/filepath"
 	"runtime"
+
+	"golang.org/x/sys/unix"
+
+	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	"github.com/infranyx/go-grpc-template/pkg/config"
 )
 
 type useCase struct{}

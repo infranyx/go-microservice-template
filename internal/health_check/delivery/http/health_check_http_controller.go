@@ -1,9 +1,11 @@
 package healthCheckHttp
 
 import (
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
+
+	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 )
 
 type controller struct {

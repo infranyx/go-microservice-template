@@ -2,13 +2,15 @@ package articleGrpcController
 
 import (
 	"context"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 type controller struct {

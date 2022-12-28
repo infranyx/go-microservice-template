@@ -2,6 +2,7 @@ package grpcErrorInterceptor
 
 import (
 	"context"
+
 	"github.com/getsentry/sentry-go"
 	grpcTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"

@@ -2,9 +2,11 @@ package healthCheckDomain
 
 import (
 	"context"
-	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
+
 	"github.com/labstack/echo/v4"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
+
+	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
 )
 
 type Configurator interface {

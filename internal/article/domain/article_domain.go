@@ -2,12 +2,14 @@ package articleDomain
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 	"github.com/labstack/echo/v4"
 	"github.com/segmentio/kafka-go"
+
+	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
 )
 
 type Article struct {
