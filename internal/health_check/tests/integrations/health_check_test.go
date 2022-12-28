@@ -32,7 +32,7 @@ func (suite *testSuite) TearDownSuite() {
 	suite.fixture.TearDown()
 }
 
-func (suite *testSuite) Test_health_check_should_send_ok_for_all_units_http() {
+func (suite *testSuite) TestHealthCheckHttpShouldSendOkForAllUnits() {
 
 	request := httptest.NewRequest(http.MethodGet, "/api/v1/health", nil)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -64,7 +64,7 @@ func (suite *testSuite) Test_health_check_should_send_ok_for_all_units_http() {
 
 }
 
-func (suite *testSuite) Test_health_check_should_send_ok_for_all_services_grpc() {
+func (suite *testSuite) TestHealthCheckGrpcShouldSendServingForAllServices() {
 	ctx := context.Background()
 
 	healthCheckRequest := &grpcHealthV1.HealthCheckRequest{
@@ -76,7 +76,7 @@ func (suite *testSuite) Test_health_check_should_send_ok_for_all_services_grpc()
 	assert.Equal(suite.T(), grpcHealthV1.HealthCheckResponse_SERVING, response.GetStatus())
 }
 
-func (suite *testSuite) Test_health_check_should_send_unknown_for_unknown_service_grpc() {
+func (suite *testSuite) TestHealthCheckGrpcShouldSendUnknownForUnknownService() {
 	ctx := context.Background()
 
 	healthCheckRequest := &grpcHealthV1.HealthCheckRequest{
