@@ -139,8 +139,7 @@ func (ge *grpcErr) ToGrpcResponseErr() error {
 func ParseExternalGrpcErr(err error) GrpcErr {
 	st := status.Convert(err)
 	for _, detail := range st.Details() {
-		switch t := detail.(type) {
-		case *sharedBuf.CustomError:
+		if t, ok := detail.(*sharedBuf.CustomError); ok {
 			timestamp, _ := time.Parse(time.RFC3339, t.Timestamp)
 			return &grpcErr{
 				Status:    st.Code(),
