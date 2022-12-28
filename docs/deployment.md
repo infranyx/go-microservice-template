@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Deployment](#deployment)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Verification](#verification)
+  - [Maintenance](#maintenance)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Deployment
 
 This guide will walk you through the steps to deploy the Golang microservice application using Docker Compose.
@@ -32,3 +43,31 @@ This will build and start the following containers:
 - `redis`: Redis cache
 - `sentry`: Sentry error tracking service
 - `app`: Golang microservice application
+
+## Verification
+
+To verify that the containers are running, use the following command:
+
+```bash
+docker-compose ps
+```
+
+## Maintenance
+
+To stop the containers, use the following command:
+
+```bash
+docker-compose stop
+```
+
+To start the containers again, use the following command:
+
+```bash
+docker-compose start
+```
+
+To remove the containers, use the following command:
+
+```bash
+docker-compose down
+```

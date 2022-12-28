@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Design](#design)
+  - [Key Components and Features](#key-components-and-features)
+  - [Design Decisions](#design-decisions)
+    - [See also](#see-also)
+  - [Layout](#layout)
+  - [Error Handling](#error-handling)
+  - [Diagrams and Mockups](#diagrams-and-mockups)
+  - [Open Issues and Areas for Improvement](#open-issues-and-areas-for-improvement)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Design
 
 This document outlines the design of the project, including the key components and features, design decisions, and technologies used.

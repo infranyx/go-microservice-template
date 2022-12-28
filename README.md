@@ -16,7 +16,6 @@ This is the code repository for [Go Microservice Template](https://www.github.co
     - [Status](#status)
     - [See also](#see-also)
   - [Getting started](#getting-started)
-    - [Layout](#layout)
     - [Database](#database)
     - [Protocol Buffer](#protocol-buffer)
     - [API docs](#api-docs)
