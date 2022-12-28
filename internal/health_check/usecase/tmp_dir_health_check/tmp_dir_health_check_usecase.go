@@ -26,9 +26,5 @@ func (uc *useCase) Check() bool {
 
 	tmpDir := filepath.Join(filepath.Dir(callerDir), "../../../..", "tmp")
 
-	if unix.Access(tmpDir, unix.W_OK) != nil {
-		return false
-	}
-
-	return true
+	return unix.Access(tmpDir, unix.W_OK) == nil
 }

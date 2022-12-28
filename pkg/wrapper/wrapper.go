@@ -15,8 +15,9 @@ func BuildChain(f HandlerFunc, m ...middleware) HandlerFunc {
 	return m[0](BuildChain(f, m[1:cap(m)]...))
 }
 
-func (f HandlerFunc) ToCronJobFunc(ctx context.Context, args ...interface{}) func() {
+func (f HandlerFunc) ToWorkerFunc(ctx context.Context, args ...interface{}) func() {
 	return func() {
-		f(ctx, args)
+		_, _ = f(ctx, args)
+
 	}
 }

@@ -66,7 +66,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	echoServer := echoHttp.NewServer(echoServerConfig)
 	echoServer.SetupDefaultMiddlewares()
 	downFns = append(downFns, func() {
-		echoServer.GracefulShutdown(ctx)
+		_ = echoServer.GracefulShutdown(ctx)
 	})
 
 	pg, err := postgres.NewConnection(ctx, &postgres.Config{
@@ -91,7 +91,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	}
 	kw := kafkaProducer.NewKafkaWriter(kwc)
 	downFns = append(downFns, func() {
-		kw.Client.Close()
+		_ = kw.Client.Close()
 	})
 
 	krc := &kafkaConsumer.ReaderConfig{
@@ -101,7 +101,7 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	}
 	kr := kafkaConsumer.NewKafkaReader(krc)
 	downFns = append(downFns, func() {
-		kr.Client.Close()
+		_ = kr.Client.Close()
 	})
 
 	ic := &IContainer{

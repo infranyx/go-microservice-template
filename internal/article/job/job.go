@@ -39,7 +39,7 @@ func (j *job) logArticleJob(ctx context.Context) {
 	)
 
 	entryId, _ := j.cron.AddFunc("*/1 * * * *",
-		worker.ToCronJobFunc(ctx, nil),
+		worker.ToWorkerFunc(ctx, nil),
 	)
 
 	j.logger.Sugar().Infof("Article Job Started: %v", entryId)

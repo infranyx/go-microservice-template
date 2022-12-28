@@ -42,7 +42,7 @@ func (c *consumer) createEvent(ctx context.Context, workersNum int) {
 		wrapperErrorhandler.ErrorHandler,
 	)
 	for i := 0; i <= workersNum; i++ {
-		go worker(ctx, nil)
+		go worker.ToWorkerFunc(ctx, nil)
 	}
 
 	for {
@@ -50,7 +50,7 @@ func (c *consumer) createEvent(ctx context.Context, workersNum int) {
 		case <-ctx.Done():
 			return
 		case <-workerChan:
-			go worker(ctx, nil)
+			go worker.ToWorkerFunc(ctx, nil)
 		}
 	}
 }
