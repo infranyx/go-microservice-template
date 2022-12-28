@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/segmentio/kafka-go"
+
 	sampleExtServiceDomain "github.com/infranyx/go-grpc-template/external/sample_ext_service/domain"
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	"github.com/segmentio/kafka-go"
 )
 
 type useCase struct {
@@ -37,7 +38,7 @@ func (uc *useCase) CreateArticle(ctx context.Context, req *articleDto.CreateArti
 	// TODO : if err => return Marshal_Err_Exception
 	jsonArticle, _ := json.Marshal(article)
 
-	//if it has go keyword and if we pass the request context to it, it will terminate after request lifecycle.
+	// if it has go keyword and if we pass the request context to it, it will terminate after request lifecycle.
 	_ = uc.kafkaProducer.PublishCreateEvent(context.Background(), kafka.Message{
 		Key:   []byte("Article"),
 		Value: jsonArticle,

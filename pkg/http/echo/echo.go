@@ -7,14 +7,15 @@ import (
 	"time"
 
 	sentryEcho "github.com/getsentry/sentry-go/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"go.uber.org/zap"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/constant"
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"go.uber.org/zap"
 )
 
 type ServerConfig struct {
@@ -119,9 +120,9 @@ func (s *Server) SetupDefaultMiddlewares() {
 	s.echo.Use(middleware.RequestID())
 	s.echo.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: constant.GzipLevel,
-		//Skipper: func(c echo.Context) bool {
+		// Skipper: func(c echo.Context) bool {
 		//	return strings.Contains(c.Request().URL.Path, "swagger")
-		//},
+		// },
 	}))
 }
 
