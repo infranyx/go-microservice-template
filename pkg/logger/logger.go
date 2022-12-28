@@ -38,10 +38,10 @@ func newLogger() *zap.Logger {
 
 		_, callerDir, _, ok := runtime.Caller(0)
 		if !ok {
-			log.Fatal("Error generating env dir")
+			log.Fatal("Error getting caller directory")
 		}
-		tmpLogDir := filepath.Join(filepath.Dir(callerDir), "../..", "tmp/logs")
 
+		tmpLogDir := filepath.Join(filepath.Dir(callerDir), "../..", "tmp/logs")
 		if _, err := os.Stat(tmpLogDir); os.IsNotExist(err) {
 			_ = os.MkdirAll(tmpLogDir, os.ModePerm)
 		}

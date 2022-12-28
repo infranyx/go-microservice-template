@@ -12,8 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const defaultEnvPath = "./envs/.env"
-
 type EVar struct {
 	key        string
 	defaultVal interface{}
@@ -24,12 +22,12 @@ func init() {
 }
 
 func LoadEnv() {
-	_, f, _, ok := runtime.Caller(0)
+	_, callerDir, _, ok := runtime.Caller(0)
 	if !ok {
 		log.Fatal("Error generating env dir")
 	}
-	dir := filepath.Join(filepath.Dir(f), "../..", defaultEnvPath)
 
+	dir := filepath.Join(filepath.Dir(callerDir), "../..", "envs/.env")
 	err := godotenv.Load(dir)
 	if err != nil {
 		log.Fatal("Error loading .env file")
