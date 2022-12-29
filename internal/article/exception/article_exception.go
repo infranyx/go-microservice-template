@@ -6,7 +6,7 @@ import (
 )
 
 func CreateArticleValidationExc(err error) error {
-	ve, ie := errorUtils.ValidationErrHandler(err)
+	ve, ie := errorUtils.ValidationErrorHandler(err)
 	if ie != nil {
 		return ie
 	}

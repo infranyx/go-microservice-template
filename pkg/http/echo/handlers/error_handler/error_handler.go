@@ -1,7 +1,6 @@
 package echoErrorHandler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
@@ -21,7 +20,7 @@ import (
 func ErrorHandler(err error, c echo.Context) {
 	// default echo errors
 	ehe, ok := err.(*echo.HTTPError)
-	fmt.Println("--->", err)
+
 	if ok {
 		switch ehe.Code {
 		case http.StatusNotFound:
