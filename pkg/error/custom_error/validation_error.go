@@ -29,9 +29,10 @@ func IsValidationError(e error) bool {
 
 func NewValidationError(message string, code int, details map[string]string) error {
 	e := NewBadRequestError(message, code, details)
-	customErr := AsCustomError(e)
 	ve := &validationError{
-		BadRequestError: customErr.(BadRequestError),
+		BadRequestError: &badRequestError{
+			CustomError: AsCustomError(e),
+		},
 	}
 
 	return ve
@@ -39,9 +40,10 @@ func NewValidationError(message string, code int, details map[string]string) err
 
 func NewValidationErrorWrap(err error, message string, code int, details map[string]string) error {
 	e := NewBadRequestErrorWrap(err, message, code, details)
-	customErr := AsCustomError(e)
 	ve := &validationError{
-		BadRequestError: customErr.(BadRequestError),
+		BadRequestError: &badRequestError{
+			CustomError: AsCustomError(e),
+		},
 	}
 
 	stackErr := errors.WithStack(ve)
