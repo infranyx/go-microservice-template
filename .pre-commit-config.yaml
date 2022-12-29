@@ -28,8 +28,6 @@ repos:
       #
       # Go Vet
       #
-#      - id: go-vet
-      #
       # Revive
       #
       - id: go-revive
@@ -54,8 +52,6 @@ repos:
       # Style Checkers
       #
       - id: go-critic
-      #
-#      - id: golangci-lint
       #
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v2.1.1
