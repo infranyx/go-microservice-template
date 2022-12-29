@@ -7,11 +7,16 @@ type internalErrorCodes struct {
 	InternalServerError   ErrorCode
 	NotFoundError         ErrorCode
 	MethodNotAllowedError ErrorCode
+	ArticleExceptions     ArticleExceptions
 }
 
 type ErrorCode struct {
 	Msg  string
 	Code int
+}
+
+type ArticleExceptions struct {
+	BindingError ErrorCode
 }
 
 func init() {
@@ -42,6 +47,12 @@ func init() {
 		MethodNotAllowedError: ErrorCode{
 			Msg:  "method not allowed",
 			Code: 1003,
+		},
+		ArticleExceptions: ArticleExceptions{
+			BindingError: ErrorCode{
+				Msg:  "binding failed",
+				Code: 3002,
+			},
 		},
 	}
 }
