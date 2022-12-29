@@ -19,10 +19,10 @@ import (
 
 func ErrorHandler(err error, c echo.Context) {
 	// default echo errors
-	ehe, ok := err.(*echo.HTTPError)
+	echoHttpError, ok := err.(*echo.HTTPError)
 
 	if ok {
-		switch ehe.Code {
+		switch echoHttpError.Code {
 		case http.StatusNotFound:
 			notFoundErrorCode := errorCodes.InternalErrorCodes.NotFoundError
 			err = customErrors.NewNotFoundError(notFoundErrorCode.Msg, notFoundErrorCode.Code, nil)
@@ -34,8 +34,9 @@ func ErrorHandler(err error, c echo.Context) {
 			err = customErrors.NewInternalServerError(internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
 		}
 	}
-	// system errors
-	he := httpError.ParseError(err)
+
+	// parse as a custom error
+	httpResponseError := httpError.ParseError(err)
 
 	if customErrors.IsInternalServerError(err) {
 		hub := sentryEcho.GetHubFromContext(c)
@@ -44,11 +45,11 @@ func ErrorHandler(err error, c echo.Context) {
 				scope.SetLevel(sentry.LevelError)
 				scope.SetContext("HttpErr", map[string]interface{}{
 					loggerConstant.TYPE:        loggerConstant.HTTP,
-					loggerConstant.TITILE:      he.GetTitle(),
-					loggerConstant.CODE:        he.GetCode(),
-					loggerConstant.STATUS:      http.StatusText(he.GetStatus()),
-					loggerConstant.TIME:        he.GetTimestamp(),
-					loggerConstant.DETAILS:     he.GetDetails(),
+					loggerConstant.TITILE:      httpResponseError.GetTitle(),
+					loggerConstant.CODE:        httpResponseError.GetCode(),
+					loggerConstant.STATUS:      http.StatusText(httpResponseError.GetStatus()),
+					loggerConstant.TIME:        httpResponseError.GetTimestamp(),
+					loggerConstant.DETAILS:     httpResponseError.GetDetails(),
 					loggerConstant.STACK_TRACE: errorUtils.RootStackTrace(err),
 				})
 			})
@@ -57,17 +58,17 @@ func ErrorHandler(err error, c echo.Context) {
 	}
 
 	if !c.Response().Committed {
-		if _, err := he.WriteTo(c.Response()); err != nil {
+		if _, err := httpResponseError.WriteTo(c.Response()); err != nil {
 			logger.Zap.Sugar().Error(`error while writing http error response: %v`, err)
 		}
 		logger.Zap.Error(
 			err.Error(),
 			zap.String(loggerConstant.TYPE, loggerConstant.HTTP),
-			zap.String(loggerConstant.TITILE, he.GetTitle()),
-			zap.Int(loggerConstant.CODE, he.GetCode()),
-			zap.String(loggerConstant.STATUS, http.StatusText(he.GetStatus())),
-			zap.Time(loggerConstant.TIME, he.GetTimestamp()),
-			zap.Any(loggerConstant.DETAILS, he.GetDetails()),
+			zap.String(loggerConstant.TITILE, httpResponseError.GetTitle()),
+			zap.Int(loggerConstant.CODE, httpResponseError.GetCode()),
+			zap.String(loggerConstant.STATUS, http.StatusText(httpResponseError.GetStatus())),
+			zap.Time(loggerConstant.TIME, httpResponseError.GetTimestamp()),
+			zap.Any(loggerConstant.DETAILS, httpResponseError.GetDetails()),
 			zap.String(loggerConstant.STACK_TRACE, errorUtils.RootStackTrace(err)),
 		)
 	}
