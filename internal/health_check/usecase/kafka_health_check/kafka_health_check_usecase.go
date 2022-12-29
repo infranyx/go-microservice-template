@@ -1,9 +1,10 @@
 package kafkaHealthCheckUseCase
 
 import (
+	"github.com/segmentio/kafka-go"
+
 	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 	"github.com/infranyx/go-grpc-template/pkg/config"
-	"github.com/segmentio/kafka-go"
 )
 
 type useCase struct{}

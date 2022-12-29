@@ -1,9 +1,10 @@
 package grpcError
 
 import (
+	"google.golang.org/grpc/codes"
+
 	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"google.golang.org/grpc/codes"
 )
 
 func ParseError(err error) GrpcErr {

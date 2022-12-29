@@ -5,6 +5,11 @@ import (
 	"net"
 	"time"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/test/bufconn"
+
 	healthCheckGrpc "github.com/infranyx/go-grpc-template/internal/health_check/delivery/grpc"
 	healthCheckHttp "github.com/infranyx/go-grpc-template/internal/health_check/delivery/http"
 	healthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase"
@@ -12,10 +17,6 @@ import (
 	postgresHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/postgres_health_check"
 	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/test/bufconn"
 
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 )

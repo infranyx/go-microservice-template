@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
-	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+
+	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
+	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client

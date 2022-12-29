@@ -3,9 +3,10 @@ package wrapperRecoveryhandler
 import (
 	"context"
 
+	"go.uber.org/zap"
+
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
-	"go.uber.org/zap"
 )
 
 var RecoveryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {

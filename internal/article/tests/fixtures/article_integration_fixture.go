@@ -6,6 +6,11 @@ import (
 	"net"
 	"time"
 
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/test/bufconn"
+
 	sampleExtServiceUseCase "github.com/infranyx/go-grpc-template/external/sample_ext_service/usecase"
 	articleGrpc "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
 	articleHttp "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
@@ -15,10 +20,6 @@ import (
 	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
 	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/test/bufconn"
 )
 
 const BUFSIZE = 1024 * 1024

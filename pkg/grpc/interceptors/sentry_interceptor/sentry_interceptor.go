@@ -5,9 +5,10 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
-	"google.golang.org/grpc"
 )
 
 func UnaryServerInterceptor(opts *sentryUtils.Options) grpc.UnaryServerInterceptor {

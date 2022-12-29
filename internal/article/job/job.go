@@ -5,12 +5,13 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/robfig/cron/v3"
+
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 	wrapperErrorhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/error_handler"
-	wrapperRecoveryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
-	wrapperSentryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
-	"github.com/robfig/cron/v3"
+	wrapperRecoveryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
+	wrapperSentryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
 
 	cronJob "github.com/infranyx/go-grpc-template/pkg/cron"
 )
@@ -34,8 +35,8 @@ func (j *job) StartJobs(ctx context.Context) {
 
 func (j *job) logArticleJob(ctx context.Context) {
 	worker := wrapper.BuildChain(j.logArticleWorker(),
-		wrapperSentryhandler.SentryHandler,
-		wrapperRecoveryhandler.RecoveryHandler,
+		wrapperSentryHandler.SentryHandler,
+		wrapperRecoveryHandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
 	)
 

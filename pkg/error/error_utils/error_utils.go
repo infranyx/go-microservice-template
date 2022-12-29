@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	validator "github.com/go-ozzo/ozzo-validation"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
+
 	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
 	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 // CheckErrMessages check for specific messages contains in the error

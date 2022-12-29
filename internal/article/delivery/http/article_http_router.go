@@ -1,8 +1,9 @@
 package articleHttpController
 
 import (
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	"github.com/labstack/echo/v4"
+
+	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 )
 
 type Router struct {

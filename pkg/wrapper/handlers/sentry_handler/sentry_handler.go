@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/getsentry/sentry-go"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"

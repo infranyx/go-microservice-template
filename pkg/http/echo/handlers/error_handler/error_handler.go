@@ -7,14 +7,15 @@ import (
 	"github.com/getsentry/sentry-go"
 
 	sentryEcho "github.com/getsentry/sentry-go/echo"
+	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
+
 	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/labstack/echo/v4"
-	"go.uber.org/zap"
 )
 
 func ErrorHandler(err error, c echo.Context) {

@@ -7,6 +7,9 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/segmentio/kafka-go"
+	"go.uber.org/zap"
+
 	"github.com/infranyx/go-grpc-template/pkg/config"
 	"github.com/infranyx/go-grpc-template/pkg/grpc"
 	echoHttp "github.com/infranyx/go-grpc-template/pkg/http/echo"
@@ -14,8 +17,6 @@ import (
 	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/postgres"
-	"github.com/segmentio/kafka-go"
-	"go.uber.org/zap"
 )
 
 type IContainer struct {

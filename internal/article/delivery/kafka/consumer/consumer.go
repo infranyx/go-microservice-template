@@ -8,8 +8,8 @@ import (
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 	wrapperErrorhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/error_handler"
-	wrapperRecoveryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
-	wrapperSentryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
+	wrapperRecoveryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
+	wrapperSentryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
 )
 
 type consumer struct {
@@ -37,8 +37,8 @@ func (c *consumer) createEvent(ctx context.Context, workersNum int) {
 	workerChan := make(chan bool)
 	worker := wrapper.BuildChain(
 		c.createEventWorker(workerChan),
-		wrapperSentryhandler.SentryHandler,
-		wrapperRecoveryhandler.RecoveryHandler,
+		wrapperSentryHandler.SentryHandler,
+		wrapperRecoveryHandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
 	)
 	for i := 0; i <= workersNum; i++ {

@@ -1,9 +1,10 @@
 package kafkaProducer
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
+
+	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
 
 type Writer struct {

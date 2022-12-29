@@ -3,8 +3,9 @@ package grpcError
 import (
 	"time"
 
-	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	"google.golang.org/grpc/codes"
+
+	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
 )
 
 func NewGrpcValidationError(code int, message string, details map[string]string) GrpcErr {

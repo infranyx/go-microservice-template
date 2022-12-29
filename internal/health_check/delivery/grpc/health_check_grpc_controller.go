@@ -3,10 +3,11 @@ package healthCheckGrpc
 import (
 	"context"
 
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 	"google.golang.org/grpc/codes"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
+
+	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
 )
 
 type controller struct {

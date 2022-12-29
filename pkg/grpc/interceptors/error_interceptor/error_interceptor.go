@@ -5,12 +5,13 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	grpcTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	grpcErrors "github.com/infranyx/go-grpc-template/pkg/error/grpc"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client

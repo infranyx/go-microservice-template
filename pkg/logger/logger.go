@@ -6,9 +6,10 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/infranyx/go-grpc-template/pkg/config"
 )
 
 var Zap *zap.Logger

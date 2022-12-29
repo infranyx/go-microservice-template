@@ -1,8 +1,9 @@
 package kafkaConsumer
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/segmentio/kafka-go"
+
+	"github.com/infranyx/go-grpc-template/pkg/logger"
 )
 
 type Reader struct {

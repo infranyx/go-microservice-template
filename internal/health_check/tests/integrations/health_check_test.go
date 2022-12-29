@@ -7,12 +7,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
-	healthCheckFixture "github.com/infranyx/go-grpc-template/internal/health_check/tests/fixtures"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
+
+	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
+	healthCheckFixture "github.com/infranyx/go-grpc-template/internal/health_check/tests/fixtures"
 )
 
 type testSuite struct {

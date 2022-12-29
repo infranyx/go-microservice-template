@@ -3,9 +3,10 @@ package articleKafkaProducer
 import (
 	"context"
 
+	"github.com/segmentio/kafka-go"
+
 	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
 	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
-	"github.com/segmentio/kafka-go"
 )
 
 type producer struct {

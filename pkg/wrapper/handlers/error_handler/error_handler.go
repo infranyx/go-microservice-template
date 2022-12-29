@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/getsentry/sentry-go"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/infranyx/go-grpc-template/pkg/wrapper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 var ErrorHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
