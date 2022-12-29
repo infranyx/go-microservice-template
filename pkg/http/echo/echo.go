@@ -119,7 +119,7 @@ func (s *Server) SetupDefaultMiddlewares() {
 
 	s.echo.Use(middleware.RequestID())
 	s.echo.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: constant.GzipLevel,
+		Level: constant.EchoGzipLevel,
 		// Skipper: func(c echo.Context) bool {
 		//	return strings.Contains(c.Request().URL.Path, "swagger")
 		// },
