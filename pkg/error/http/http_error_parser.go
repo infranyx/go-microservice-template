@@ -7,13 +7,15 @@ import (
 
 	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	errorCodes "github.com/infranyx/go-grpc-template/pkg/error/error_codes"
 )
 
 func ParseError(err error) HttpErr {
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
+		internalServerErrorCode := errorCodes.InternalErrorCodes.InternalServerError
 		err =
-			customError.NewInternalServerErrorWrap(err, errorConstant.ErrInfo.InternalServerErr.Msg, errorConstant.ErrInfo.InternalServerErr.Code, nil)
+			customError.NewInternalServerErrorWrap(err, internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
 		customErr = customError.AsCustomError(err)
 		return NewHttpError(http.StatusInternalServerError, customErr.Code(), errorConstant.ErrInternalServerErrorTitle, customErr.Error(), customErr.Details())
 	}

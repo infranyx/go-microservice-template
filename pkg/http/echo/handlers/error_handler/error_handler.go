@@ -9,9 +9,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 
-	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	errorCodes "github.com/infranyx/go-grpc-template/pkg/error/error_codes"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
 	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
 	"github.com/infranyx/go-grpc-template/pkg/logger"
@@ -24,11 +24,14 @@ func ErrorHandler(err error, c echo.Context) {
 	if ok {
 		switch ehe.Code {
 		case http.StatusNotFound:
-			err = customErrors.NewNotFoundError(errorConstant.ErrInfo.NotFoundErr.Msg, errorConstant.ErrInfo.NotFoundErr.Code, nil)
+			notFoundErrorCode := errorCodes.InternalErrorCodes.NotFoundError
+			err = customErrors.NewNotFoundError(notFoundErrorCode.Msg, notFoundErrorCode.Code, nil)
 		case http.StatusMethodNotAllowed:
-			err = customErrors.NewMethodNotAllowedError(errorConstant.ErrInfo.MethodNotAllowedErr.Msg, errorConstant.ErrInfo.MethodNotAllowedErr.Code, nil)
+			methodNotAllowedErrorCode := errorCodes.InternalErrorCodes.MethodNotAllowedError
+			err = customErrors.NewMethodNotAllowedError(methodNotAllowedErrorCode.Msg, methodNotAllowedErrorCode.Code, nil)
 		default:
-			err = customErrors.NewInternalServerError(errorConstant.ErrInfo.InternalServerErr.Msg, errorConstant.ErrInfo.InternalServerErr.Code, nil)
+			internalServerErrorCode := errorCodes.InternalErrorCodes.InternalServerError
+			err = customErrors.NewInternalServerError(internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
 		}
 	}
 	// system errors
