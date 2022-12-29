@@ -3,6 +3,8 @@ package articleConfigurator
 import (
 	"context"
 
+	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+
 	sampleExtServiceUseCase "github.com/infranyx/go-grpc-template/external/sample_ext_service/usecase"
 	articleGrpcController "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
 	articleHttpController "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
@@ -14,7 +16,6 @@ import (
 	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
 	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
 	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 )
 
 type configurator struct {
@@ -41,10 +42,10 @@ func (c *configurator) Configure(ctx context.Context) error {
 	httpController := articleHttpController.NewController(useCase)
 	articleHttpController.NewRouter(httpController).Register(httpRouterGp)
 
-	// Consumers
+	// consumers
 	articleKafkaConsumer.NewConsumer(c.ic.KafkaReader).RunConsumers(ctx)
 
-	// Jobs
+	// jobs
 	articleJob.NewJob(c.ic.Logger).StartJobs(ctx)
 
 	return nil
