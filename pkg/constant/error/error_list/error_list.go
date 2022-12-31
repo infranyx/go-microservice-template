@@ -3,11 +3,10 @@ package errorList
 var InternalErrorList *internalErrorList
 
 type internalErrorList struct {
-	ValidationError       ErrorList
-	InternalServerError   ErrorList
-	NotFoundError         ErrorList
-	MethodNotAllowedError ErrorList
-	ArticleExceptions     ArticleErrorList
+	ValidationError     ErrorList
+	InternalServerError ErrorList
+	NotFoundError       ErrorList
+	ArticleExceptions   ArticleErrorList
 }
 
 type ErrorList struct {
@@ -44,10 +43,6 @@ func init() {
 			Code: 1002,
 		},
 
-		MethodNotAllowedError: ErrorList{
-			Msg:  "method not allowed",
-			Code: 1003,
-		},
 		ArticleExceptions: ArticleErrorList{
 			BindingError: ErrorList{
 				Msg:  "binding failed",

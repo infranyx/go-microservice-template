@@ -40,17 +40,6 @@ func NewHttpBadRequestError(code int, message string, details map[string]string)
 	}
 }
 
-func NewMethodNotAllowedError(code int, message string, details map[string]string) HttpErr {
-	return &httpErr{
-		Title:     errorConstant.ErrMethodNotAllowed,
-		Code:      code,
-		Msg:       message,
-		Details:   details,
-		Status:    http.StatusMethodNotAllowed,
-		Timestamp: time.Now(),
-	}
-}
-
 func NewHttpNotFoundError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
 		Title:     errorConstant.ErrNotFoundTitle,

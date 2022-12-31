@@ -3,7 +3,6 @@ package errorConstant
 const (
 	ErrBadRequestTitle          = "Bad Request"
 	ErrConflictTitle            = "Conflict Error"
-	ErrMethodNotAllowed         = "Method Not Allowed"
 	ErrNotFoundTitle            = "Not Found"
 	ErrUnauthorizedTitle        = "Unauthorized"
 	ErrForbiddenTitle           = "Forbidden"
