@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
 )
 
 type controller struct {

@@ -6,8 +6,8 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	"github.com/infranyx/go-grpc-template/pkg/config"
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
+	"github.com/infranyx/go-microservice-template/pkg/config"
 )
 
 type useCase struct{}

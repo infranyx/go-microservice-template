@@ -3,7 +3,7 @@ package articleJob
 import (
 	"context"
 
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 func (j *job) logArticleWorker() wrapper.HandlerFunc {

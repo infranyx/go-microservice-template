@@ -1,9 +1,9 @@
 package articleException
 
 import (
-	errorList "github.com/infranyx/go-grpc-template/pkg/constant/error/error_list"
-	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customErrors "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	errorUtils "github.com/infranyx/go-microservice-template/pkg/error/error_utils"
 )
 
 func CreateArticleValidationExc(err error) error {

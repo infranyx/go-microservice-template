@@ -5,9 +5,9 @@ import (
 
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 
-	sampleExtServiceDomain "github.com/infranyx/go-grpc-template/external/sample_ext_service/domain"
-	grpcError "github.com/infranyx/go-grpc-template/pkg/error/grpc"
-	"github.com/infranyx/go-grpc-template/pkg/grpc"
+	sampleExtServiceDomain "github.com/infranyx/go-microservice-template/external/sample_ext_service/domain"
+	grpcError "github.com/infranyx/go-microservice-template/pkg/error/grpc"
+	"github.com/infranyx/go-microservice-template/pkg/grpc"
 )
 
 type sampleExtServiceUseCase struct {

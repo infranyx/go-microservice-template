@@ -6,10 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
-	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
-	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
-	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
+	articleConfigurator "github.com/infranyx/go-microservice-template/internal/article/configurator"
+	healthCheckConfigurator "github.com/infranyx/go-microservice-template/internal/health_check/configurator"
+	externalBridge "github.com/infranyx/go-microservice-template/pkg/external_bridge"
+	iContainer "github.com/infranyx/go-microservice-template/pkg/infra_container"
 )
 
 type App struct{}

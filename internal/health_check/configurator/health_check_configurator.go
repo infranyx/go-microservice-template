@@ -5,15 +5,15 @@ import (
 
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 
-	kafkaHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/kafka_health_check"
-	postgresHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/postgres_health_check"
-	tmpDirHealthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase/tmp_dir_health_check"
+	kafkaHealthCheckUseCase "github.com/infranyx/go-microservice-template/internal/health_check/usecase/kafka_health_check"
+	postgresHealthCheckUseCase "github.com/infranyx/go-microservice-template/internal/health_check/usecase/postgres_health_check"
+	tmpDirHealthCheckUseCase "github.com/infranyx/go-microservice-template/internal/health_check/usecase/tmp_dir_health_check"
 
-	healthCheckGrpc "github.com/infranyx/go-grpc-template/internal/health_check/delivery/grpc"
-	healthCheckHttp "github.com/infranyx/go-grpc-template/internal/health_check/delivery/http"
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	healthCheckUseCase "github.com/infranyx/go-grpc-template/internal/health_check/usecase"
-	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
+	healthCheckGrpc "github.com/infranyx/go-microservice-template/internal/health_check/delivery/grpc"
+	healthCheckHttp "github.com/infranyx/go-microservice-template/internal/health_check/delivery/http"
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
+	healthCheckUseCase "github.com/infranyx/go-microservice-template/internal/health_check/usecase"
+	infraContainer "github.com/infranyx/go-microservice-template/pkg/infra_container"
 )
 
 type configurator struct {

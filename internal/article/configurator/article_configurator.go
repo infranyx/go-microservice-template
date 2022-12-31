@@ -5,17 +5,17 @@ import (
 
 	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
 
-	sampleExtServiceUseCase "github.com/infranyx/go-grpc-template/external/sample_ext_service/usecase"
-	articleGrpcController "github.com/infranyx/go-grpc-template/internal/article/delivery/grpc"
-	articleHttpController "github.com/infranyx/go-grpc-template/internal/article/delivery/http"
-	articleKafkaConsumer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/consumer"
-	articleKafkaProducer "github.com/infranyx/go-grpc-template/internal/article/delivery/kafka/producer"
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	articleJob "github.com/infranyx/go-grpc-template/internal/article/job"
-	articleRepository "github.com/infranyx/go-grpc-template/internal/article/repository"
-	articleUseCase "github.com/infranyx/go-grpc-template/internal/article/usecase"
-	externalBridge "github.com/infranyx/go-grpc-template/pkg/external_bridge"
-	infraContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
+	sampleExtServiceUseCase "github.com/infranyx/go-microservice-template/external/sample_ext_service/usecase"
+	articleGrpcController "github.com/infranyx/go-microservice-template/internal/article/delivery/grpc"
+	articleHttpController "github.com/infranyx/go-microservice-template/internal/article/delivery/http"
+	articleKafkaConsumer "github.com/infranyx/go-microservice-template/internal/article/delivery/kafka/consumer"
+	articleKafkaProducer "github.com/infranyx/go-microservice-template/internal/article/delivery/kafka/producer"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	articleJob "github.com/infranyx/go-microservice-template/internal/article/job"
+	articleRepository "github.com/infranyx/go-microservice-template/internal/article/repository"
+	articleUseCase "github.com/infranyx/go-microservice-template/internal/article/usecase"
+	externalBridge "github.com/infranyx/go-microservice-template/pkg/external_bridge"
+	infraContainer "github.com/infranyx/go-microservice-template/pkg/infra_container"
 )
 
 type configurator struct {

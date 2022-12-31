@@ -7,8 +7,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client

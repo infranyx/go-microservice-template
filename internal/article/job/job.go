@@ -7,13 +7,13 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
-	wrapperErrorhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/error_handler"
-	wrapperRecoveryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
-	wrapperSentryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
+	wrapperErrorhandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/error_handler"
+	wrapperRecoveryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/recovery_handler"
+	wrapperSentryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/sentry_handler"
 
-	cronJob "github.com/infranyx/go-grpc-template/pkg/cron"
+	cronJob "github.com/infranyx/go-microservice-template/pkg/cron"
 )
 
 type job struct {

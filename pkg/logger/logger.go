@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
+	"github.com/infranyx/go-microservice-template/pkg/config"
 )
 
 var Zap *zap.Logger

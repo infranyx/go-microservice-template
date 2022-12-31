@@ -1,8 +1,8 @@
 package healthCheckUseCase
 
 import (
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
+	healthCheckDto "github.com/infranyx/go-microservice-template/internal/health_check/dto"
 )
 
 type useCase struct {

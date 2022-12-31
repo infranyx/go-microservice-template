@@ -9,9 +9,9 @@ import (
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
-	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	errorContract "github.com/infranyx/go-microservice-template/pkg/error/contracts"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 // CheckErrorMessages checks for specific messages contains in the error

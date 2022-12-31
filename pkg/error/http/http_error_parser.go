@@ -5,9 +5,9 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	errorList "github.com/infranyx/go-grpc-template/pkg/constant/error/error_list"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	errorConstant "github.com/infranyx/go-microservice-template/pkg/constant/error"
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
 )
 
 func ParseError(err error) HttpErr {

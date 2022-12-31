@@ -5,8 +5,8 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	kafkaProducer "github.com/infranyx/go-microservice-template/pkg/kafka/producer"
 )
 
 type producer struct {

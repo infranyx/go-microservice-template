@@ -3,13 +3,13 @@ package articleKafkaConsumer
 import (
 	"context"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
-	wrapperErrorhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/error_handler"
-	wrapperRecoveryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
-	wrapperSentryHandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	kafkaConsumer "github.com/infranyx/go-microservice-template/pkg/kafka/consumer"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
+	wrapperErrorhandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/error_handler"
+	wrapperRecoveryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/recovery_handler"
+	wrapperSentryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/sentry_handler"
 )
 
 type consumer struct {

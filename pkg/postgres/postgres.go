@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
+	"github.com/infranyx/go-microservice-template/pkg/config"
 )
 
 type Config struct {

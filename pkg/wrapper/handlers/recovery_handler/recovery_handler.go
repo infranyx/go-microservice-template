@@ -5,8 +5,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 var RecoveryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {

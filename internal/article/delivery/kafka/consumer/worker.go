@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 func (c *consumer) createEventWorker(

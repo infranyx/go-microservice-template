@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/segmentio/kafka-go"
 
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
 )
 
 type Article struct {

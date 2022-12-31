@@ -7,7 +7,7 @@ import (
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
 )
 
 type controller struct {

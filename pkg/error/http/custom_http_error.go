@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	errorConstant "github.com/infranyx/go-grpc-template/pkg/constant/error"
+	errorConstant "github.com/infranyx/go-microservice-template/pkg/constant/error"
 )
 
 func NewHttpValidationError(code int, message string, details map[string]string) HttpErr {

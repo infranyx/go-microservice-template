@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/infranyx/go-grpc-template/app"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/app"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 func main() {

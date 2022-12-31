@@ -4,7 +4,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 type Writer struct {

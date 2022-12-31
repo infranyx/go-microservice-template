@@ -11,11 +11,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/zap"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	"github.com/infranyx/go-grpc-template/pkg/constant"
-	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	echoErrorHandler "github.com/infranyx/go-grpc-template/pkg/http/echo/handlers/error_handler"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/config"
+	"github.com/infranyx/go-microservice-template/pkg/constant"
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	echoErrorHandler "github.com/infranyx/go-microservice-template/pkg/http/echo/handlers/error_handler"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 type ServerConfig struct {

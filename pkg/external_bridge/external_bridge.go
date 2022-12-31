@@ -3,8 +3,8 @@ package externalBridge
 import (
 	"context"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	"github.com/infranyx/go-grpc-template/pkg/grpc"
+	"github.com/infranyx/go-microservice-template/pkg/config"
+	"github.com/infranyx/go-microservice-template/pkg/grpc"
 )
 
 type ExternalBridge struct {

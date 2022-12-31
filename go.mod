@@ -1,4 +1,4 @@
-module github.com/infranyx/go-grpc-template
+module github.com/infranyx/go-microservice-template
 
 go 1.19
 

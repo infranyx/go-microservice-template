@@ -7,10 +7,10 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 var ErrorHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {

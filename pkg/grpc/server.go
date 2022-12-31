@@ -11,11 +11,11 @@ import (
 	googleGrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	grpcErrorInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/error_interceptor"
-	grpcLoggerInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/logger_interceptor"
-	grpcSentryInterceptor "github.com/infranyx/go-grpc-template/pkg/grpc/interceptors/sentry_interceptor"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
+	grpcErrorInterceptor "github.com/infranyx/go-microservice-template/pkg/grpc/interceptors/error_interceptor"
+	grpcLoggerInterceptor "github.com/infranyx/go-microservice-template/pkg/grpc/interceptors/logger_interceptor"
+	grpcSentryInterceptor "github.com/infranyx/go-microservice-template/pkg/grpc/interceptors/sentry_interceptor"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	sentryUtils "github.com/infranyx/go-microservice-template/pkg/sentry/sentry_utils"
 )
 
 type Server interface {

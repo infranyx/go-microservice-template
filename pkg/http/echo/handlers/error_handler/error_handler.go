@@ -8,11 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 
-	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
-	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	customErrors "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	errorUtils "github.com/infranyx/go-microservice-template/pkg/error/error_utils"
+	httpError "github.com/infranyx/go-microservice-template/pkg/error/http"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 func ErrorHandler(err error, c echo.Context) {

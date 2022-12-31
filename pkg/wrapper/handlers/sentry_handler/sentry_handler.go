@@ -5,9 +5,9 @@ import (
 
 	"github.com/getsentry/sentry-go"
 
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	sentryUtils "github.com/infranyx/go-grpc-template/pkg/sentry/sentry_utils"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	"github.com/infranyx/go-microservice-template/pkg/config"
+	sentryUtils "github.com/infranyx/go-microservice-template/pkg/sentry/sentry_utils"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 var SentryHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {

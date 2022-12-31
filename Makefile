@@ -1,6 +1,6 @@
 #args = $(foreach a,$($(subst -,_,$1)_args),$(if $(value $a),$a="$($a)"))
 
-PKG := github.com/infranyx/go-grpc-template
+PKG := github.com/infranyx/go-microservice-template
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.m' --always --tags)
 BINARY_NAME=infranyx_go_grpc_template
 BINARY_PATH=./out/bin/$(BINARY_NAME)

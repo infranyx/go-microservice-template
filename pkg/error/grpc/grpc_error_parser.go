@@ -3,8 +3,8 @@ package grpcError
 import (
 	"google.golang.org/grpc/codes"
 
-	errorList "github.com/infranyx/go-grpc-template/pkg/constant/error/error_list"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
 )
 
 func ParseError(err error) GrpcErr {

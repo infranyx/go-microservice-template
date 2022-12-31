@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 
-	healthCheckDto "github.com/infranyx/go-grpc-template/internal/health_check/dto"
+	healthCheckDto "github.com/infranyx/go-microservice-template/internal/health_check/dto"
 )
 
 type Configurator interface {

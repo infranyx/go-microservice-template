@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/constant"
-	"github.com/infranyx/go-grpc-template/pkg/env"
+	"github.com/infranyx/go-microservice-template/pkg/constant"
+	"github.com/infranyx/go-microservice-template/pkg/env"
 )
 
 type Config struct {

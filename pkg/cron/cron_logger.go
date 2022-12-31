@@ -1,6 +1,6 @@
 package cronJob
 
-import "github.com/infranyx/go-grpc-template/pkg/logger"
+import "github.com/infranyx/go-microservice-template/pkg/logger"
 
 type CronLogger struct{}
 

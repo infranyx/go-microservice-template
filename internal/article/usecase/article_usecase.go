@@ -6,9 +6,9 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
-	sampleExtServiceDomain "github.com/infranyx/go-grpc-template/external/sample_ext_service/domain"
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
+	sampleExtServiceDomain "github.com/infranyx/go-microservice-template/external/sample_ext_service/domain"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
 )
 
 type useCase struct {
