@@ -12,8 +12,8 @@ func CreateArticleValidationExc(err error) error {
 		return ie
 	}
 
-	validationErrorCode := errorList.InternalErrorList.ValidationError
-	return customErrors.NewValidationError(validationErrorCode.Msg, validationErrorCode.Code, ve)
+	validationError := errorList.InternalErrorList.ValidationError
+	return customErrors.NewValidationError(validationError.Msg, validationError.Code, ve)
 }
 
 func ArticleBindingExc() error {

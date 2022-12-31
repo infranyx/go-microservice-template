@@ -10,9 +10,9 @@ import (
 func ParseError(err error) GrpcErr {
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
-		internalServerErrorCode := errorList.InternalErrorList.InternalServerError
+		internalServerError := errorList.InternalErrorList.InternalServerError
 		err =
-			customError.NewInternalServerErrorWrap(err, internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
+			customError.NewInternalServerErrorWrap(err, internalServerError.Msg, internalServerError.Code, nil)
 		customErr = customError.AsCustomError(err)
 		return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Error(), customErr.Details())
 	}
