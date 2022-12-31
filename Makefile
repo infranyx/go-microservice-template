@@ -1,3 +1,5 @@
+#args = $(foreach a,$($(subst -,_,$1)_args),$(if $(value $a),$a="$($a)"))
+
 PKG := github.com/infranyx/go-grpc-template
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.m' --always --tags)
 BINARY_NAME=infranyx_go_grpc_template
@@ -109,22 +111,21 @@ help: ## Show this help.
 
 # TODO : Fix & Complete migration commands
 .PHONY: rollback
-rollback: ### migration roll-back
+migrate-rollback: ### migration roll-back
 	migrate -source db/migrations -database $(PG_URL) down
 
 .PHONY: drop
-drop: ### migration drop
+migrate-drop: ### migration drop
 	migrate -source db/migrations -database $(PG_URL)  drop
 
 .PHONY: migrate-create
 migrate-create:  ### create new migration
-	migrate create -ext sql -dir db/migrations 'migrate_name'
+	migrate create -ext sql -dir db/migrations $(migrate_name)
 
 .PHONY: migrate-up
 migrate-up: ### migration up
 	migrate -path db/migrations -database $(PG_URL) up
 
 .PHONY: force
-force: ### force
-	migrate -path db/migrations -database $(PG_URL) force 20221025181800
-
+migrate-force: ### force
+	migrate -path db/migrations -database $(PG_URL) force $(id)
