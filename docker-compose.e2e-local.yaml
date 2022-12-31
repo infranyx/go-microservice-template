@@ -1,0 +1,63 @@
+version: "3.8"
+
+volumes:
+  test_pg_data:
+  test_zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+
+services:
+  postgres:
+    container_name: pg_test_container
+    image: postgres:11.16-alpine
+    volumes:
+      - "test_pg_data:/var/lib/postgresql/data"
+    restart: always
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: go_microservice_template
+
+  zookeeper:
+    image: bitnami/zookeeper
+    ports:
+      - 12181:2181
+    hostname: zookeeper
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "true"
+
+  kafka:
+    image: bitnami/kafka
+    ports:
+      - 9094:9092
+    hostname: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+    #      KAFKA_CFG_LISTENERS: 'PLAINTEXT://:9092'
+    #      KAFKA_CFG_ADVERTISED_LISTENERS: 'PLAINTEXT://:9092'
+    #      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka

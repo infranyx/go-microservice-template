@@ -1,0 +1,60 @@
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+
+exclude: "(.idea|vendor)"
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-added-large-files
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-rc.1
+    hooks:
+      #
+      # Go Build
+      #
+      - id: go-build-mod
+      #
+      # Go Mod Tidy
+      #
+      - id: go-mod-tidy
+      #
+      # Go Test
+      #
+      - id: go-test-mod
+      #
+      # Go Vet
+      #
+      # Revive
+      #
+      - id: go-revive
+      #
+      # GoSec
+      #
+      - id: go-sec-mod
+      #
+      # StaticCheck
+      #
+      - id: go-staticcheck-mod
+      #
+      # StructSlop
+      #
+      - id: go-structslop-mod
+      #
+      # Formatters
+      #
+      - id: go-fmt
+      - id: go-imports
+      #
+      # Style Checkers
+      #
+      - id: go-critic
+      #
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v2.1.1
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
