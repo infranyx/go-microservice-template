@@ -3,7 +3,7 @@ package articleConfigurator
 import (
 	"context"
 
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang_template/article/v1"
 
 	sampleExtServiceUseCase "github.com/infranyx/go-microservice-template/external/sample_ext_service/usecase"
 	articleGrpcController "github.com/infranyx/go-microservice-template/internal/article/delivery/grpc"

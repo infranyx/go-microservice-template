@@ -3,7 +3,7 @@ package sampleExtServiceUseCase
 import (
 	"context"
 
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang_template/article/v1"
 
 	sampleExtServiceDomain "github.com/infranyx/go-microservice-template/external/sample_ext_service/domain"
 	grpcError "github.com/infranyx/go-microservice-template/pkg/error/grpc"

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang_template/article/v1"
 	"github.com/labstack/echo/v4"
 
 	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
