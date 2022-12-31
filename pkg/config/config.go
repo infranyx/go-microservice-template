@@ -1,21 +1,21 @@
 package config
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/constant"
-	"github.com/infranyx/go-grpc-template/pkg/env"
+	"github.com/infranyx/go-microservice-template/pkg/constant"
+	"github.com/infranyx/go-microservice-template/pkg/env"
 )
 
 type Config struct {
-	App                  AppConfig
-	Grpc                 GrpcConfig
-	Http                 HttpConfig
-	Postgres             PostgresConfig
-	GoTemplateGrpcClient GrpcConfig
-	Kafka                KafkaConfig
-	Sentry               SentryConfig
+	App              AppConfig
+	Grpc             GrpcConfig
+	Http             HttpConfig
+	Postgres         PostgresConfig
+	SampleExtService GrpcConfig
+	Kafka            KafkaConfig
+	Sentry           SentryConfig
 }
 
-var Conf *Config
+var BaseConfig *Config
 
 type AppConfig struct {
 	AppEnv  string
@@ -40,6 +40,7 @@ type GrpcConfig struct {
 
 type HttpConfig struct {
 	Port int
+	Host string
 }
 
 type KafkaConfig struct {
@@ -56,7 +57,7 @@ type SentryConfig struct {
 }
 
 func init() {
-	Conf = newConfig()
+	BaseConfig = newConfig()
 }
 
 func newConfig() *Config {
@@ -71,6 +72,7 @@ func newConfig() *Config {
 		},
 		Http: HttpConfig{
 			Port: env.New("HTTP_PORT", constant.HttpPort).AsInt(),
+			Host: env.New("HTTP_HOST", constant.HttpHost).AsString(),
 		},
 		Postgres: PostgresConfig{
 			Host:            env.New("PG_HOST", nil).AsString(),
@@ -83,9 +85,9 @@ func newConfig() *Config {
 			MaxLifeTimeConn: env.New("PG_MAX_LIFETIME_CONNECTIONS", constant.PgMaxLifeTimeConn).AsInt(),
 			SslMode:         env.New("PG_SSL_MODE", constant.PgSslMode).AsString(),
 		},
-		GoTemplateGrpcClient: GrpcConfig{
-			Port: env.New("EXTERNAL_GO_TEMPLATE_GRPC_PORT", constant.GrpcPort).AsInt(),
-			Host: env.New("EXTERNAL_GO_TEMPLATE_GRPC_HOST", constant.GrpcHost).AsString(),
+		SampleExtService: GrpcConfig{
+			Port: env.New("SAMPLE_EXT_SERVICE_GRPC_PORT", constant.GrpcPort).AsInt(),
+			Host: env.New("SAMPLE_EXT_SERVICE_GRPC_HOST", constant.GrpcHost).AsString(),
 		},
 		Kafka: KafkaConfig{
 			Enabled:       env.New("KAFKA_ENABLED", nil).AsBool(),
@@ -102,13 +104,13 @@ func newConfig() *Config {
 }
 
 func IsDevEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvDev
+	return BaseConfig.App.AppEnv == constant.AppEnvDev
 }
 
 func IsProdEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvProd
+	return BaseConfig.App.AppEnv == constant.AppEnvProd
 }
 
 func IsTestEnv() bool {
-	return Conf.App.AppEnv == constant.AppEnvTest
+	return BaseConfig.App.AppEnv == constant.AppEnvTest
 }

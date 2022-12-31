@@ -1,29 +1,31 @@
 package kafkaConsumer
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"github.com/segmentio/kafka-go"
+
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 type Reader struct {
 	Client *kafka.Reader
 }
 
-type ReaderConf struct {
+type ReaderConfig struct {
 	Brokers []string
 	GroupID string
 	Topic   string
 }
 
-func NewKafkaReader(cfg *ReaderConf) *Reader {
-	rc := kafka.ReaderConfig{
+func NewKafkaReader(cfg *ReaderConfig) *Reader {
+	kafkaReaderConfig := kafka.ReaderConfig{
 		Brokers:     cfg.Brokers,
 		GroupID:     cfg.GroupID,
 		Topic:       cfg.Topic,
 		Logger:      kafka.LoggerFunc(logger.Zap.Sugar().Infof),
 		ErrorLogger: kafka.LoggerFunc(logger.Zap.Sugar().Errorf),
 	}
+
 	return &Reader{
-		Client: kafka.NewReader(rc),
+		Client: kafka.NewReader(kafkaReaderConfig),
 	}
 }

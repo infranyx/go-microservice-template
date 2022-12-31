@@ -1,7 +1,6 @@
 package constant
 
-import "time"
-
+// App
 const AppName = "Go-gRPC-Template"
 
 const (
@@ -10,23 +9,20 @@ const (
 	AppEnvTest = "test"
 )
 
+// Http + Grpc
 const (
-	HttpPort = 4000
-	GrpcPort = 3000
+	HttpHost      = "localhost"
+	HttpPort      = 4000
+	EchoGzipLevel = 5
+
 	GrpcHost = "localhost"
+	GrpcPort = 3000
 )
 
+// Postgres
 const (
 	PgMaxConn         = 1
 	PgMaxIdleConn     = 1
 	PgMaxLifeTimeConn = 1
 	PgSslMode         = "disable"
-)
-
-const (
-	MaxHeaderBytes       = 1 << 20
-	BodyLimit            = "2M"
-	ReadTimeout          = 15 * time.Second
-	WriteTimeout         = 15 * time.Second
-	GzipLevel            = 5
 )

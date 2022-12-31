@@ -12,8 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const defaultEnvPath = "./envs/.env"
-
 type EVar struct {
 	key        string
 	defaultVal interface{}
@@ -24,12 +22,12 @@ func init() {
 }
 
 func LoadEnv() {
-	_, f, _, ok := runtime.Caller(0)
+	_, callerDir, _, ok := runtime.Caller(0)
 	if !ok {
 		log.Fatal("Error generating env dir")
 	}
-	dir := filepath.Join(filepath.Dir(f), "../..", defaultEnvPath)
 
+	dir := filepath.Join(filepath.Dir(callerDir), "../..", "envs/.env")
 	err := godotenv.Load(dir)
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -46,7 +44,6 @@ func (eVar EVar) GetEnv() interface{} {
 	}
 
 	if eVar.defaultVal == nil {
-		// TODO : Log + Err
 		log.Fatalf("Env variable is required %v", eVar.key)
 	}
 
@@ -60,7 +57,6 @@ func (eVar EVar) AsString() string {
 func (eVar EVar) AsInt() int {
 	val, err := strconv.Atoi(eVar.AsString())
 	if err != nil {
-		// TODO : Log + Err
 		log.Fatalf("could not convert eVar to Int %v", eVar.key)
 	}
 
@@ -70,7 +66,6 @@ func (eVar EVar) AsInt() int {
 func (eVar EVar) AsBool() bool {
 	val, err := strconv.ParseBool(eVar.AsString())
 	if err != nil {
-		// TODO : Log + Err
 		log.Fatalf("could not convert eVar to bool %v", eVar.key)
 	}
 

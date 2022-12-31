@@ -1,28 +1,30 @@
-package articleGrpc
+package articleGrpcController
 
 import (
 	"context"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+	articleV1 "github.com/infranyx/protobuf-template-go/golang_template/article/v1"
+
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
+	articleException "github.com/infranyx/go-microservice-template/internal/article/exception"
 )
 
-type articleGrpcController struct {
-	articleUC articleDomain.ArticleUseCase
+type controller struct {
+	useCase articleDomain.UseCase
 }
 
-func NewArticleGrpcController(uc articleDomain.ArticleUseCase) articleDomain.ArticleGrpcController {
-	return &articleGrpcController{
-		articleUC: uc,
+func NewController(uc articleDomain.UseCase) articleDomain.GrpcController {
+	return &controller{
+		useCase: uc,
 	}
 }
 
-func (ac *articleGrpcController) CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error) {
-	aDto := &articleDto.CreateArticle{
+func (c *controller) CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error) {
+	aDto := &articleDto.CreateArticleRequestDto{
 		Name:        req.Name,
 		Description: req.Desc,
 	}
@@ -31,7 +33,7 @@ func (ac *articleGrpcController) CreateArticle(ctx context.Context, req *article
 		return nil, articleException.CreateArticleValidationExc(err)
 	}
 
-	article, err := ac.articleUC.Create(ctx, aDto)
+	article, err := c.useCase.CreateArticle(ctx, aDto)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +45,6 @@ func (ac *articleGrpcController) CreateArticle(ctx context.Context, req *article
 	}, nil
 }
 
-func (ac *articleGrpcController) GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error) {
+func (c *controller) GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }

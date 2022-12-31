@@ -3,29 +3,29 @@ package articleKafkaConsumer
 import (
 	"context"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
-	wrapperErrorhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/error_handler"
-	wrapperRecoveryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/recovery_handler"
-	wrapperSentryhandler "github.com/infranyx/go-grpc-template/pkg/wrapper/handlers/sentry_handler"
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	kafkaConsumer "github.com/infranyx/go-microservice-template/pkg/kafka/consumer"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
+	wrapperErrorhandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/error_handler"
+	wrapperRecoveryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/recovery_handler"
+	wrapperSentryHandler "github.com/infranyx/go-microservice-template/pkg/wrapper/handlers/sentry_handler"
 )
 
-type articleConsumer struct {
-	createReader *kafkaConsumer.Reader
+type consumer struct {
+	createEventReader *kafkaConsumer.Reader
 }
 
-func NewArticleConsumer(r *kafkaConsumer.Reader) articleDomain.ArticleConsumer {
-	return &articleConsumer{createReader: r}
+func NewConsumer(r *kafkaConsumer.Reader) articleDomain.KafkaConsumer {
+	return &consumer{createEventReader: r}
 }
 
-func (ac *articleConsumer) RunConsumers(ctx context.Context) {
-	go ac.consumerCreateArticle(ctx, 2)
+func (c *consumer) RunConsumers(ctx context.Context) {
+	go c.createEvent(ctx, 2)
 }
 
-func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum int) {
-	r := ac.createReader.Client
+func (c *consumer) createEvent(ctx context.Context, workersNum int) {
+	r := c.createEventReader.Client
 	defer func() {
 		if err := r.Close(); err != nil {
 			logger.Zap.Sugar().Errorf("error closing create article consumer")
@@ -34,19 +34,23 @@ func (ac *articleConsumer) consumerCreateArticle(ctx context.Context, workersNum
 
 	logger.Zap.Sugar().Infof("Starting consumer group: %v", r.Config().GroupID)
 
-	c := make(chan bool)
+	workerChan := make(chan bool)
 	worker := wrapper.BuildChain(
-		ac.createArticleWorker(c),
-		wrapperSentryhandler.SentryHandler,
-		wrapperRecoveryhandler.RecoveryHandler,
+		c.createEventWorker(workerChan),
+		wrapperSentryHandler.SentryHandler,
+		wrapperRecoveryHandler.RecoveryHandler,
 		wrapperErrorhandler.ErrorHandler,
 	)
 	for i := 0; i <= workersNum; i++ {
-		go worker(ctx, nil)
+		go worker.ToWorkerFunc(ctx, nil)
 	}
 
 	for {
-		<-c
-		go worker(ctx, nil)
+		select {
+		case <-ctx.Done():
+			return
+		case <-workerChan:
+			go worker.ToWorkerFunc(ctx, nil)
+		}
 	}
 }

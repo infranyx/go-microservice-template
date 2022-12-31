@@ -8,7 +8,7 @@ type unauthorizedError struct {
 	CustomError
 }
 
-func (ue *unauthorizedError) IsUnAuthorizedError() bool {
+func (e *unauthorizedError) IsUnAuthorizedError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type UnauthorizedError interface {
 	IsUnAuthorizedError() bool
 }
 
-func IsUnAuthorizedError(err error) bool {
+func IsUnAuthorizedError(e error) bool {
 	var unauthorizedError UnauthorizedError
 
-	if errors.As(err, &unauthorizedError) {
+	if errors.As(e, &unauthorizedError) {
 		return unauthorizedError.IsUnAuthorizedError()
 	}
 
@@ -28,18 +28,18 @@ func IsUnAuthorizedError(err error) bool {
 }
 
 func NewUnAuthorizedError(message string, code int, details map[string]string) error {
-	ue := &unauthorizedError{
+	e := &unauthorizedError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ue
+	return e
 }
 
 func NewUnAuthorizedErrorWrap(err error, message string, code int, details map[string]string) error {
-	ue := &unauthorizedError{
+	e := &unauthorizedError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

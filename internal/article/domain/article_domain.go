@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	articleV1 "github.com/infranyx/protobuf-template-go/golang-grpc-template/article/v1"
+
+	articleV1 "github.com/infranyx/protobuf-template-go/golang_template/article/v1"
 	"github.com/labstack/echo/v4"
 	"github.com/segmentio/kafka-go"
+
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
 )
 
 type Article struct {
@@ -16,35 +18,35 @@ type Article struct {
 	Description string    `db:"description" json:"desc"`
 }
 
-type ArticleConfigurator interface {
-	ConfigureArticle(ctx context.Context) error
+type Configurator interface {
+	Configure(ctx context.Context) error
 }
 
-type ArticleGrpcController interface {
+type UseCase interface {
+	CreateArticle(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
+}
+
+type Repository interface {
+	CreateArticle(ctx context.Context, article *articleDto.CreateArticleRequestDto) (*articleDto.CreateArticleResponseDto, error)
+}
+
+type GrpcController interface {
 	CreateArticle(ctx context.Context, req *articleV1.CreateArticleRequest) (*articleV1.CreateArticleResponse, error)
 	GetArticleById(ctx context.Context, req *articleV1.GetArticleByIdRequest) (*articleV1.GetArticleByIdResponse, error)
 }
 
-type ArticleHttpController interface {
-	Create(c echo.Context) error
+type HttpController interface {
+	CreateArticle(c echo.Context) error
 }
 
-type ArticleProducer interface {
-	PublishCreate(ctx context.Context, msgs ...kafka.Message) error
+type Job interface {
+	StartJobs(ctx context.Context)
 }
 
-type ArticleConsumer interface {
+type KafkaProducer interface {
+	PublishCreateEvent(ctx context.Context, messages ...kafka.Message) error
+}
+
+type KafkaConsumer interface {
 	RunConsumers(ctx context.Context)
-}
-
-type ArticleJob interface {
-	RunJobs(ctx context.Context)
-}
-
-type ArticleUseCase interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
-}
-
-type ArticleRepository interface {
-	Create(ctx context.Context, article *articleDto.CreateArticle) (*Article, error)
 }

@@ -3,7 +3,7 @@ package grpcError
 import (
 	"time"
 
-	sharedBuf "github.com/infranyx/protobuf-template-go/shared/error"
+	errorBuf "github.com/infranyx/protobuf-template-go/shared/error/v1"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -125,7 +125,7 @@ func IsGrpcError(err error) bool {
 // ToGrpcResponseErr creates a gRPC error response to send grpc engine
 func (ge *grpcErr) ToGrpcResponseErr() error {
 	st := status.New(ge.Status, ge.Error())
-	mappedErr := &sharedBuf.CustomError{
+	mappedErr := &errorBuf.CustomError{
 		Title:     ge.Title,
 		Code:      int64(ge.Code),
 		Msg:       ge.Msg,
@@ -139,8 +139,7 @@ func (ge *grpcErr) ToGrpcResponseErr() error {
 func ParseExternalGrpcErr(err error) GrpcErr {
 	st := status.Convert(err)
 	for _, detail := range st.Details() {
-		switch t := detail.(type) {
-		case *sharedBuf.CustomError:
+		if t, ok := detail.(*errorBuf.CustomError); ok {
 			timestamp, _ := time.Parse(time.RFC3339, t.Timestamp)
 			return &grpcErr{
 				Status:    st.Code(),

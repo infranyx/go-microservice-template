@@ -8,7 +8,7 @@ type badRequestError struct {
 	CustomError
 }
 
-func (br *badRequestError) IsBadRequestError() bool {
+func (e *badRequestError) IsBadRequestError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type BadRequestError interface {
 	IsBadRequestError() bool
 }
 
-func IsBadRequestError(err error) bool {
+func IsBadRequestError(e error) bool {
 	var badRequestError BadRequestError
 
-	if errors.As(err, &badRequestError) {
+	if errors.As(e, &badRequestError) {
 		return badRequestError.IsBadRequestError()
 	}
 
@@ -28,18 +28,18 @@ func IsBadRequestError(err error) bool {
 }
 
 func NewBadRequestError(message string, code int, details map[string]string) error {
-	br := &badRequestError{
+	e := &badRequestError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return br
+	return e
 }
 
 func NewBadRequestErrorWrap(err error, message string, code int, details map[string]string) error {
-	br := &badRequestError{
+	e := &badRequestError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(br)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

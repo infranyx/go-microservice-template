@@ -8,7 +8,7 @@ type conflictError struct {
 	CustomError
 }
 
-func (ce *conflictError) IsConflictError() bool {
+func (e *conflictError) IsConflictError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type ConflictError interface {
 	IsConflictError() bool
 }
 
-func IsConflictError(err error) bool {
+func IsConflictError(e error) bool {
 	var conflictError ConflictError
 
-	if errors.As(err, &conflictError) {
+	if errors.As(e, &conflictError) {
 		return conflictError.IsConflictError()
 	}
 
@@ -28,18 +28,18 @@ func IsConflictError(err error) bool {
 }
 
 func NewConflictError(message string, code int, details map[string]string) error {
-	ce := &conflictError{
+	e := &conflictError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ce
+	return e
 }
 
 func NewConflictErrorWrap(err error, message string, code int, details map[string]string) error {
-	ce := &conflictError{
+	e := &conflictError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ce)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

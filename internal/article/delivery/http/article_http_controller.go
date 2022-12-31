@@ -1,27 +1,28 @@
-package articleHttp
+package articleHttpController
 
 import (
 	"net/http"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	articleDto "github.com/infranyx/go-grpc-template/internal/article/dto"
-	articleException "github.com/infranyx/go-grpc-template/internal/article/exception"
 	"github.com/labstack/echo/v4"
+
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	articleDto "github.com/infranyx/go-microservice-template/internal/article/dto"
+	articleException "github.com/infranyx/go-microservice-template/internal/article/exception"
 )
 
-type articleHttpController struct {
-	articleUC articleDomain.ArticleUseCase
+type controller struct {
+	useCase articleDomain.UseCase
 }
 
-func NewArticleHttpController(uc articleDomain.ArticleUseCase) articleDomain.ArticleHttpController {
-	return &articleHttpController{
-		articleUC: uc,
+func NewController(uc articleDomain.UseCase) articleDomain.HttpController {
+	return &controller{
+		useCase: uc,
 	}
 }
 
-func (ac articleHttpController) Create(c echo.Context) error {
-	aDto := new(articleDto.CreateArticle)
-	if err := c.Bind(aDto); err != nil {
+func (c controller) CreateArticle(ctx echo.Context) error {
+	aDto := new(articleDto.CreateArticleRequestDto)
+	if err := ctx.Bind(aDto); err != nil {
 		return articleException.ArticleBindingExc()
 	}
 
@@ -29,10 +30,10 @@ func (ac articleHttpController) Create(c echo.Context) error {
 		return articleException.CreateArticleValidationExc(err)
 	}
 
-	article, err := ac.articleUC.Create(c.Request().Context(), aDto)
+	article, err := c.useCase.CreateArticle(ctx.Request().Context(), aDto)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, article)
+	return ctx.JSON(http.StatusOK, article)
 }

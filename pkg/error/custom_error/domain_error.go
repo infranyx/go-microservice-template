@@ -8,7 +8,7 @@ type domainError struct {
 	CustomError
 }
 
-func (de *domainError) IsDomainError() bool {
+func (e *domainError) IsDomainError() bool {
 	return true
 }
 
@@ -17,28 +17,28 @@ type DomainError interface {
 	IsDomainError() bool
 }
 
-func IsDomainError(err error) bool {
-	var domainErr DomainError
+func IsDomainError(e error) bool {
+	var domainError DomainError
 
-	if errors.As(err, &domainErr) {
-		return domainErr.IsDomainError()
+	if errors.As(e, &domainError) {
+		return domainError.IsDomainError()
 	}
 	return false
 }
 
 func NewDomainError(message string, code int, details map[string]string) error {
-	de := &domainError{
+	e := &domainError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return de
+	return e
 }
 
 func NewDomainErrorWrap(err error, message string, code int, details map[string]string) error {
-	de := &domainError{
+	e := &domainError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(de)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

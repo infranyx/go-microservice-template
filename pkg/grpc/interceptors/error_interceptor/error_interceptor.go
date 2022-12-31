@@ -2,14 +2,16 @@ package grpcErrorInterceptor
 
 import (
 	"context"
+
 	"github.com/getsentry/sentry-go"
 	grpcTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
-	grpcErrors "github.com/infranyx/go-grpc-template/pkg/error/grpc"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	errorUtils "github.com/infranyx/go-microservice-template/pkg/error/error_utils"
+	grpcErrors "github.com/infranyx/go-microservice-template/pkg/error/grpc"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 // UnaryServerInterceptor returns a problem-detail error to client
@@ -30,13 +32,13 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 				hub.ConfigureScope(func(scope *sentry.Scope) {
 					scope.SetLevel(sentry.LevelError)
 					scope.SetContext("grpcErr", map[string]interface{}{
-						loggerConst.TYPE:        loggerConst.GRPC,
-						loggerConst.TITILE:      grpcErr.GetTitle(),
-						loggerConst.CODE:        grpcErr.GetCode(),
-						loggerConst.STATUS:      grpcErr.GetStatus().String(),
-						loggerConst.TIME:        grpcErr.GetTimestamp(),
-						loggerConst.DETAILS:     grpcErr.GetDetails(),
-						loggerConst.STACK_TRACE: errorUtils.RootStackTrace(err),
+						loggerConstant.TYPE:        loggerConstant.GRPC,
+						loggerConstant.TITILE:      grpcErr.GetTitle(),
+						loggerConstant.CODE:        grpcErr.GetCode(),
+						loggerConstant.STATUS:      grpcErr.GetStatus().String(),
+						loggerConstant.TIME:        grpcErr.GetTimestamp(),
+						loggerConstant.DETAILS:     grpcErr.GetDetails(),
+						loggerConstant.STACK_TRACE: errorUtils.RootStackTrace(err),
 					})
 					tags := grpcTags.Extract(ctx)
 					for k, v := range tags.Values() {
@@ -48,13 +50,13 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 			logger.Zap.Error(
 				err.Error(),
-				zap.String(loggerConst.TYPE, loggerConst.GRPC),
-				zap.String(loggerConst.TITILE, grpcErr.GetTitle()),
-				zap.Int(loggerConst.CODE, grpcErr.GetCode()),
-				zap.String(loggerConst.STATUS, grpcErr.GetStatus().String()),
-				zap.Time(loggerConst.TIME, grpcErr.GetTimestamp()),
-				zap.Any(loggerConst.DETAILS, grpcErr.GetDetails()),
-				zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
+				zap.String(loggerConstant.TYPE, loggerConstant.GRPC),
+				zap.String(loggerConstant.TITILE, grpcErr.GetTitle()),
+				zap.Int(loggerConstant.CODE, grpcErr.GetCode()),
+				zap.String(loggerConstant.STATUS, grpcErr.GetStatus().String()),
+				zap.Time(loggerConstant.TIME, grpcErr.GetTimestamp()),
+				zap.Any(loggerConstant.DETAILS, grpcErr.GetDetails()),
+				zap.String(loggerConstant.STACK_TRACE, errorUtils.RootStackTrace(err)),
 			)
 			return nil, grpcErr.ToGrpcResponseErr()
 		}

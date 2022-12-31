@@ -1,47 +1,45 @@
 package echoErrorHandler
 
 import (
-	"github.com/getsentry/sentry-go"
 	"net/http"
 
-	sentryecho "github.com/getsentry/sentry-go/echo"
-	errorConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
-	httpError "github.com/infranyx/go-grpc-template/pkg/error/http"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	"github.com/getsentry/sentry-go"
+	sentryEcho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
+
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	customErrors "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	errorUtils "github.com/infranyx/go-microservice-template/pkg/error/error_utils"
+	httpError "github.com/infranyx/go-microservice-template/pkg/error/http"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
 func ErrorHandler(err error, c echo.Context) {
 	// default echo errors
-	ehe, ok := err.(*echo.HTTPError)
+	echoHttpError, ok := err.(*echo.HTTPError)
+	var httpResponseError httpError.HttpErr
+
 	if ok {
-		switch ehe.Code {
-		case http.StatusNotFound:
-			err = customErrors.NewNotFoundError(errorConst.ErrInfo.NotFoundErr.Msg, errorConst.ErrInfo.NotFoundErr.Code, nil)
-		default:
-			err = customErrors.NewInternalServerError(errorConst.ErrInfo.InternalServerErr.Msg, errorConst.ErrInfo.InternalServerErr.Code, nil)
-		}
+		httpResponseError = httpError.NewHttpError(echoHttpError.Code, echoHttpError.Code, http.StatusText(echoHttpError.Code), http.StatusText(echoHttpError.Code), nil)
+	} else {
+		// parse as a custom error
+		httpResponseError = httpError.ParseError(err)
 	}
-	// system errors
-	he := httpError.ParseError(err)
 
 	if customErrors.IsInternalServerError(err) {
-		hub := sentryecho.GetHubFromContext(c)
+		hub := sentryEcho.GetHubFromContext(c)
 		if hub != nil {
 			hub.ConfigureScope(func(scope *sentry.Scope) {
 				scope.SetLevel(sentry.LevelError)
-				scope.SetContext("grpcErr", map[string]interface{}{
-					loggerConst.TYPE:        loggerConst.HTTP,
-					loggerConst.TITILE:      he.GetTitle(),
-					loggerConst.CODE:        he.GetCode(),
-					loggerConst.STATUS:      http.StatusText(he.GetStatus()),
-					loggerConst.TIME:        he.GetTimestamp(),
-					loggerConst.DETAILS:     he.GetDetails(),
-					loggerConst.STACK_TRACE: errorUtils.RootStackTrace(err),
+				scope.SetContext("HttpErr", map[string]interface{}{
+					loggerConstant.TYPE:        loggerConstant.HTTP,
+					loggerConstant.TITILE:      httpResponseError.GetTitle(),
+					loggerConstant.CODE:        httpResponseError.GetCode(),
+					loggerConstant.STATUS:      http.StatusText(httpResponseError.GetStatus()),
+					loggerConstant.TIME:        httpResponseError.GetTimestamp(),
+					loggerConstant.DETAILS:     httpResponseError.GetDetails(),
+					loggerConstant.STACK_TRACE: errorUtils.RootStackTrace(err),
 				})
 			})
 			hub.CaptureException(err)
@@ -49,18 +47,18 @@ func ErrorHandler(err error, c echo.Context) {
 	}
 
 	if !c.Response().Committed {
-		if _, err := he.WriteTo(c.Response()); err != nil {
+		if _, err := httpResponseError.WriteTo(c.Response()); err != nil {
 			logger.Zap.Sugar().Error(`error while writing http error response: %v`, err)
 		}
 		logger.Zap.Error(
 			err.Error(),
-			zap.String(loggerConst.TYPE, loggerConst.HTTP),
-			zap.String(loggerConst.TITILE, he.GetTitle()),
-			zap.Int(loggerConst.CODE, he.GetCode()),
-			zap.String(loggerConst.STATUS, http.StatusText(he.GetStatus())),
-			zap.Time(loggerConst.TIME, he.GetTimestamp()),
-			zap.Any(loggerConst.DETAILS, he.GetDetails()),
-			zap.String(loggerConst.STACK_TRACE, errorUtils.RootStackTrace(err)),
+			zap.String(loggerConstant.TYPE, loggerConstant.HTTP),
+			zap.String(loggerConstant.TITILE, httpResponseError.GetTitle()),
+			zap.Int(loggerConstant.CODE, httpResponseError.GetCode()),
+			zap.String(loggerConstant.STATUS, http.StatusText(httpResponseError.GetStatus())),
+			zap.Time(loggerConstant.TIME, httpResponseError.GetTimestamp()),
+			zap.Any(loggerConstant.DETAILS, httpResponseError.GetDetails()),
+			zap.String(loggerConstant.STACK_TRACE, errorUtils.RootStackTrace(err)),
 		)
 	}
 }

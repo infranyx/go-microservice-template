@@ -8,7 +8,7 @@ type unMarshalingError struct {
 	CustomError
 }
 
-func (ue *unMarshalingError) IsUnMarshalingError() bool {
+func (e *unMarshalingError) IsUnMarshalingError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type UnMarshalingError interface {
 	IsUnMarshalingError() bool
 }
 
-func IsUnMarshalingError(err error) bool {
+func IsUnMarshalingError(e error) bool {
 	var unMarshalingError UnMarshalingError
 
-	if errors.As(err, &unMarshalingError) {
+	if errors.As(e, &unMarshalingError) {
 		return unMarshalingError.IsUnMarshalingError()
 	}
 
@@ -28,18 +28,18 @@ func IsUnMarshalingError(err error) bool {
 }
 
 func NewUnMarshalingError(message string, code int, details map[string]string) error {
-	ue := &unMarshalingError{
+	e := &unMarshalingError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ue
+	return e
 }
 
 func NewUnMarshalingErrorWrap(err error, message string, code int, details map[string]string) error {
-	ue := &unMarshalingError{
+	e := &unMarshalingError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ue)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

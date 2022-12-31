@@ -8,7 +8,7 @@ type applicationError struct {
 	CustomError
 }
 
-func (ae *applicationError) IsApplicationError() bool {
+func (e *applicationError) IsApplicationError() bool {
 	return true
 }
 
@@ -17,10 +17,10 @@ type ApplicationError interface {
 	IsApplicationError() bool
 }
 
-func IsApplicationError(err error) bool {
+func IsApplicationError(e error) bool {
 	var applicationError ApplicationError
 
-	if errors.As(err, &applicationError) {
+	if errors.As(e, &applicationError) {
 		return applicationError.IsApplicationError()
 	}
 
@@ -28,18 +28,18 @@ func IsApplicationError(err error) bool {
 }
 
 func NewApplicationError(message string, code int, details map[string]string) error {
-	ae := &applicationError{
+	e := &applicationError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ae
+	return e
 }
 
 func NewApplicationErrorWrap(err error, message string, code int, details map[string]string) error {
-	ae := &applicationError{
+	e := &applicationError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ae)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

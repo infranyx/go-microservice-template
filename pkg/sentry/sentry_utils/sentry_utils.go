@@ -13,14 +13,14 @@ type Options struct {
 	Timeout         time.Duration
 }
 
-func RecoverWithSentry(hub *sentry.Hub, ctx context.Context, o *Options) {
+func RecoverWithSentry(hub *sentry.Hub, ctx context.Context, options *Options) {
 	if err := recover(); err != nil {
 		eventID := hub.RecoverWithContext(ctx, err)
-		if eventID != nil && o.WaitForDelivery {
-			hub.Flush(o.Timeout)
+		if eventID != nil && options.WaitForDelivery {
+			hub.Flush(options.Timeout)
 		}
 
-		if o.Repanic {
+		if options.Repanic {
 			panic(err)
 		}
 	}
