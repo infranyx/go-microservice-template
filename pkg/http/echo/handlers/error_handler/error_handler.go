@@ -4,12 +4,10 @@ import (
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
-
 	sentryEcho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 
-	errorList "github.com/infranyx/go-grpc-template/pkg/constant/error/error_list"
 	loggerConstant "github.com/infranyx/go-grpc-template/pkg/constant/logger"
 	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
@@ -20,23 +18,14 @@ import (
 func ErrorHandler(err error, c echo.Context) {
 	// default echo errors
 	echoHttpError, ok := err.(*echo.HTTPError)
+	var httpResponseError httpError.HttpErr
 
 	if ok {
-		switch echoHttpError.Code {
-		case http.StatusNotFound:
-			notFoundErrorCode := errorList.InternalErrorList.NotFoundError
-			err = customErrors.NewNotFoundError(notFoundErrorCode.Msg, notFoundErrorCode.Code, nil)
-		case http.StatusMethodNotAllowed:
-			methodNotAllowedErrorCode := errorList.InternalErrorList.MethodNotAllowedError
-			err = customErrors.NewMethodNotAllowedError(methodNotAllowedErrorCode.Msg, methodNotAllowedErrorCode.Code, nil)
-		default:
-			internalServerErrorCode := errorList.InternalErrorList.InternalServerError
-			err = customErrors.NewInternalServerError(internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
-		}
+		httpResponseError = httpError.NewHttpError(echoHttpError.Code, echoHttpError.Code, http.StatusText(echoHttpError.Code), http.StatusText(echoHttpError.Code), nil)
+	} else {
+		// parse as a custom error
+		httpResponseError = httpError.ParseError(err)
 	}
-
-	// parse as a custom error
-	httpResponseError := httpError.ParseError(err)
 
 	if customErrors.IsInternalServerError(err) {
 		hub := sentryEcho.GetHubFromContext(c)

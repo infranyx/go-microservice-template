@@ -28,9 +28,6 @@ func ParseError(err error) HttpErr {
 		case customError.IsBadRequestError(err):
 			return NewHttpBadRequestError(customErr.Code(), customErr.Message(), customErr.Details())
 
-		case customError.IsMethodNotAllowedError(err):
-			return NewMethodNotAllowedError(customErr.Code(), customErr.Message(), customErr.Details())
-
 		case customError.IsNotFoundError(err):
 			return NewHttpNotFoundError(customErr.Code(), customErr.Message(), customErr.Details())
 
