@@ -147,11 +147,11 @@ func (he *httpErr) json() []byte {
 	return b
 }
 
-func ParseExternalHttpErr(err io.ReadCloser) HttpErr {
-	defer err.Close()
+// Don't forget to clese the body : <defer body.Close()>
 
+func ParseExternalHttpErr(body io.ReadCloser) HttpErr {
 	he := new(httpErr)
-	_ = json.NewDecoder(err).Decode(he)
+	_ = json.NewDecoder(body).Decode(he)
 
 	return he
 }

@@ -61,25 +61,25 @@ func (response *HttpResponse) IsError() bool {
 	return response.StatusCode() > 399
 }
 
-func (response *HttpResponse) Bind(s interface{}) error {
-	defer response.Response.Body.Close()
+// Don't forget to call => <Response.Body.Close()>
 
+func (response *HttpResponse) Bind(s interface{}) error {
 	return json.NewDecoder(response.Body()).Decode(s)
 }
 
-func (response *HttpResponse) ParseBody() (interface{}, error) {
-	defer response.Response.Body.Close()
+// Sample: We can use it to parse the body to interface type
 
-	res, err := io.ReadAll(response.Body())
-	if err != nil {
-		return nil, err
-	}
-
-	var data interface{}
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
+// func (response *HttpResponse) ParseBody() (interface{}, error) {
+// 	res, err := io.ReadAll(response.Body())
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	var data interface{}
+// 	err = json.Unmarshal(res, &data)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return data, nil
+// }
