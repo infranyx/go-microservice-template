@@ -22,8 +22,8 @@ This guide will walk you through the steps to deploy the Golang microservice app
 1. Clone the repository and navigate to the root directory of the project:
 
 ```bash
-git clone https://github.com/infranyx/go-grpc-template
-cd go-grpc-template
+git clone https://github.com/infranyx/go-microservice-template
+cd go-microservice-template
 ```
 
 2. Create a .env file in the `envs` directory of the project and copy the `local.env` environment variables.

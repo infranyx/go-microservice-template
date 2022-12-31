@@ -1,7 +1,7 @@
 package constant
 
 // App
-const AppName = "Go-gRPC-Template"
+const AppName = "Go-Microservice-Template"
 
 const (
 	AppEnvProd = "prod"

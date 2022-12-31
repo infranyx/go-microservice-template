@@ -2,7 +2,7 @@
 
 <!-- # Hands-On Microservices with Node.js -->
 
-This is the code repository for [Go Microservice Template](https://www.github.com/infranyx/go-grpc-template), published by InfraNyx.
+This is the code repository for [Go Microservice Template](https://www.github.com/infranyx/go-microservice-template), published by InfraNyx.
 
 **Build, test, and deploy robust golang microservices**
 
@@ -52,8 +52,8 @@ The template project is in alpha status.
 1. Clone the repository and navigate to the root directory of the project:
 
 ```bash
-git clone https://github.com/infranyx/go-grpc-template.git
-cd go-grpc-template
+git clone https://github.com/infranyx/go-microservice-template.git
+cd go-microservice-template
 ```
 
 2. Install the dependencies:
