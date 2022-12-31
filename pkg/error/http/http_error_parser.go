@@ -13,9 +13,9 @@ import (
 func ParseError(err error) HttpErr {
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
-		internalServerErrorCode := errorList.InternalErrorList.InternalServerError
+		internalServerError := errorList.InternalErrorList.InternalServerError
 		err =
-			customError.NewInternalServerErrorWrap(err, internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
+			customError.NewInternalServerErrorWrap(err, internalServerError.Msg, internalServerError.Code, nil)
 		customErr = customError.AsCustomError(err)
 		return NewHttpError(http.StatusInternalServerError, customErr.Code(), errorConstant.ErrInternalServerErrorTitle, customErr.Error(), customErr.Details())
 	}

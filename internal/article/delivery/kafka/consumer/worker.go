@@ -13,7 +13,6 @@ func (c *consumer) createEventWorker(
 	workerChan chan bool,
 ) wrapper.HandlerFunc {
 	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
-		// TODO : Graceful shutdown workers
 		defer func() {
 			workerChan <- true
 		}()
@@ -24,7 +23,7 @@ func (c *consumer) createEventWorker(
 			}
 
 			logger.Zap.Sugar().Infof(
-				"Kafka Worker recieve message at topic/partition/offset %v/%v/%v: %s = %s\n",
+				"Kafka Worker recieved message at topic/partition/offset %v/%v/%v: %s = %s\n",
 				msg.Topic,
 				msg.Partition,
 				msg.Offset,

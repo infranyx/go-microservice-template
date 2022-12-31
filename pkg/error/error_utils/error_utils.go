@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
 	errorContract "github.com/infranyx/go-microservice-template/pkg/error/contracts"
 	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
 	"github.com/infranyx/go-microservice-template/pkg/logger"
@@ -54,8 +55,8 @@ func ValidationErrorHandler(err error) (map[string]string, error) {
 		}
 		return details, nil
 	}
-	// TODO : get internal error from constant.
-	return nil, customError.NewInternalServerErrorWrap(err, "internal error", 8585, nil)
+	internalServerError := errorList.InternalErrorList.InternalServerError
+	return nil, customError.NewInternalServerErrorWrap(err, internalServerError.Msg, internalServerError.Code, nil)
 }
 
 type HandlerFunc func() error

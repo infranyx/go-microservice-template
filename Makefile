@@ -90,24 +90,7 @@ lint-go: ## Use golintci-lint on your project
 	$(eval OUTPUT_OPTIONS = $(shell [ "${EXPORT_RESULT}" == "true" ] && echo "--out-format checkstyle ./... | tee /dev/tty > checkstyle-report.xml" || echo "" ))
 	docker run --rm -v $(shell pwd):/app -w /app golangci/golangci-lint:latest-alpine golangci-lint run --deadline=65s $(OUTPUT_OPTIONS)
 
-
-## ---------- Help ----------
-.PHONY: help
-help: ## Show this help.
-	@echo ''
-	@echo ${CYAN}'PKG:' ${GREEN}$(PKG)
-	@echo 'Usage:'
-	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
-	@echo ''
-	@echo 'Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} { \
-		if (/^[a-zA-Z_-]+:.*?##.*$$/) {printf "    ${YELLOW}%-20s${GREEN}%s${RESET}\n", $$1, $$2} \
-		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
-		}' $(MAKEFILE_LIST)
-
-
-
-# TODO : Fix & Complete migration commands
+## ---------- Migration ----------
 .PHONY: rollback
 migrate-rollback: ### migration roll-back
 	migrate -source db/migrations -database $(PG_URL) down
@@ -127,3 +110,17 @@ migrate-up: ### migration up
 .PHONY: force
 migrate-force: ### force
 	migrate -path db/migrations -database $(PG_URL) force $(id)
+
+## ---------- Help ----------
+.PHONY: help
+help: ## Show this help.
+	@echo ''
+	@echo ${CYAN}'PKG:' ${GREEN}$(PKG)
+	@echo 'Usage:'
+	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
+	@echo ''
+	@echo 'Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} { \
+		if (/^[a-zA-Z_-]+:.*?##.*$$/) {printf "    ${YELLOW}%-20s${GREEN}%s${RESET}\n", $$1, $$2} \
+		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
+		}' $(MAKEFILE_LIST)
