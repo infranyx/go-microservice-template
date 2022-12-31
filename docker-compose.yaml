@@ -19,7 +19,7 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: grpc_template
+      POSTGRES_DB: go_microservice_template
 
   zookeeper:
     image: bitnami/zookeeper

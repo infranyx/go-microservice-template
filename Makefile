@@ -1,5 +1,3 @@
-#args = $(foreach a,$($(subst -,_,$1)_args),$(if $(value $a),$a="$($a)"))
-
 PKG := github.com/infranyx/go-microservice-template
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.m' --always --tags)
 BINARY_NAME=infranyx_go_grpc_template
@@ -12,7 +10,7 @@ TEST_COVERAGE_FLAGS = -race -coverprofile=coverage.out -covermode=atomic
 TEST_FLAGS?= -timeout 15m
 
 # Set ENV
-export PG_URL=postgres://admin:admin@localhost:5432/grpc_template?sslmode=disable ### DB Conn String For Migrations
+export PG_URL=postgres://admin:admin@localhost:5432/go_microservice_template?sslmode=disable ### DB Conn String For Migrations
 
 GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
