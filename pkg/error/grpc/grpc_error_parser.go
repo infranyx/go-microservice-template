@@ -1,16 +1,18 @@
 package grpcError
 
 import (
-	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"google.golang.org/grpc/codes"
+
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
 )
 
 func ParseError(err error) GrpcErr {
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
+		internalServerErrorCode := errorList.InternalErrorList.InternalServerError
 		err =
-			customError.NewInternalServerErrorWrap(err, errConst.ErrInfo.InternalServerErr.Msg, errConst.ErrInfo.InternalServerErr.Code, nil)
+			customError.NewInternalServerErrorWrap(err, internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
 		customErr = customError.AsCustomError(err)
 		return NewGrpcError(codes.Internal, customErr.Code(), codes.Internal.String(), customErr.Error(), customErr.Details())
 	}

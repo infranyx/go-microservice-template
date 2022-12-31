@@ -120,6 +120,7 @@ func (he *httpErr) SetTimestamp(time time.Time) HttpErr {
 
 func IsHttpError(err error) bool {
 	var httpErr HttpErr
+
 	return errors.As(err, &httpErr)
 }
 
@@ -133,19 +134,24 @@ func (he *httpErr) WriteTo(w http.ResponseWriter) (int, error) {
 	if status == 0 {
 		status = http.StatusInternalServerError
 	}
+
 	w.Header().Set("Content-Type", ContentTypeJSON)
 	w.WriteHeader(status)
+
 	return w.Write(he.json())
 }
 
 func (he *httpErr) json() []byte {
 	b, _ := json.Marshal(&he)
+
 	return b
 }
 
-func ParseExternalHttpErr(err io.ReadCloser) HttpErr {
-	defer err.Close()
+// Don't forget to clese the body : <defer body.Close()>
+
+func ParseExternalHttpErr(body io.ReadCloser) HttpErr {
 	he := new(httpErr)
-	json.NewDecoder(err).Decode(he)
+	_ = json.NewDecoder(body).Decode(he)
+
 	return he
 }

@@ -1,18 +1,22 @@
 package articleException
 
 import (
-	customErrors "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	errorUtils "github.com/infranyx/go-grpc-template/pkg/error/error_utils"
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customErrors "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	errorUtils "github.com/infranyx/go-microservice-template/pkg/error/error_utils"
 )
 
 func CreateArticleValidationExc(err error) error {
-	ve, ie := errorUtils.ValidationErrHandler(err)
+	ve, ie := errorUtils.ValidationErrorHandler(err)
 	if ie != nil {
 		return ie
 	}
-	return customErrors.NewValidationError("validation failed", 2000, ve)
+
+	validationErrorCode := errorList.InternalErrorList.ValidationError
+	return customErrors.NewValidationError(validationErrorCode.Msg, validationErrorCode.Code, ve)
 }
 
 func ArticleBindingExc() error {
-	return customErrors.NewBadRequestError("binding failed", 3000, nil)
+	articleBindingError := errorList.InternalErrorList.ArticleExceptions.BindingError
+	return customErrors.NewBadRequestError(articleBindingError.Msg, articleBindingError.Code, nil)
 }

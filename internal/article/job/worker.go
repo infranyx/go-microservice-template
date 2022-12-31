@@ -1,15 +1,14 @@
-package job
+package articleJob
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
-func (aj *articleJob) logArticleWorker() wrapper.HandlerFunc {
+func (j *job) logArticleWorker() wrapper.HandlerFunc {
 	return func(ctx context.Context, args ...interface{}) (interface{}, error) {
-		fmt.Println("article log job")
+		j.logger.Info("article log job")
 		return nil, nil
 	}
 }

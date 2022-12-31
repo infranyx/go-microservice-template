@@ -3,19 +3,20 @@ package articleKafkaProducer
 import (
 	"context"
 
-	articleDomain "github.com/infranyx/go-grpc-template/internal/article/domain"
-	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
-	kafkaGo "github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go"
+
+	articleDomain "github.com/infranyx/go-microservice-template/internal/article/domain"
+	kafkaProducer "github.com/infranyx/go-microservice-template/pkg/kafka/producer"
 )
 
-type articleProducer struct {
+type producer struct {
 	createWriter *kafkaProducer.Writer
 }
 
-func NewArticleProducer(w *kafkaProducer.Writer) articleDomain.ArticleProducer {
-	return &articleProducer{createWriter: w}
+func NewProducer(w *kafkaProducer.Writer) articleDomain.KafkaProducer {
+	return &producer{createWriter: w}
 }
 
-func (p *articleProducer) PublishCreate(ctx context.Context, msgs ...kafkaGo.Message) error {
-	return p.createWriter.Client.WriteMessages(ctx, msgs...)
+func (p *producer) PublishCreateEvent(ctx context.Context, messages ...kafka.Message) error {
+	return p.createWriter.Client.WriteMessages(ctx, messages...)
 }

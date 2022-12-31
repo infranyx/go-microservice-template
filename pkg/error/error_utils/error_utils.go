@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"strings"
 
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
+	validator "github.com/go-ozzo/ozzo-validation"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
-	validator "github.com/go-ozzo/ozzo-validation"
-	errorContract "github.com/infranyx/go-grpc-template/pkg/error/contracts"
-	"github.com/pkg/errors"
+	errorContract "github.com/infranyx/go-microservice-template/pkg/error/contracts"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
 )
 
-// CheckErrMessages check for specific messages contains in the error
-func CheckErrMessages(err error, messages ...string) bool {
+// CheckErrorMessages checks for specific messages contains in the error
+func CheckErrorMessages(err error, messages ...string) bool {
 	for _, message := range messages {
 		if strings.Contains(strings.TrimSpace(strings.ToLower(err.Error())), strings.TrimSpace(strings.ToLower(message))) {
 			return true
@@ -45,7 +45,7 @@ func RootStackTrace(err error) string {
 	return stackStr
 }
 
-func ValidationErrHandler(err error) (map[string]string, error) {
+func ValidationErrorHandler(err error) (map[string]string, error) {
 	var customErr validator.Errors
 	if errors.As(err, &customErr) {
 		details := make(map[string]string)

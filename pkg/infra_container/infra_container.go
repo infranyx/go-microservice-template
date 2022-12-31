@@ -3,28 +3,30 @@ package infraContainer
 import (
 	"context"
 	"fmt"
-	"github.com/getsentry/sentry-go"
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	"github.com/infranyx/go-grpc-template/pkg/grpc"
-	httpEcho "github.com/infranyx/go-grpc-template/pkg/http/echo"
-	kafkaConsumer "github.com/infranyx/go-grpc-template/pkg/kafka/consumer"
-	kafkaProducer "github.com/infranyx/go-grpc-template/pkg/kafka/producer"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/postgres"
-	"github.com/segmentio/kafka-go"
-	"go.uber.org/zap"
 	"log"
 	"time"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/segmentio/kafka-go"
+	"go.uber.org/zap"
+
+	"github.com/infranyx/go-microservice-template/pkg/config"
+	"github.com/infranyx/go-microservice-template/pkg/grpc"
+	echoHttp "github.com/infranyx/go-microservice-template/pkg/http/echo"
+	kafkaConsumer "github.com/infranyx/go-microservice-template/pkg/kafka/consumer"
+	kafkaProducer "github.com/infranyx/go-microservice-template/pkg/kafka/producer"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/postgres"
 )
 
 type IContainer struct {
-	GrpcServer  grpc.GrpcServer
-	EchoServer  httpEcho.EchoHttpServer
-	Logger      *zap.Logger
-	Cfg         *config.Config
-	Pg          *postgres.Postgres
-	KafkaWriter *kafkaProducer.Writer
-	KafkaReader *kafkaConsumer.Reader
+	Config         *config.Config
+	Logger         *zap.Logger
+	Postgres       *postgres.Postgres
+	GrpcServer     grpc.Server
+	EchoHttpServer echoHttp.ServerInterface
+	KafkaWriter    *kafkaProducer.Writer
+	KafkaReader    *kafkaConsumer.Reader
 }
 
 func NewIC(ctx context.Context) (*IContainer, func(), error) {
@@ -36,20 +38,20 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 	}
 
 	se := sentry.Init(sentry.ClientOptions{
-		Dsn:              config.Conf.Sentry.Dsn,
+		Dsn:              config.BaseConfig.Sentry.Dsn,
 		TracesSampleRate: 1.0,
 		EnableTracing:    config.IsDevEnv(),
 	})
 	if se != nil {
-		log.Fatalf("sentry.Init: %s", se)
+		log.Fatalf("can not initialize sentry with error:  %s", se)
 	}
 	downFns = append(downFns, func() {
 		sentry.Flush(2 * time.Second)
 	})
 
-	grpcServerConfig := &grpc.GrpcConfig{
-		Port:        config.Conf.Grpc.Port,
-		Host:        config.Conf.Grpc.Host,
+	grpcServerConfig := &grpc.Config{
+		Port:        config.BaseConfig.Grpc.Port,
+		Host:        config.BaseConfig.Grpc.Host,
 		Development: config.IsDevEnv(),
 	}
 	grpcServer := grpc.NewGrpcServer(grpcServerConfig)
@@ -57,53 +59,59 @@ func NewIC(ctx context.Context) (*IContainer, func(), error) {
 		grpcServer.GracefulShutdown()
 	})
 
-	echoServerConfig := &httpEcho.EchoHttpConfig{
-		Port:     config.Conf.Http.Port,
+	echoServerConfig := &echoHttp.ServerConfig{
+		Port:     config.BaseConfig.Http.Port,
 		BasePath: "/api/v1",
 		IsDev:    config.IsDevEnv(),
 	}
-	echoServer := httpEcho.NewEchoHttpServer(echoServerConfig)
+	echoServer := echoHttp.NewServer(echoServerConfig)
 	echoServer.SetupDefaultMiddlewares()
 	downFns = append(downFns, func() {
-		echoServer.GracefulShutdown(ctx)
+		_ = echoServer.GracefulShutdown(ctx)
 	})
 
-	pg, err := postgres.NewPgConn(ctx, &postgres.PgConf{
-		Host:    config.Conf.Postgres.Host,
-		Port:    config.Conf.Postgres.Port,
-		User:    config.Conf.Postgres.User,
-		Pass:    config.Conf.Postgres.Pass,
-		DBName:  config.Conf.Postgres.DBName,
-		SslMode: config.Conf.Postgres.SslMode,
+	pg, err := postgres.NewConnection(ctx, &postgres.Config{
+		Host:    config.BaseConfig.Postgres.Host,
+		Port:    config.BaseConfig.Postgres.Port,
+		User:    config.BaseConfig.Postgres.User,
+		Pass:    config.BaseConfig.Postgres.Pass,
+		DBName:  config.BaseConfig.Postgres.DBName,
+		SslMode: config.BaseConfig.Postgres.SslMode,
 	})
 	if err != nil {
-		return nil, down, fmt.Errorf("could not initialize database connection using sqlx %s", err)
+		return nil, down, fmt.Errorf("can not connect to database using sqlx with error: %s", err)
 	}
 	downFns = append(downFns, func() {
 		pg.Close()
 	})
 
-	kwc := &kafkaProducer.WriterConf{
-		Brokers:      config.Conf.Kafka.ClientBrokers,
-		Topic:        config.Conf.Kafka.Topic,
+	kwc := &kafkaProducer.WriterConfig{
+		Brokers:      config.BaseConfig.Kafka.ClientBrokers,
+		Topic:        config.BaseConfig.Kafka.Topic,
 		RequiredAcks: kafka.RequireAll,
 	}
 	kw := kafkaProducer.NewKafkaWriter(kwc)
 	downFns = append(downFns, func() {
-		kw.Client.Close()
+		_ = kw.Client.Close()
 	})
 
-	krc := &kafkaConsumer.ReaderConf{
-		Brokers: config.Conf.Kafka.ClientBrokers,
-		Topic:   config.Conf.Kafka.Topic,
-		GroupID: config.Conf.Kafka.ClientGroupId,
+	krc := &kafkaConsumer.ReaderConfig{
+		Brokers: config.BaseConfig.Kafka.ClientBrokers,
+		Topic:   config.BaseConfig.Kafka.Topic,
+		GroupID: config.BaseConfig.Kafka.ClientGroupId,
 	}
 	kr := kafkaConsumer.NewKafkaReader(krc)
 	downFns = append(downFns, func() {
-		kr.Client.Close()
+		_ = kr.Client.Close()
 	})
 
-	ic := &IContainer{Cfg: config.Conf, Logger: logger.Zap, GrpcServer: grpcServer, EchoServer: echoServer, Pg: pg, KafkaWriter: kw, KafkaReader: kr}
+	ic := &IContainer{
+		Config:         config.BaseConfig,
+		Logger:         logger.Zap,
+		Postgres:       pg,
+		GrpcServer:     grpcServer,
+		EchoHttpServer: echoServer,
+		KafkaWriter:    kw, KafkaReader: kr}
 
 	return ic, down, nil
 }

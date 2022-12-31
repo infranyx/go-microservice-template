@@ -8,7 +8,7 @@ type internalServerError struct {
 	CustomError
 }
 
-func (ie *internalServerError) IsInternalServerError() bool {
+func (e *internalServerError) IsInternalServerError() bool {
 	return true
 }
 
@@ -17,29 +17,29 @@ type InternalServerError interface {
 	IsInternalServerError() bool
 }
 
-func IsInternalServerError(err error) bool {
-	var internalErr InternalServerError
+func IsInternalServerError(e error) bool {
+	var internalError InternalServerError
 
-	if errors.As(err, &internalErr) {
-		return internalErr.IsInternalServerError()
+	if errors.As(e, &internalError) {
+		return internalError.IsInternalServerError()
 	}
 
 	return false
 }
 
 func NewInternalServerError(message string, code int, details map[string]string) error {
-	ie := &internalServerError{
+	e := &internalServerError{
 		CustomError: NewCustomError(nil, code, message, details),
 	}
 
-	return ie
+	return e
 }
 
 func NewInternalServerErrorWrap(err error, message string, code int, details map[string]string) error {
-	ie := &internalServerError{
+	e := &internalServerError{
 		CustomError: NewCustomError(err, code, message, details),
 	}
-	stackErr := errors.WithStack(ie)
+	stackErr := errors.WithStack(e)
 
 	return stackErr
 }

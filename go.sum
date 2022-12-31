@@ -51,6 +51,8 @@ github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 h1:+9834+KizmvFV7pXQGSXQTsaW
 github.com/grpc-ecosystem/go-grpc-middleware v1.3.0/go.mod h1:z0ButlSOZa5vEBq9m2m2hlwIgKw+rp3sdCBRoJY+30Y=
 github.com/infranyx/protobuf-template-go v1.0.14 h1:1/kZ9c+TKh93qVDrWCpbF7VrZLOPIAnR5e6HTvUpAYk=
 github.com/infranyx/protobuf-template-go v1.0.14/go.mod h1:HuXrZeBMaHigfpEHmHUPGYuOHFMe9LW26eJN9xnscwQ=
+github.com/infranyx/protobuf-template-go v1.5.0 h1:PDXar5Z8nU/LmMNO/H8g9qJREjW39X8QpmiULo4m7SE=
+github.com/infranyx/protobuf-template-go v1.5.0/go.mod h1:HuXrZeBMaHigfpEHmHUPGYuOHFMe9LW26eJN9xnscwQ=
 github.com/jmoiron/sqlx v1.3.5 h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=
 github.com/jmoiron/sqlx v1.3.5/go.mod h1:nRVWtLre0KfCLJvgxzCsLVMogSvQ1zNJtpYr2Ccp0mQ=
 github.com/joho/godotenv v1.4.0 h1:3l4+N6zfMWnkbPEXKng2o2/MR5mSwTrBih4ZEkkz1lg=

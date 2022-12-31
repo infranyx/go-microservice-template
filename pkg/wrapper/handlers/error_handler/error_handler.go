@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/getsentry/sentry-go"
-	loggerConst "github.com/infranyx/go-grpc-template/pkg/constant/logger"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
-	"github.com/infranyx/go-grpc-template/pkg/logger"
-	"github.com/infranyx/go-grpc-template/pkg/wrapper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	loggerConstant "github.com/infranyx/go-microservice-template/pkg/constant/logger"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
+	"github.com/infranyx/go-microservice-template/pkg/logger"
+	"github.com/infranyx/go-microservice-template/pkg/wrapper"
 )
 
 var ErrorHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
@@ -18,22 +19,22 @@ var ErrorHandler = func(f wrapper.HandlerFunc) wrapper.HandlerFunc {
 		if err != nil {
 			hub := sentry.GetHubFromContext(ctx)
 			logFields := []zapcore.Field{
-				zap.String(loggerConst.TYPE, loggerConst.WORKER),
+				zap.String(loggerConstant.TYPE, loggerConstant.WORKER),
 			}
 			sentryContext := make(map[string]interface{})
 
 			if ce := customError.AsCustomError(err); ce != nil {
-				sentryContext[loggerConst.CODE] = ce.Code()
-				sentryContext[loggerConst.DETAILS] = ce.Details()
+				sentryContext[loggerConstant.CODE] = ce.Code()
+				sentryContext[loggerConstant.DETAILS] = ce.Details()
 
 				logFields = append(logFields,
-					zap.Int(loggerConst.CODE, ce.Code()),
-					zap.Any(loggerConst.DETAILS, ce.Details()),
+					zap.Int(loggerConstant.CODE, ce.Code()),
+					zap.Any(loggerConstant.DETAILS, ce.Details()),
 				)
 			}
 
 			if hub != nil {
-				sentryContext[loggerConst.TYPE] = loggerConst.WORKER
+				sentryContext[loggerConstant.TYPE] = loggerConstant.WORKER
 				hub.ConfigureScope(func(scope *sentry.Scope) {
 					scope.SetLevel(sentry.LevelError)
 					scope.SetContext("systemErr", sentryContext)

@@ -3,13 +3,14 @@ package grpcError
 import (
 	"time"
 
-	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
 	"google.golang.org/grpc/codes"
+
+	errorConstant "github.com/infranyx/go-microservice-template/pkg/constant/error"
 )
 
 func NewGrpcValidationError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrValidationFailedTitle,
+		Title:     errorConstant.ErrValidationFailedTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -20,7 +21,7 @@ func NewGrpcValidationError(code int, message string, details map[string]string)
 
 func NewGrpcConflictError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrConflictTitle,
+		Title:     errorConstant.ErrConflictTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -31,7 +32,7 @@ func NewGrpcConflictError(code int, message string, details map[string]string) G
 
 func NewGrpcBadRequestError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrBadRequestTitle,
+		Title:     errorConstant.ErrBadRequestTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -42,7 +43,7 @@ func NewGrpcBadRequestError(code int, message string, details map[string]string)
 
 func NewGrpcNotFoundError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrNotFoundTitle,
+		Title:     errorConstant.ErrNotFoundTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -53,7 +54,7 @@ func NewGrpcNotFoundError(code int, message string, details map[string]string) G
 
 func NewGrpcUnAuthorizedError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrUnauthorizedTitle,
+		Title:     errorConstant.ErrUnauthorizedTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -64,7 +65,7 @@ func NewGrpcUnAuthorizedError(code int, message string, details map[string]strin
 
 func NewGrpcForbiddenError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrForbiddenTitle,
+		Title:     errorConstant.ErrForbiddenTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -75,7 +76,7 @@ func NewGrpcForbiddenError(code int, message string, details map[string]string) 
 
 func NewGrpcInternalServerError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrInternalServerErrorTitle,
+		Title:     errorConstant.ErrInternalServerErrorTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -86,7 +87,7 @@ func NewGrpcInternalServerError(code int, message string, details map[string]str
 
 func NewGrpcDomainError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrDomainTitle,
+		Title:     errorConstant.ErrDomainTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -97,7 +98,7 @@ func NewGrpcDomainError(code int, message string, details map[string]string) Grp
 
 func NewGrpcApplicationError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrApplicationTitle,
+		Title:     errorConstant.ErrApplicationTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -108,7 +109,7 @@ func NewGrpcApplicationError(code int, message string, details map[string]string
 
 func NewGrpcApiError(code int, message string, details map[string]string) GrpcErr {
 	return &grpcErr{
-		Title:     errConst.ErrApiTitle,
+		Title:     errorConstant.ErrApiTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,

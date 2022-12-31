@@ -1,29 +1,32 @@
 package tmpDirHealthCheckUseCase
 
 import (
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	"golang.org/x/sys/unix"
-	"os"
 	"path/filepath"
+	"runtime"
+
+	"golang.org/x/sys/unix"
+
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
+	"github.com/infranyx/go-microservice-template/pkg/config"
 )
 
-type tmpDirHealthCheck struct {
+type useCase struct{}
+
+func NewUseCase() healthCheckDomain.TmpDirHealthCheckUseCase {
+	return &useCase{}
 }
 
-func NewTmpDirHealthCheck() healthCheckDomain.TmpDirHealthCheckUseCase {
-	return &tmpDirHealthCheck{}
-}
+func (uc *useCase) Check() bool {
+	if !config.IsProdEnv() {
+		return true
+	}
 
-func (th *tmpDirHealthCheck) PingCheck() bool {
-	cwd, err := os.Getwd()
-	if err != nil {
+	_, callerDir, _, ok := runtime.Caller(0)
+	if !ok {
 		return false
 	}
 
-	tmpDirPath := filepath.Join(cwd, "/tmp")
-	if unix.Access(tmpDirPath, unix.W_OK) != nil {
-		return false
-	}
+	tmpDir := filepath.Join(filepath.Dir(callerDir), "../../../..", "tmp")
 
-	return true
+	return unix.Access(tmpDir, unix.W_OK) == nil
 }

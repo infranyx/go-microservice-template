@@ -1,4 +1,4 @@
-PKG := github.com/infranyx/go-grpc-template
+PKG := github.com/infranyx/go-microservice-template
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.m' --always --tags)
 BINARY_NAME=infranyx_go_grpc_template
 BINARY_PATH=./out/bin/$(BINARY_NAME)
@@ -10,7 +10,7 @@ TEST_COVERAGE_FLAGS = -race -coverprofile=coverage.out -covermode=atomic
 TEST_FLAGS?= -timeout 15m
 
 # Set ENV
-export PG_URL=postgres://admin:admin@localhost:5432/grpc_template?sslmode=disable ### DB Conn String For Migrations
+export PG_URL=postgres://admin:admin@localhost:5432/go_microservice_template?sslmode=disable ### DB Conn String For Migrations
 
 GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
@@ -64,8 +64,8 @@ clean: ## Remove build related file
 
 ## ---------- Test ----------
 .PHONY: test
-test: ## go test ./...
-	go test ./...
+test: ## go clean -testcache && go test ./...
+	go clean -testcache && go test ./...
 
 .PHONY: test_coverage
 test_coverage: ## go test ./... -coverprofile=coverage.out
@@ -109,22 +109,21 @@ help: ## Show this help.
 
 # TODO : Fix & Complete migration commands
 .PHONY: rollback
-rollback: ### migration roll-back
+migrate-rollback: ### migration roll-back
 	migrate -source db/migrations -database $(PG_URL) down
 
 .PHONY: drop
-drop: ### migration drop
+migrate-drop: ### migration drop
 	migrate -source db/migrations -database $(PG_URL)  drop
 
 .PHONY: migrate-create
 migrate-create:  ### create new migration
-	migrate create -ext sql -dir db/migrations 'migrate_name'
+	migrate create -ext sql -dir db/migrations $(migrate_name)
 
 .PHONY: migrate-up
 migrate-up: ### migration up
 	migrate -path db/migrations -database $(PG_URL) up
 
 .PHONY: force
-force: ### force
-	migrate -path db/migrations -database $(PG_URL) force 20221025181800
-
+migrate-force: ### force
+	migrate -path db/migrations -database $(PG_URL) force $(id)

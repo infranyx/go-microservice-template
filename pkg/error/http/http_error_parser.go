@@ -3,18 +3,21 @@ package httpError
 import (
 	"net/http"
 
-	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
-	customError "github.com/infranyx/go-grpc-template/pkg/error/custom_error"
 	"google.golang.org/grpc/codes"
+
+	errorConstant "github.com/infranyx/go-microservice-template/pkg/constant/error"
+	errorList "github.com/infranyx/go-microservice-template/pkg/constant/error/error_list"
+	customError "github.com/infranyx/go-microservice-template/pkg/error/custom_error"
 )
 
 func ParseError(err error) HttpErr {
 	customErr := customError.AsCustomError(err)
 	if customErr == nil {
+		internalServerErrorCode := errorList.InternalErrorList.InternalServerError
 		err =
-			customError.NewInternalServerErrorWrap(err, errConst.ErrInfo.InternalServerErr.Msg, errConst.ErrInfo.InternalServerErr.Code, nil)
+			customError.NewInternalServerErrorWrap(err, internalServerErrorCode.Msg, internalServerErrorCode.Code, nil)
 		customErr = customError.AsCustomError(err)
-		return NewHttpError(http.StatusInternalServerError, customErr.Code(), errConst.ErrInternalServerErrorTitle, customErr.Error(), customErr.Details())
+		return NewHttpError(http.StatusInternalServerError, customErr.Code(), errorConstant.ErrInternalServerErrorTitle, customErr.Error(), customErr.Details())
 	}
 
 	if err != nil {
@@ -24,9 +27,6 @@ func ParseError(err error) HttpErr {
 
 		case customError.IsBadRequestError(err):
 			return NewHttpBadRequestError(customErr.Code(), customErr.Message(), customErr.Details())
-
-		case customError.IsMethodNotAllowedError(err):
-			return NewMethodNotAllowedError(customErr.Code(), customErr.Message(), customErr.Details())
 
 		case customError.IsNotFoundError(err):
 			return NewHttpNotFoundError(customErr.Code(), customErr.Message(), customErr.Details())

@@ -2,14 +2,14 @@ package app
 
 import (
 	"context"
-	healthCheckConfigurator "github.com/infranyx/go-grpc-template/internal/health_check/configurator"
 	"os"
 	"os/signal"
 	"syscall"
 
-	articleConfigurator "github.com/infranyx/go-grpc-template/internal/article/configurator"
-	cContainer "github.com/infranyx/go-grpc-template/pkg/client_container"
-	iContainer "github.com/infranyx/go-grpc-template/pkg/infra_container"
+	articleConfigurator "github.com/infranyx/go-microservice-template/internal/article/configurator"
+	healthCheckConfigurator "github.com/infranyx/go-microservice-template/internal/health_check/configurator"
+	externalBridge "github.com/infranyx/go-microservice-template/pkg/external_bridge"
+	iContainer "github.com/infranyx/go-microservice-template/pkg/infra_container"
 )
 
 type App struct{}
@@ -28,13 +28,13 @@ func (a *App) Run() error {
 	}
 	defer infraDown()
 
-	cc, clientsDown, err := cContainer.NewCC(ctx)
+	extBridge, extBridgeDown, err := externalBridge.NewExternalBridge(ctx)
 	if err != nil {
 		return err
 	}
-	defer clientsDown()
+	defer extBridgeDown()
 
-	me := configureModule(ctx, ic, cc)
+	me := configureModule(ctx, ic, extBridge)
 	if me != nil {
 		return me
 	}
@@ -49,7 +49,7 @@ func (a *App) Run() error {
 	}()
 
 	go func() {
-		if err := ic.EchoServer.RunHttpServer(ctx, nil); err != nil {
+		if err := ic.EchoHttpServer.RunServer(ctx, nil); err != nil {
 			ic.Logger.Sugar().Errorf("(s.RunEchoServer) err: {%v}", err)
 			serverError = err
 			cancel()
@@ -70,15 +70,15 @@ func (a *App) Run() error {
 	return serverError
 }
 
-func configureModule(ctx context.Context, ic *iContainer.IContainer, cc *cContainer.CContainer) error {
-	e := articleConfigurator.NewArticleConfigurator(ic, cc).ConfigureArticle(ctx)
-	if e != nil {
-		return e
+func configureModule(ctx context.Context, ic *iContainer.IContainer, extBridge *externalBridge.ExternalBridge) error {
+	err := articleConfigurator.NewConfigurator(ic, extBridge).Configure(ctx)
+	if err != nil {
+		return err
 	}
 
-	he := healthCheckConfigurator.NewHealthCheckConfigurator(ic).ConfigureHealthCheck(ctx)
-	if he != nil {
-		return he
+	err = healthCheckConfigurator.NewConfigurator(ic).Configure(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil

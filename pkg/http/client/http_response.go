@@ -7,71 +7,79 @@ import (
 )
 
 type HttpResponse struct {
-	Res *http.Response
+	Response *http.Response
 }
 
 func NewHttpResponse(res *http.Response) *HttpResponse {
-	return &HttpResponse{Res: res}
+	return &HttpResponse{Response: res}
 }
 
-func (hr *HttpResponse) Status() string {
-	if hr.Res == nil {
+func (response *HttpResponse) Status() string {
+	if response.Response == nil {
 		return ""
 	}
-	return hr.Res.Status
+
+	return response.Response.Status
 }
 
-func (hr *HttpResponse) StatusCode() int {
-	if hr.Res == nil {
+func (response *HttpResponse) StatusCode() int {
+	if response.Response == nil {
 		return 0
 	}
-	return hr.Res.StatusCode
+
+	return response.Response.StatusCode
 }
 
-func (hr *HttpResponse) Header() http.Header {
-	if hr.Res == nil {
+func (response *HttpResponse) Header() http.Header {
+	if response.Response == nil {
 		return http.Header{}
 	}
-	return hr.Res.Header
+
+	return response.Response.Header
 }
 
-func (hr *HttpResponse) Cookies() []*http.Cookie {
-	if hr.Res == nil {
+func (response *HttpResponse) Cookies() []*http.Cookie {
+	if response.Response == nil {
 		return make([]*http.Cookie, 0)
 	}
-	return hr.Res.Cookies()
+
+	return response.Response.Cookies()
 }
 
-func (hr *HttpResponse) Body() io.ReadCloser {
-	if hr.Res == nil {
+func (response *HttpResponse) Body() io.ReadCloser {
+	if response.Response == nil {
 		return nil
 	}
-	return hr.Res.Body
+	return response.Response.Body
 }
 
-func (hr *HttpResponse) IsSuccess() bool {
-	return hr.StatusCode() > 199 && hr.StatusCode() < 300
+func (response *HttpResponse) IsSuccess() bool {
+	return response.StatusCode() > 199 && response.StatusCode() < 300
 }
 
-func (hr *HttpResponse) IsError() bool {
-	return hr.StatusCode() > 399
+func (response *HttpResponse) IsError() bool {
+	return response.StatusCode() > 399
 }
 
-func (hr *HttpResponse) Bind(s interface{}) error {
-	defer hr.Res.Body.Close()
-	return json.NewDecoder(hr.Body()).Decode(s)
+// Don't forget to call => <Response.Body.Close()>
+
+func (response *HttpResponse) Bind(s interface{}) error {
+	return json.NewDecoder(response.Body()).Decode(s)
 }
 
-func (hr *HttpResponse) ParseBody() (interface{}, error) {
-	defer hr.Res.Body.Close()
-	var data interface{}
-	res, err := io.ReadAll(hr.Body())
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
+// Sample: We can use it to parse the body to interface type
+
+// func (response *HttpResponse) ParseBody() (interface{}, error) {
+// 	res, err := io.ReadAll(response.Body())
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	var data interface{}
+// 	err = json.Unmarshal(res, &data)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return data, nil
+// }

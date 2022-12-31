@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"time"
 
-	errConst "github.com/infranyx/go-grpc-template/pkg/constant/error"
+	errorConstant "github.com/infranyx/go-microservice-template/pkg/constant/error"
 )
 
 func NewHttpValidationError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrValidationFailedTitle,
+		Title:     errorConstant.ErrValidationFailedTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -20,7 +20,7 @@ func NewHttpValidationError(code int, message string, details map[string]string)
 
 func NewHttpConflictError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrConflictTitle,
+		Title:     errorConstant.ErrConflictTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -31,7 +31,7 @@ func NewHttpConflictError(code int, message string, details map[string]string) H
 
 func NewHttpBadRequestError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrBadRequestTitle,
+		Title:     errorConstant.ErrBadRequestTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -40,20 +40,9 @@ func NewHttpBadRequestError(code int, message string, details map[string]string)
 	}
 }
 
-func NewMethodNotAllowedError(code int, message string, details map[string]string) HttpErr {
-	return &httpErr{
-		Title:     errConst.ErrMethodNotAllowed,
-		Code:      code,
-		Msg:       message,
-		Details:   details,
-		Status:    http.StatusMethodNotAllowed,
-		Timestamp: time.Now(),
-	}
-}
-
 func NewHttpNotFoundError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrNotFoundTitle,
+		Title:     errorConstant.ErrNotFoundTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -64,7 +53,7 @@ func NewHttpNotFoundError(code int, message string, details map[string]string) H
 
 func NewHttpUnAuthorizedError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrUnauthorizedTitle,
+		Title:     errorConstant.ErrUnauthorizedTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -75,7 +64,7 @@ func NewHttpUnAuthorizedError(code int, message string, details map[string]strin
 
 func NewHttpForbiddenError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrForbiddenTitle,
+		Title:     errorConstant.ErrForbiddenTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -86,7 +75,7 @@ func NewHttpForbiddenError(code int, message string, details map[string]string) 
 
 func NewHttpInternalServerError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrInternalServerErrorTitle,
+		Title:     errorConstant.ErrInternalServerErrorTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -97,7 +86,7 @@ func NewHttpInternalServerError(code int, message string, details map[string]str
 
 func NewHttpDomainError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrDomainTitle,
+		Title:     errorConstant.ErrDomainTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -108,7 +97,7 @@ func NewHttpDomainError(code int, message string, details map[string]string) Htt
 
 func NewHttpApplicationError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrApplicationTitle,
+		Title:     errorConstant.ErrApplicationTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,
@@ -119,7 +108,7 @@ func NewHttpApplicationError(code int, message string, details map[string]string
 
 func NewHttpApiError(code int, message string, details map[string]string) HttpErr {
 	return &httpErr{
-		Title:     errConst.ErrApiTitle,
+		Title:     errorConstant.ErrApiTitle,
 		Code:      code,
 		Msg:       message,
 		Details:   details,

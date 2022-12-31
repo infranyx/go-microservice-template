@@ -1,28 +1,30 @@
 package healthCheckHttp
 
 import (
-	healthCheckDomain "github.com/infranyx/go-grpc-template/internal/health_check/domain"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
+
+	healthCheckDomain "github.com/infranyx/go-microservice-template/internal/health_check/domain"
 )
 
-type healthCheckHttpController struct {
-	healthCheckUC healthCheckDomain.HealthCheckUseCase
+type controller struct {
+	useCase healthCheckDomain.HealthCheckUseCase
 }
 
-func NewHealthCheckHttpController(uc healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HealthCheckHttpController {
-	return &healthCheckHttpController{
-		healthCheckUC: uc,
+func NewController(useCase healthCheckDomain.HealthCheckUseCase) healthCheckDomain.HttpController {
+	return &controller{
+		useCase: useCase,
 	}
 }
 
-func (hc healthCheckHttpController) Check(c echo.Context) error {
-	healthResult := hc.healthCheckUC.Check()
+func (c controller) Check(eCtx echo.Context) error {
+	healthResult := c.useCase.Check()
 
 	httpStatus := http.StatusOK
 	if !healthResult.Status {
 		httpStatus = http.StatusInternalServerError
 	}
 
-	return c.JSON(httpStatus, healthResult)
+	return eCtx.JSON(httpStatus, healthResult)
 }

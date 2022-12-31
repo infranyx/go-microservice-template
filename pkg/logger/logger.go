@@ -1,11 +1,15 @@
 package logger
 
 import (
-	"github.com/infranyx/go-grpc-template/pkg/config"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+
+	"github.com/infranyx/go-microservice-template/pkg/config"
 )
 
 var Zap *zap.Logger
@@ -34,11 +38,21 @@ func newLogger() *zap.Logger {
 		encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
 
-		if _, err := os.Stat("/path/to/your-file"); os.IsNotExist(err) {
-			os.MkdirAll(filepath.Join(".", "tmp/logs"), os.ModePerm)
+		_, callerDir, _, ok := runtime.Caller(0)
+		if !ok {
+			log.Fatal("Error getting caller directory")
 		}
 
-		logFile, _ := os.OpenFile("tmp/logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		tmpLogDir := filepath.Join(filepath.Dir(callerDir), "../..", "tmp/logs")
+		if _, err := os.Stat(tmpLogDir); os.IsNotExist(err) {
+			_ = os.MkdirAll(tmpLogDir, os.ModePerm)
+		}
+
+		logFile, err := os.OpenFile(filepath.Clean(filepath.Join(tmpLogDir, "main.log")), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			log.Fatal("Error Open File main.log")
+		}
+
 		logWriter = zapcore.AddSync(logFile)
 	} else {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
@@ -61,24 +75,3 @@ func newLogger() *zap.Logger {
 	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(zapcore.DebugLevel))
 	return zap.New(core, zap.AddCaller())
 }
-
-// func (l *zapLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
-// 	l.logger.Info(
-// 		constants.GRPC,
-// 		zap.String(constants.METHOD, method),
-// 		zap.Any(constants.REQUEST, req),
-// 		zap.Any(constants.REPLY, reply),
-// 		zap.Duration(constants.TIME, time),
-// 		zap.Any(constants.METADATA, metaData),
-// 		zap.Error(err),
-// 	)
-// }
-
-// func mapToFields(fields map[string]interface{}) []zap.Field {
-// 	var zapFields []zap.Field
-// 	for k, v := range fields {
-// 		zapFields = append(zapFields, zap.Any(k, v))
-// 	}
-
-// 	return zapFields
-// }
