@@ -29,13 +29,13 @@ func init() {
 		// 8000 - 8999 : Third-party
 		// 9000 - 9999 : FATAL
 
-		ValidationError: ErrorList{
-			Msg:  "request validation failed",
+		InternalServerError: ErrorList{
+			Msg:  "internal server error",
 			Code: 1000,
 		},
 
-		InternalServerError: ErrorList{
-			Msg:  "internal server error",
+		ValidationError: ErrorList{
+			Msg:  "request validation failed",
 			Code: 1001,
 		},
 
