@@ -12,7 +12,7 @@ func BuildChain(f HandlerFunc, m ...middleware) HandlerFunc {
 		return f
 	}
 
-	return m[0](BuildChain(f, m[1:cap(m)]...))
+	return m[0](BuildChain(f, m[1:len(m)]...))
 }
 
 func (f HandlerFunc) ToWorkerFunc(ctx context.Context, args ...interface{}) func() {
